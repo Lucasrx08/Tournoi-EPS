@@ -1,4 +1,35 @@
-# Tournoi EPS — conception avant développement
+# Tournoi EPS · conception version 2
+
+La version 2 remplace l’interface initiale par un univers d’affiche sportive : papier crème, vert terrain, jaune et corail, titres expressifs, activités dessinées et formules en pictogrammes. Les identités des équipes se retrouvent directement sur le tableau des terrains.
+
+## Parcours
+
+Le choix d’activité constitue le premier écran. Suivent terrains / nombre de joueurs, effectif, noms / couleurs / logos, formule, fin des matchs, départ puis lancement. Les listes d’identités et de formules sont paginées ; les commandes de progression restent visibles sur ordinateur. Les variantes chiffrées sont remplacées par un paramètre nombre de joueurs.
+
+L’effectif offre deux chemins : groupes déjà faits ou groupes à constituer. Les propositions comparent les terrains utilisés, les remplaçants et les groupes en attente, en tenant compte d’une éventuelle tâche d’arbitrage. La répartition des personnes conserve un écart maximal d’un élève entre groupes.
+
+La préparation au chrono réserve installation et transitions. Les formules à progression dynamique annoncent une estimation. La vue des terrains affiche maintenant la prochaine rotation à la place d’un bandeau de repos ; les arbitres disponibles y sont nommés. La projection est la recopie AirPlay de cette même vue.
+
+Badminton et tennis de table utilisent joueurs ou duos. Les partenaires tournants utilisent des joueurs individuels. Les exemples prêts à jouer, la recherche du terrain, la fenêtre TV distincte, le mode de fin hybride et les activités tennis / hockey sont retirés des nouveaux choix.
+
+## Modules
+
+| Fichier | Responsabilité |
+| --- | --- |
+| `dist/app.js` | Parcours, terrains, scores, rôles, logos, annonces, import / export et sauvegardes |
+| `dist/style.css` | Identité visuelle, écrans fixes sur ordinateur, adaptation mobile et projection |
+| `dist/planning.js` | Propositions d’effectifs, budget du cours, estimation des rotations et arbitres |
+| `dist/engine.js` | Rencontres, formules, chronos, résultats et classements |
+| `dist/exchange.js` | Échanges CSV, XLSX, PDF et téléchargements |
+| `dist/sw.js` | Cache hors connexion et mise à jour des ressources |
+
+Les sauvegardes version 1 restent lisibles. Le moteur conserve les anciens sports et règles pour cette compatibilité, même lorsqu’ils ne sont plus proposés dans la création. Aucune migration ne supprime les scores.
+
+---
+
+## Archive : conception de la version 1
+
+Le texte ci-dessous et `dist/conception.html` décrivent la maquette initiale, remplacée par le parcours version 2.
 
 ## Parcours et architecture fonctionnelle
 
