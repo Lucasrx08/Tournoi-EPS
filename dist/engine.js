@@ -47,6 +47,8 @@ export function newTournament(config={},teams=makeTeams(8)){
  if(!Number.isInteger(cfg.roundCount)||cfg.roundCount<1||cfg.roundCount>50||!Number.isInteger(cfg.poolCount)||cfg.poolCount<1||cfg.poolCount>8||!Number.isInteger(cfg.qualifiers)||cfg.qualifiers<1||cfg.qualifiers>4)throw Error('Nombre de rondes, poules ou qualifiés invalide.');
  if(!Number.isFinite(cfg.overtime)||cfg.overtime<10||cfg.overtime>3600||!Number.isFinite(cfg.breakSeconds)||cfg.breakSeconds<0||cfg.breakSeconds>600)throw Error('Durée de récupération ou de prolongation invalide.');
  if([cfg.winPoints,cfg.drawPoints,cfg.lossPoints,cfg.availableMinutes].some(x=>!Number.isFinite(x)||x<0))throw Error('Les points et la durée disponible doivent être positifs ou nuls.');
+ if(cfg.scoreMode!==undefined&&!['normal','bonus'].includes(cfg.scoreMode))throw Error('Comptage des points invalide.');
+ if(cfg.scoreMode==='bonus'&&(!Number.isInteger(cfg.bonusPoints)||cfg.bonusPoints<2||cfg.bonusPoints>20))throw Error('Le bonus doit valoir entre 2 et 20 points.');
  if(!Number.isInteger(cfg.courtCount)||cfg.courtCount<1||cfg.courtCount>24)throw Error('Choisissez entre 1 et 24 terrains.');if(teams.length<2||teams.length>64)throw Error('Choisissez entre 2 et 64 équipes ou joueurs.');if(cfg.formula==='americano'&&teams.length<4)throw Error('L’Americano nécessite au moins quatre joueurs.');
  const t={id:uid(),config:cfg,teams:structuredClone(teams),courts:Array.from({length:cfg.courtCount},(_,i)=>({id:uid(),name:(cfg.sport==='table'?'Table ':cfg.sport==='basket'&&cfg.format==='3x3'?'Demi-terrain ':'Terrain ')+(i+1),available:true})),rotations:[],roundIndex:0,completed:false,engine:{stage:0,phase:'main',byes:{},placements:{},wait:[],groups:[]},audit:[]};
  const roster=t.teams.map(x=>x.id);

@@ -1,6 +1,6 @@
-# Validation · version 2.1 · 10 octobre 2026
+# Validation · version 2.2 · 10 octobre 2026
 
-87 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent les actions avec un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
+107 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent les actions avec un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
 
 ## Parcours et identités
 
@@ -10,6 +10,19 @@
 - Noms automatiques distincts jusqu’à 64 équipes ; changement de couleur et conservation d’un nom personnalisé.
 - Raquettes : joueurs et duos, imports réels et doubles avec partenaires tournants.
 - Noms uniques et choix de répartition requis avant la validation.
+
+## Imports, déplacements et points
+
+- Modèle XLSX réel à deux colonnes, largeurs adaptées, lignes vides ignorées et noms complets conservés ; ancien format NOM / Prénom compatible.
+- Numéros invalides et terrains hors configuration refusés avec message de ligne ou nom. Un import refusé conserve le brouillon précédent.
+- Duos constitués au sein du terrain et changement simple → double après import.
+- Première rotation du championnat conforme aux terrains importés ; toutes les oppositions et tous les identifiants conservés.
+- Déplacement manuel prioritaire avant le départ, sans modifier les adversaires du tableau.
+- Échange de terrains avant le départ ; pendant une rencontre, déplacement de la prochaine opposition sans modification des scores ni des chronos courants.
+- Demande différée dans une formule évolutive appliquée à la prévision puis à la rotation réelle. Absence, terrain indisponible et tournoi terminé refusés.
+- Parcours de glisser-déposer natif avec DOM simulé, seuil et annulation de la poignée tactile, alternative par sélection et bouton. Ces tests ne valident pas les gestes sur un appareil réel.
+- Étape Points immédiatement après la formule, bonus configurable et sauvegardé, ajout au score et atteinte de l’objectif, barème collectif appliqué au classement.
+- Calcul de la grille : sept terrains sur deux rangées dans l’espace simulé d’un ordinateur ; largeur minimale, hauteur lisible, arbitres et bonus pris en compte.
 
 ## Durées et roulettes
 

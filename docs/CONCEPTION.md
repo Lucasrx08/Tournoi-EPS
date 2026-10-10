@@ -1,20 +1,30 @@
-# Tournoi EPS · conception version 2.1
+# Tournoi EPS · conception version 2.2
 
-La palette crème, vert, jaune et corail est conservée. Les titres décrivent les tâches d’EPS ; les images et les couleurs rendent les choix et les oppositions visibles. Les tuiles restent dans une grille régulière et utilisent la place disponible, sans empilement décoratif sur les textes.
+La palette utilise un fond clair bleuté, de l’encre bleu nuit, du bleu électrique, du rose et du vert citron. Outfit est fournie localement avec sa licence SIL OFL. Chaque activité possède un accent distinct ; aucun texte n’est couvert par un empilement de tuiles. Les titres décrivent les tâches d’EPS ; les images et les couleurs rendent les choix et les oppositions visibles. Les tuiles restent dans une grille régulière et utilisent la place disponible, sans empilement décoratif sur les textes.
 
 ## Parcours et identités
 
-Activité → terrains et joueurs par côté → effectif → identités → formule → fin des rencontres → départ → validation. Les identités et les formules sont paginées lorsque nécessaire ; Retour et Continuer restent visibles sur ordinateur. Les listes longues ont leur propre zone de défilement.
+Activité → terrains et joueurs par côté → effectif → identités → formule → points → fin des rencontres → départ → validation. Les identités et les formules sont paginées lorsque nécessaire ; Retour et Continuer restent visibles sur ordinateur. Les listes longues ont leur propre zone de défilement.
 
 Les sports collectifs disposent de chasubles nommées et dessinées. Un nom personnalisé peut remplacer le nom de couleur ; les changements de couleur ne l’écrasent pas. Les propositions répartissent le total en effectifs équilibrés, avec un écart maximal d’un élève. Elles ne créent aucun élève fictif dans les équipes. Les sports de raquettes conservent joueurs, duos, noms et imports individuels.
 
 Le nom, le logo et l’identifiant stable sont indépendants. Les anciennes équipes nommées par défaut sont migrées vers des couleurs ; les noms personnalisés, scores et logos sont conservés. Les listes individuelles historiques ne sont plus exposées pour les sports collectifs mais restent dans le JSON de sauvegarde.
 
+## Raquettes et points
+
+Le modèle XLSX utilise « Nom et prénom » et « Numéro de terrain ». Les noms complets restent intacts et les colonnes NOM / Prénom sont encore acceptées. Les numéros sont validés (entiers, de 1 à 24, et dans la limite des terrains configurés). Les lignes sans nom sont ignorées. Les duos sont constitués au sein de leur groupe de terrain.
+
+La répartition concerne les terrains de départ. Pour le championnat, les poules et les niveaux, une première rotation est choisie parmi les oppositions déjà générées, puis les oppositions restantes sont programmées ; aucun match ni identifiant n’est supprimé. Les autres formules conservent leur tableau et placent ses rencontres sur les terrains disponibles. Un déplacement manuel dans le brouillon est prioritaire pour la première rencontre lorsqu’une opposition existe dans la formule.
+
+Après création, un déplacement échange le terrain de la prochaine rencontre du joueur avec celui de la rencontre déjà affectée à la cible. Il ne change pas les adversaires, les scores ou les chronos commencés. Les demandes pour un tour encore à générer sont sauvegardées et appliquées après sa génération, y compris dans la prévision sans mutation de l’état réel. Le glisser-déposer natif, une poignée tactile et une alternative par sélection puis bouton utilisent la même opération.
+
+Les raquettes proposent un comptage normal ou un bonus de 2 à 20 points, avec +1 toujours disponible. Le bonus vaut le nombre choisi au total ; les scores alimentent les règles de fin habituelles. Le barème victoire / nul / défaite des sports collectifs est configurable après la formule.
+
 ## Durées et projection
 
 Les roulettes proposent minutes / secondes, et heures uniquement pour la durée totale du cours. Elles acceptent défilement, gestes tactiles, clics et clavier. Le budget est calculé à la seconde : installation + toutes les rencontres + transitions entre rotations. Une durée dépassant le cours bloque la validation. Les tours dynamiques restent annoncés comme estimés.
 
-Les cartes de terrain séparent une surface de rencontre et un panneau clair « Prochaine rotation ». Les identités des adversaires, leurs couleurs et les arbitres sont associés au terrain concerné. Les formules évolutives attendent les résultats nécessaires avant d’annoncer les adversaires. AirPlay recopie cette même vue.
+La grille utilise une hauteur minimale de 230 px, 250 px avec arbitre, et 24 px supplémentaires avec les commandes de bonus. Les cartes séparent une surface de rencontre et un panneau clair « Prochaine rotation ». Les identités des adversaires, leurs couleurs et les arbitres sont associés au terrain concerné. Les formules évolutives attendent les résultats nécessaires avant d’annoncer les adversaires. AirPlay recopie cette même vue.
 
 ## Gestion unique
 
@@ -27,7 +37,8 @@ La corbeille sur chaque tournoi enregistré permet une suppression directe. Une 
 | Fichier | Responsabilité |
 | --- | --- |
 | `dist/app.js` | Parcours, terrains, scores, logos, annonces, import / export et sauvegardes |
-| `dist/controls.js` | Chasubles, noms de couleurs, composition des durées et roulettes accessibles |
+| `dist/controls.js` | Chasubles, roulettes, calcul de la grille et gestes tactiles |
+| `dist/rackets.js` | Noms complets, duos importés, terrains de départ et déplacements de rencontres |
 | `dist/style.css` | Grilles adaptées, typographie, terrains, affichage ordinateur / mobile |
 | `dist/planning.js` | Répartition des effectifs, budget exact, estimation des rotations et arbitres |
 | `dist/engine.js` | Rencontres, formules, chronos, résultats et classements |

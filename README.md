@@ -1,16 +1,16 @@
-# Tournoi EPS · version 2.1
+# Tournoi EPS · version 2.2
 
 Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
 
 ## Préparer le tournoi
 
-Choisir l’activité, puis renseigner les terrains et le nombre de joueurs par côté. Les étapes suivantes concernent l’effectif, les identités, la formule, la fin des rencontres, le départ et la validation. Les commandes de progression restent visibles sur ordinateur.
+Choisir l’activité, puis renseigner les terrains et le nombre de joueurs par côté. Les étapes suivantes concernent l’effectif, les identités, la formule, les points, la fin des rencontres, le départ et la validation. Les commandes de progression restent visibles sur ordinateur.
 
-Pour les sports collectifs, les équipes sont identifiées par les couleurs de chasubles : Rouge, Bleu, Vert, Jaune… Un nom personnalisé et un logo restent possibles. Deux méthodes : équipes déjà constituées, ou effectif total à répartir. Les propositions comparent les terrains utilisés, les équipes en attente, les remplaçants et l’arbitrage. Aucun nom individuel ni liste d’élèves n’est demandé pour ces équipes ; seule leur taille est conservée lorsque la répartition est calculée.
+Pour les sports collectifs, les équipes sont identifiées par les couleurs de chasubles : Bleu clair, Bleu foncé, Vert clair, Vert foncé, Orange, Rouge, Jaune fluo, Jaune, Rose, Fuchsia et Blanc. Un nom personnalisé et un logo restent possibles. Deux méthodes : équipes déjà constituées, ou effectif total à répartir. Les propositions comparent les terrains utilisés, les équipes en attente, les remplaçants et l’arbitrage. Aucun nom individuel ni liste d’élèves n’est demandé pour ces équipes ; seule leur taille est conservée lorsque la répartition est calculée.
 
-En badminton et tennis de table, les inscriptions sont des joueurs en simple ou des duos en double. Les noms individuels et l’import de listes sont conservés. Les partenaires tournants utilisent une liste de joueurs individuels et organisent de vrais doubles.
+En badminton et tennis de table, les inscriptions sont des joueurs en simple ou des duos en double. Le bouton « Modèle élèves » télécharge un XLSX avec deux colonnes : **Nom et prénom** et **Numéro de terrain**. Remplir les noms sans les découper et, si souhaité, indiquer le terrain de départ. Un numéro supérieur aux terrains disponibles est refusé. Les anciens imports NOM / Prénom sont acceptés. Les duos importés sont constitués entre joueurs affectés au même terrain ; un effectif impair dans un groupe est signalé. Les partenaires tournants utilisent une liste de joueurs individuels et organisent de vrais doubles.
 
-Les activités proposées sont basket, football, futsal, handball, volley, badminton, tennis de table, rugby, ultimate et activité personnalisée. Tennis et hockey restent lisibles dans les anciennes sauvegardes.
+L’ordre des activités est : handball, badminton, ultimate, basket, volley, futsal, tennis de table, rugby, football, activité personnalisée. Tennis et hockey restent lisibles dans les anciennes sauvegardes.
 
 ## Régler les durées
 
@@ -26,7 +26,11 @@ Une seule interface donne accès à tous les terrains, aux scores et aux réglag
 
 Chaque carte distingue la rencontre actuelle et une zone claire pour la prochaine rotation, avec les couleurs, noms et logos des prochains adversaires. L’arbitre affecté est indiqué lorsque l’arbitrage est activé. « À désigner » apparaît lorsqu’il manque un groupe ou joueur disponible.
 
-Un grand score ajoute un point ; le bouton − corrige. Démarrer, pauser et passer à la rotation suivante se font depuis les terrains. Les annonces françaises disent « Jouez ! », « Fin du match ! » et « Fin des matchs ! ». Un signal doux et un son personnalisé sont également disponibles.
+Un grand score ajoute un point ; le bouton − corrige. Après la formule, les sports de raquettes proposent **Point normal** ou **Point bonus**. Le bonus vaut 3 points par défaut et se règle entre 2 et 20 ; il ajoute cette valeur au score, sans ajouter un point normal en plus. Les boutons +1 et bonus restent disponibles. Le critère de réussite est défini avec les élèves. Les sports collectifs proposent les points de classement pour une victoire, un nul et une défaite, avec 3 / 1 / 0 par défaut. Démarrer, pauser et passer à la rotation suivante se font depuis les terrains. Les annonces françaises disent « Jouez ! », « Fin du match ! » et « Fin des matchs ! ». Un signal doux et un son personnalisé sont également disponibles.
+
+Le bouton **Joueurs** ouvre la répartition par terrain en raquettes. Déposer une carte de joueur / duo sur un terrain déplace sa rencontre avec son adversaire ; si un match est prévu sur le terrain visé, les deux rencontres échangent leurs terrains. Avant un départ, le déplacement est immédiat. Pendant une rencontre, il concerne la prochaine rencontre programmée ou est conservé jusqu’au calcul du prochain tour. Les adversaires, identifiants, résultats et chronos déjà commencés restent inchangés. La poignée accepte les gestes tactiles ; sélectionner un joueur puis « Déplacer ici » offre une alternative au clavier.
+
+La charte utilise Outfit (police locale sous SIL OFL), du bleu électrique, du rose et du vert citron. Les dix activités ont des accents distincts. Les panneaux partagent une échelle typographique. La grille des terrains adapte son nombre de colonnes à l’espace disponible et garde une hauteur minimale lisible ; les grands nombres de terrains défilent dans la grille.
 
 Pour AirPlay, utiliser la recopie de l’écran de l’appareil et, si utile, le bouton plein écran. La même vue sert à gérer et à projeter les rencontres.
 
@@ -38,7 +42,7 @@ Depuis l’accueil, la corbeille supprime directement un tournoi. « Annuler » 
 
 Les listes individuelles historiques des sports collectifs restent dans les sauvegardes JSON, pour éviter une perte de données ; elles ne sont plus affichées dans les équipes ni les exports de résultats.
 
-Pour les raquettes : importer CSV, XLSX ou coller les cellules d’Excel / Google Sheets, avec les colonnes NOM et Prénom. Classe, Couleur et Niveau sont facultatifs. Le premier onglet XLSX est importé. Les effectifs et niveaux fournis peuvent servir à équilibrer les duos.
+Pour les raquettes : importer CSV, XLSX ou coller les cellules d’Excel / Google Sheets, avec les colonnes Nom et prénom / Numéro de terrain, ou NOM / Prénom. Classe, Couleur et Niveau sont facultatifs. Le premier onglet XLSX est importé. Les effectifs et niveaux fournis peuvent servir à équilibrer les duos.
 
 Exports locaux : XLSX avec couleurs, CSV, PDF paginé et JSON de restauration. Les anciens événements multisports gardent leurs activités et leur export général.
 
@@ -50,7 +54,7 @@ La voix dépend des voix françaises installées et du navigateur. La projection
 
 ## Développement
 
-Site statique sans dépendances téléchargées à l’exécution. Héberger `dist/`. Modules : interface `app.js`, contrôles `controls.js`, moteur `engine.js`, préparation `planning.js` et échanges `exchange.js`. Pako est fourni localement avec sa licence.
+Site statique sans dépendances téléchargées à l’exécution. Héberger `dist/`. Modules : interface `app.js`, contrôles `controls.js`, moteur `engine.js`, préparation `planning.js`, affectations `rackets.js` et échanges `exchange.js`. Pako est fourni localement avec sa licence.
 
 Tests : `npm test` ou `node --test tests/*.test.mjs`.
 

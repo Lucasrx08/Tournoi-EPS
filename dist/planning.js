@@ -1,6 +1,7 @@
 import * as E from './engine.js';
+import * as R from './rackets.js';
 
-export const ACTIVITIES=['basket','football','futsal','handball','volley','badminton','table','rugby','ultimate','custom'];
+export const ACTIVITIES=['handball','badminton','ultimate','basket','volley','futsal','table','rugby','football','custom'];
 export const isIndividual=sport=>['badminton','table'].includes(sport);
 export const noun=(sport,plural=false)=>isIndividual(sport)?plural?'joueurs':'joueur':plural?'équipes':'équipe';
 export const safeLogo=value=>typeof value==='string'&&value.length<=350000&&/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(value)?value:'';
@@ -103,5 +104,5 @@ export function nextRotation(t){
  if(!E.current(t).matches.every(E.done))return null;
  const copy=structuredClone(t);
  if(!E.advance(copy))return null;
- assignReferees(copy);return E.current(copy);
+ R.applyPending(copy);assignReferees(copy);return E.current(copy);
 }

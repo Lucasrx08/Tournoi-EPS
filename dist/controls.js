@@ -1,11 +1,11 @@
 // Bib identities and duration wheels shared by creation and tournament settings.
 export const BIBS=[
- {name:'Rouge',color:'#e74c3c'},{name:'Bleu',color:'#315ae8'},
- {name:'Vert',color:'#258d69'},{name:'Jaune',color:'#f4c430'},
- {name:'Orange',color:'#ef842c'},{name:'Violet',color:'#8355bc'},
- {name:'Rose',color:'#e05588'},{name:'Blanc',color:'#f7f7f2'},
- {name:'Noir',color:'#263038'},{name:'Bleu ciel',color:'#64b9dc'},
- {name:'Vert clair',color:'#90b956'},{name:'Bordeaux',color:'#973850'}
+ {name:'Bleu clair',color:'#66c8f1'},{name:'Bleu foncé',color:'#2145b8'},
+ {name:'Vert clair',color:'#a1dc67'},{name:'Vert foncé',color:'#16824b'},
+ {name:'Orange',color:'#ff8a32'},{name:'Rouge',color:'#ef4055'},
+ {name:'Jaune fluo',color:'#dfff00'},{name:'Jaune',color:'#ffd53c'},
+ {name:'Rose',color:'#ffadcf'},{name:'Fuchsia',color:'#e7249a'},
+ {name:'Blanc',color:'#ffffff'}
 ];
 export function bibIdentity(index){const x=BIBS[index%BIBS.length];return {...x,name:x.name+(index>=BIBS.length?' · '+String.fromCharCode(65+Math.floor(index/BIBS.length)):'')}}
 export function colorName(color){
@@ -41,5 +41,30 @@ export function mountWheels(root,onChange){
   wheel.addEventListener('scroll',()=>{clearTimeout(timer);timer=setTimeout(()=>{if(wheel.isConnected)commit(Math.round(wheel.scrollTop/row))},140)},{passive:true});
   wheel.addEventListener('click',e=>{const option=e.target.closest('[data-wheel-value]');if(option)commit(Number(option.dataset.wheelValue))});
   wheel.addEventListener('keydown',e=>{let value;if(['ArrowDown','ArrowUp'].includes(e.key))value=selected+(e.key==='ArrowDown'?1:-1);else if(e.key==='PageDown'||e.key==='PageUp')value=selected+(e.key==='PageDown'?5:-5);else if(e.key==='Home')value=0;else if(e.key==='End')value=options.length-1;if(value!==undefined){e.preventDefault();const field=wheel.dataset.wheelField,unit=wheel.dataset.wheelUnit;commit(value);root.querySelector(`[data-wheel-field="${field}"][data-wheel-unit="${unit}"]`)?.focus()}});
+ }
+}
+
+// Keep a readable minimum cell size; large sets scroll inside the board.
+export function courtLayout(count,width,height,referees=false,bonus=false){
+ const gap=10,minWidth=width<580?220:235,minHeight=(referees?250:230)+(bonus?24:0);
+ const max=Math.max(1,Math.min(6,count,Math.floor((width+gap)/(minWidth+gap))));
+ const options=Array.from({length:max},(_,i)=>{const cols=i+1,rows=Math.ceil(count/cols),w=(width-gap*(cols-1))/cols,h=(height-gap*(rows-1))/rows;return {cols,rows,fits:h>=minHeight,cost:Math.abs(Math.log(Math.max(.1,w/h)/1.35))+(cols*rows-count)*.08}});
+ const fitting=options.filter(x=>x.fits),choice=fitting.length?fitting.sort((a,b)=>a.cost-b.cost)[0]:options[max-1];
+ return {cols:choice.cols,rows:choice.rows,minHeight};
+}
+let courtObserver;
+export function mountCourtLayout(root,referees=false,bonus=false){
+ courtObserver?.disconnect();const grid=root.querySelector('.courts-grid');if(!grid)return;
+ const fit=()=>{const x=courtLayout(grid.children.length,grid.clientWidth,grid.clientHeight,referees,bonus);grid.style.setProperty('--cols',x.cols);grid.style.setProperty('--rows',x.rows);grid.style.setProperty('--court-min',x.minHeight+'px')};
+ fit();if(typeof ResizeObserver!=='undefined'){courtObserver=new ResizeObserver(fit);courtObserver.observe(grid)}
+}
+export function mountCourtDrag(root,onMove){
+ for(const handle of root.querySelectorAll('[data-court-handle]')){
+  let start=null,zone=null,dragging=false;
+  const clear=()=>{zone?.classList.remove('drop-active');handle.closest('[data-court-player]')?.classList.remove('dragging');start=null;zone=null;dragging=false};
+  handle.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;start={x:e.clientX,y:e.clientY,id:e.pointerId};handle.setPointerCapture(e.pointerId)});
+  handle.addEventListener('pointermove',e=>{if(!start)return;if(Math.hypot(e.clientX-start.x,e.clientY-start.y)<8&&!dragging)return;dragging=true;e.preventDefault();handle.closest('[data-court-player]').classList.add('dragging');const next=root.ownerDocument.elementFromPoint(e.clientX,e.clientY)?.closest('[data-drop-court]');if(next!==zone){zone?.classList.remove('drop-active');zone=next;zone?.classList.add('drop-active')}});
+  handle.addEventListener('pointerup',e=>{if(!start)return;const id=handle.closest('[data-court-player]').dataset.courtPlayer,target=zone?.dataset.dropCourt,moved=dragging;clear();if(moved){e.preventDefault();if(target)onMove(id,Number(target))}});
+  handle.addEventListener('pointercancel',clear);handle.addEventListener('lostpointercapture',clear);
  }
 }

@@ -1,6 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as C from '../dist/controls.js';
+test('Terrains sur ordinateur : sept terrains tiennent sur deux rangées, minimum lisible conservé',()=>{
+ const x=C.courtLayout(7,1325,482);assert.equal(x.cols,4);assert.equal(x.rows,2);assert.ok((482-10*(x.rows-1))/x.rows>=x.minHeight);
+ for(const n of[1,3,4,7,9,12,24])for(const w of[1024,1325,1880]){const x=C.courtLayout(n,w,482,true);assert.ok(x.cols>=1&&x.cols<=6);assert.equal(x.rows,Math.ceil(n/x.cols));assert.ok(x.minHeight>=250);if(x.cols>1)assert.ok((w-10*(x.cols-1))/x.cols>=235)}
+ assert.equal(C.courtLayout(7,1325,482,true,true).minHeight,274);
+});
+test('Déplacement tactile : poignée, seuil, cible et annulation',()=>{
+ const handlers={},calls=[],player={dataset:{courtPlayer:'p1'},classList:{add(){},remove(){}}},zone={dataset:{dropCourt:'2'},classList:{add(){},remove(){}}},handle={addEventListener:(k,v)=>handlers[k]=v,setPointerCapture(){},closest:()=>player},root={querySelectorAll:()=>[handle],ownerDocument:{elementFromPoint:()=>({closest:()=>zone})}};
+ C.mountCourtDrag(root,(...args)=>calls.push(args));handlers.pointerdown({pointerType:'touch',clientX:10,clientY:10,pointerId:1});handlers.pointermove({clientX:14,clientY:10,preventDefault(){}});handlers.pointerup({preventDefault(){}});assert.equal(calls.length,0);
+ handlers.pointerdown({pointerType:'touch',clientX:10,clientY:10,pointerId:2});handlers.pointermove({clientX:60,clientY:30,preventDefault(){}});handlers.pointerup({preventDefault(){}});assert.deepEqual(calls,[['p1',2]]);
+ handlers.pointerdown({pointerType:'touch',clientX:10,clientY:10,pointerId:3});handlers.pointermove({clientX:60,clientY:30,preventDefault(){}});handlers.pointercancel();handlers.pointerup({preventDefault(){}});assert.equal(calls.length,1);
+});
 
 test('Durées : les secondes sont conservées, les heures réservées au cours',()=>{
  assert.deepEqual(C.durationParts(5427,true),{hours:1,minutes:30,seconds:27});
@@ -14,7 +25,7 @@ test('Durées : les secondes sont conservées, les heures réservées au cours',
 test('Chasubles : 64 identités distinctes et noms personnalisés inchangés',()=>{
  const teams=Array.from({length:64},(_,i)=>({...C.bibIdentity(i),bibNamed:true}));assert.equal(new Set(teams.map(x=>x.name)).size,64);
  C.setBibColor(teams[0],C.BIBS[1].color,teams);assert.equal(new Set(teams.map(x=>x.name)).size,64);assert.match(teams[0].name,/^Bleu/);
- teams[0].bibNamed=false;teams[0].name='Les Aigles';C.setBibColor(teams[0],C.BIBS[2].color,teams);assert.equal(teams[0].name,'Les Aigles');assert.equal(C.colorName(C.BIBS[3].color),'Jaune');
+ teams[0].bibNamed=false;teams[0].name='Les Aigles';C.setBibColor(teams[0],C.BIBS[2].color,teams);assert.equal(teams[0].name,'Les Aigles');assert.equal(C.colorName(C.BIBS[3].color),'Vert foncé');
 });
 function fakeWheel(value=5){
  const handlers={},options=Array.from({length:60},(_,i)=>({id:'option-'+i,dataset:{wheelValue:String(i)},getBoundingClientRect:()=>({height:32})}));

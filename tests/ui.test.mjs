@@ -7,6 +7,7 @@ import * as E from '../dist/engine.js';
 import * as X from '../dist/exchange.js';
 import * as P from '../dist/planning.js';
 import * as C from '../dist/controls.js';
+import * as R from '../dist/rackets.js';
 const source=readFileSync(new URL('../dist/app.js',import.meta.url),'utf8').replace(/^import .+;\n/gm,'');
 const plain=v=>JSON.parse(JSON.stringify(v));
 function runtime(snapshot,backup,legacySession={}){
@@ -14,9 +15,9 @@ function runtime(snapshot,backup,legacySession={}){
  if(snapshot)memory.set('EPS_TOURNOIS_V1',snapshot);if(backup)memory.set('EPS_TOURNOIS_V1_BACKUP',backup);
  function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',classList:{add(){},remove(){},toggle(){}},addEventListener(){},showModal(){this.open=true},close(){this.open=false},getBoundingClientRect(){return {left:0,right:1000,top:0,bottom:1000}}});return nodes.get(id)}
  const storage=map=>({getItem:key=>map.get(key)??null,setItem:(key,v)=>map.set(key,String(v)),removeItem:key=>map.delete(key)});
- const ctx={E,X,P,C,crypto:webcrypto,console,structuredClone,TextEncoder,Uint8Array,URL,URLSearchParams,Date,Blob,Map,Set,Number,JSON,Math,Promise,String,Array,RegExp,Error,atob,btoa,localStorage:storage(memory),sessionStorage:storage(session),location:{search:'',href:'https://example.test/',pathname:'/'},navigator:{},document:{getElementById:node,querySelector(){return null},addEventListener:(type,cb)=>listeners.set(type,cb),visibilityState:'visible',documentElement:{requestFullscreen:async()=>{}}},setTimeout:()=>0,clearTimeout(){},setInterval:()=>0,addEventListener(){},scrollTo(){},confirm:()=>true,window:{},audioContext:null,speechSynthesis:{getVoices:()=>[{lang:'fr-FR'}],cancel(){},speak:speech=>spoken.push(speech)},SpeechSynthesisUtterance:class{constructor(text){this.text=text}}};
+ const ctx={E,X,P,C,R,crypto:webcrypto,console,structuredClone,TextEncoder,Uint8Array,URL,URLSearchParams,Date,Blob,Map,Set,Number,JSON,Math,Promise,String,Array,RegExp,Error,atob,btoa,localStorage:storage(memory),sessionStorage:storage(session),location:{search:'',href:'https://example.test/',pathname:'/'},navigator:{},document:{getElementById:node,querySelector(){return null},addEventListener:(type,cb)=>listeners.set(type,cb),visibilityState:'visible',documentElement:{requestFullscreen:async()=>{}}},setTimeout:()=>0,clearTimeout(){},setInterval:()=>0,addEventListener(){},scrollTo(){},confirm:()=>true,window:{},audioContext:null,speechSynthesis:{getVoices:()=>[{lang:'fr-FR'}],cancel(){},speak:speech=>spoken.push(speech)},SpeechSynthesisUtterance:class{constructor(text){this.text=text}}};
  vm.createContext(ctx);vm.runInContext(source,ctx);
- return {ctx,node,memory,spoken,run:s=>vm.runInContext(s,ctx),html:()=>node('app').innerHTML,action:(name,dataset={})=>ctx.action(name,{dataset}),change:target=>listeners.get('change')({target:{hasAttribute:()=>false,...target}}),input:target=>listeners.get('input')({target})};
+ return {ctx,node,memory,spoken,listeners,run:s=>vm.runInContext(s,ctx),html:()=>node('app').innerHTML,action:(name,dataset={})=>ctx.action(name,{dataset}),change:target=>listeners.get('change')({target:{hasAttribute:()=>false,...target}}),input:target=>listeners.get('input')({target})};
 }
 function fixture(sport,n,c,config={}){const t=E.newTournament({sport,courtCount:c,format:E.SPORTS[sport].formats[0][0],...config},E.makeTeams(n));return {id:E.uid(),title:'Test EPS',tournaments:[t],selectedId:t.id,pinHash:null,pinSalt:'salt',studentScores:false,audio:{enabled:false,volume:.5,sound:'buzzer',start:false,alert30:false},createdAt:0}}
 function snapshot(e){return JSON.stringify({schema:1,events:[e],activeId:e.id,updatedAt:0,revision:0})}
@@ -41,9 +42,9 @@ test('Création complète : répartition, identités, timing, jeu et reprise',as
  r.input({dataset:{teamName:'0'},value:'Les Comètes'});await r.change({dataset:{teamColor:'0'},value:'#ffcc00'});
  r.run("draft.teams[0].logo='data:image/png;base64,YQ==';render()");assert.ok(r.html().includes('data:image/png;base64,YQ=='));
  await next(r);assert.ok(r.html().includes('formula-art'));assert.ok(!r.html().includes('<select'));
- await next(r);assert.equal(r.run('draftCfg().duration'),300);assert.ok(r.html().includes('Scores + déplacement'));
+ await next(r);assert.ok(r.html().includes('Définir le barème'));assert.ok(r.html().includes('Match nul'));await next(r);assert.equal(r.run('draftCfg().duration'),300);assert.ok(r.html().includes('Scores + déplacement'));
  await next(r);assert.ok(r.html().includes('Départ commun'));assert.ok(!r.html().includes('<select'));
- await next(r);assert.ok(r.html().includes('8 sur 8'));assert.equal(r.node('toast').textContent,'');
+ await next(r);assert.ok(r.html().includes('9 sur 9'));assert.equal(r.node('toast').textContent,'');
  await r.action('create');assert.ok(r.html().includes('Rotation <b>1</b>'));assert.equal(r.run('tourney().teams[0].name'),'Les Comètes');assert.equal(r.run('tourney().config.referees'),true);
  await r.action('start');assert.equal(r.spoken.at(-1).text,'Jouez !');
  const match=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match,side:'a',delta:'1'});await r.action('pause');assert.equal(r.run('E.current(tourney()).clock.status'),'paused');
@@ -58,19 +59,19 @@ test('Nombres : bornes, fractions et proposition invalidée',async()=>{
  const r=runtime();r.run('newDraft()');await r.change({dataset:{field:'courtCount'},value:'1000'});assert.equal(r.run('draftCfg().courtCount'),24);
  await r.change({dataset:{field:'courtCount'},value:'3'});await next(r);await r.action('roster-mode',{id:'auto'});await r.action('proposal',{id:r.run('proposals()[0].id')});
  await r.change({dataset:{field:'studentCount'},value:'29'});assert.equal(r.run('draft.proposal'),null);assert.equal(r.run('draft.participants.length'),0);
- await r.action('proposal',{id:r.run('proposals()[0].id')});r.run('draft.step=5;render()');r.run("updateDurationWheel('duration','minutes',2);updateDurationWheel('duration','seconds',30)");assert.equal(r.run('draftCfg().duration'),150);
+ await r.action('proposal',{id:r.run('proposals()[0].id')});r.run('draft.step=6;render()');r.run("updateDurationWheel('duration','minutes',2);updateDurationWheel('duration','seconds',30)");assert.equal(r.run('draftCfg().duration'),150);
  r.run("updateDurationWheel('duration','seconds',47)");assert.equal(r.run('draftCfg().duration'),167);
 });
 test('Temps : séance trop longue bloquée avant le départ',async()=>{
- const r=runtime();r.run("newDraft();draft.mode='existing';draft.step=5;draftCfg().duration=7200;render()");await assert.rejects(next(r),/dépasse/);assert.equal(r.run('draft.step'),5);
- await r.change({dataset:{field:'availableMinutes'},value:'5'});await assert.rejects(next(r),/dépasse/);await r.action('end-mode',{id:'score'});await next(r);assert.equal(r.run('draft.step'),6);
+ const r=runtime();r.run("newDraft();draft.mode='existing';draft.step=6;draftCfg().duration=7200;render()");await assert.rejects(next(r),/dépasse/);assert.equal(r.run('draft.step'),6);
+ await r.change({dataset:{field:'availableMinutes'},value:'5'});await assert.rejects(next(r),/dépasse/);await r.action('end-mode',{id:'score'});await next(r);assert.equal(r.run('draft.step'),7);
 });
 test('Raquettes : joueurs en simple, duos en double, noms importés',async()=>{
  for(const sport of['badminton','table']){
   const r=runtime();await r.action('pick-activity',{id:sport});await next(r);await r.action('roster-mode',{id:'auto'});await r.change({dataset:{field:'studentCount'},value:'18'});await r.action('proposal',{id:r.run('proposals()[0].id')});
   assert.equal(r.run('draft.count'),18);assert.ok(r.run('draft.teams.every(x=>x.members.length===1)'));await next(r);assert.ok(r.html().includes('Identifier les joueurs'));assert.ok(!r.html().includes('Équipe'));
   r.ctx.imported=X.participantsFromRows([['Prénom','Nom'],['Inès','Martin'],['Léo','Durand']]);r.run('applyParticipants(imported)');assert.deepEqual(plain(r.run('draft.teams.map(x=>x.name)')),['Inès Martin','Léo Durand']);
-  await r.change({dataset:{field:'playersPerSide'},value:'2'});r.run('draft.step=2;render()');assert.ok(r.html().includes('Nombre de duos'));
+  await r.change({dataset:{field:'playersPerSide'},value:'2'});assert.equal(r.run('draftCfg().playersPerSide'),1);r.ctx.imported=X.participantsFromRows([['Prénom','Nom'],['Inès','Martin'],['Léo','Durand'],['Lou','Roy'],['Adam','Diallo']]);r.run('applyParticipants(imported)');await r.change({dataset:{field:'playersPerSide'},value:'2'});r.run('draft.step=2;render()');assert.ok(r.html().includes('Nombre de duos'));
  }
 });
 test('Partenaires tournants : quatre joueurs constituent un vrai double',async()=>{
@@ -90,7 +91,7 @@ test('Vue unifiée : tous les terrains sont contrôlables, arbitrage affiché sa
 test('Ancien profil élève : commandes disponibles et nouveau tournoi sans code',async()=>{
  const e=fixture('basket',6,3);e.pinHash='ancien-code';const r=runtime(snapshot(e),null,{'eps-role':'student'});await r.action('open-event',{id:e.id});
  for(const action of['start','score','settings'])assert.ok(r.html().includes('data-action="'+action+'"'));
- await r.action('pick-activity',{id:'basket'});r.run("draft.mode='existing';draft.step=7;render()");await r.action('create');assert.equal(r.run('event().pinHash'),undefined);assert.equal(r.run('event().studentScores'),undefined);
+ await r.action('pick-activity',{id:'basket'});r.run("draft.mode='existing';draft.step=8;render()");await r.action('create');assert.equal(r.run('event().pinHash'),undefined);assert.equal(r.run('event().studentScores'),undefined);
 });
 test('Annonces françaises et silence respecté',async()=>{
  const r=runtime();open(r,fixture('basket',6,3));await r.run("sound('start')");assert.equal(r.spoken.length,0);r.run("event().audio.enabled=true");await r.run("sound('start')");await r.run("sound('end')");await r.run("sound('match-end')");
@@ -110,7 +111,7 @@ test('Ancien multisport : activités et export général conservés',()=>{
 
 test('Chasubles : noms par couleur, changement automatique et nom personnalisé conservé',async()=>{
  const r=runtime();await r.action('pick-activity',{id:'football'});r.run("draft.mode='existing';draft.step=3;render()");
- assert.deepEqual(plain(r.run('draft.teams.slice(0,4).map(x=>x.name)')),['Rouge','Bleu','Vert','Jaune']);assert.ok(!r.html().includes('Équipe 1'));assert.ok(r.html().includes('bib-swatch'));
+ assert.deepEqual(plain(r.run('draft.teams.slice(0,4).map(x=>x.name)')),['Bleu clair','Bleu foncé','Vert clair','Vert foncé']);assert.ok(!r.html().includes('Équipe 1'));assert.ok(r.html().includes('bib-swatch'));
  await r.action('bib-color',{index:'0',color:C.BIBS[4].color});assert.match(r.run('draft.teams[0].name'),/^Orange/);assert.equal(r.run('new Set(draft.teams.map(x=>x.name)).size'),6);
  r.input({dataset:{teamName:'0'},value:'Les Lynx'});await r.action('bib-color',{index:'0',color:C.BIBS[2].color});assert.equal(r.run('draft.teams[0].name'),'Les Lynx');
  r.run('resizeTeams(64)');assert.equal(r.run('new Set(draft.teams.map(x=>x.name)).size'),64);
@@ -124,7 +125,7 @@ test('Sports collectifs : uniquement effectifs, aucune liste individuelle même 
  assert.equal(r.run('tourney().teams[0].members[0].first'),'Élève 13');assert.ok(!r.run('JSON.stringify(sheets(tourney()))').includes('Élève 13'));
 });
 test('Roulettes : heures pour le cours seulement, budget et rencontres précis à la seconde',async()=>{
- const r=runtime();r.run("newDraft();draft.mode='existing';draft.step=5;render()");
+ const r=runtime();r.run("newDraft();draft.mode='existing';draft.step=6;render()");
  assert.equal((r.html().match(/class="duration-picker"/g)??[]).length,4);
  assert.equal((r.html().match(/data-wheel-unit="hours"/g)??[]).length,1);assert.ok(r.html().includes('data-wheel-field="availableMinutes" data-wheel-unit="hours"'));
  for(const field of['availableMinutes','setupMinutes','breakSeconds','duration'])for(const unit of['minutes','seconds'])assert.ok(r.html().includes('data-wheel-field="'+field+'" data-wheel-unit="'+unit+'"'));
@@ -143,9 +144,46 @@ test('Suppression depuis l’accueil : plusieurs suppressions et annulations con
 });
 test('Migration des anciens numéros : identifiants, noms personnalisés, logos et scores préservés',()=>{
  const e=fixture('basket',6,3),ids=e.tournaments[0].teams.map(x=>x.id);e.tournaments[0].teams[1].name='Les Aigles';e.tournaments[0].teams[1].logo='data:image/png;base64,YQ==';e.tournaments[0].rotations[0].matches[0].scoreB=9;
- const r=runtime(snapshot(e));assert.equal(r.run('tourney().teams[0].name'),'Rouge');assert.equal(r.run('tourney().teams[1].name'),'Les Aigles');assert.deepEqual(plain(r.run('tourney().teams.map(x=>x.id)')),ids);assert.equal(r.run('tourney().teams[1].logo'),'data:image/png;base64,YQ==');assert.equal(r.run('E.current(tourney()).matches[0].scoreB'),9);
+ const r=runtime(snapshot(e));assert.equal(r.run('tourney().teams[0].name'),'Bleu clair');assert.equal(r.run('tourney().teams[1].name'),'Les Aigles');assert.deepEqual(plain(r.run('tourney().teams.map(x=>x.id)')),ids);assert.equal(r.run('tourney().teams[1].logo'),'data:image/png;base64,YQ==');assert.equal(r.run('E.current(tourney()).matches[0].scoreB'),9);
 });
 test('Prochaines rotations : couleurs, joueurs et arbitres restent associés au bon terrain',()=>{
  const r=runtime();open(r,fixture('handball',9,3,{referees:true}));const t=r.run('tourney()'),next=P.nextRotation(t);
  for(const court of t.courts){r.ctx.court=court;const html=r.run('courtCard(tourney(),court)'),m=next.matches.find(m=>m.courtId===court.id);assert.ok(html.includes('data-next-court="'+court.id+'"'));assert.ok(html.includes(E.label(t,m.a)));assert.ok(html.includes(E.label(t,m.b)));for(const id of [...m.a,...m.b])assert.ok(html.includes(E.team(t,id).color));if(m.refereeId)assert.ok(html.includes(E.team(t,m.refereeId).name));}
+});
+
+test('Nouvel accueil : ordre demandé et dix accents différents',()=>{
+ const r=runtime(),ids=[...r.html().matchAll(/data-action="pick-activity"[^>]*data-id="([^"]+)"/g)].map(x=>x[1]);assert.deepEqual(ids,['handball','badminton','ultimate','basket','volley','futsal','table','rugby','football','custom']);
+ const accents=[...r.html().matchAll(/--tile:(#[0-9a-f]+)/g)].map(x=>x[1]);assert.equal(new Set(accents).size,10);
+ assert.deepEqual(C.BIBS.map(x=>x.name),['Bleu clair','Bleu foncé','Vert clair','Vert foncé','Orange','Rouge','Jaune fluo','Jaune','Rose','Fuchsia','Blanc']);
+});
+test('Points juste après la formule : bonus raquette enregistré, appliqué et restauré',async()=>{
+ const r=runtime();r.run("newDraft('badminton');draft.mode='existing';resizeTeams(4);draft.step=4;render()");await next(r);assert.equal(r.run('draft.step'),5);assert.ok(r.html().includes('Point normal'));assert.ok(r.html().includes('Point bonus'));assert.ok(!r.html().includes('Match nul'));
+ await r.action('score-mode',{id:'bonus'});await r.change({dataset:{field:'bonusPoints'},value:'4'});await next(r);assert.ok(r.html().includes('Définir la fin des rencontres'));await r.action('end-mode',{id:'score'});await r.change({dataset:{field:'target'},value:'5'});await next(r);await next(r);await r.action('create');
+ assert.ok(r.html().includes('★ +4'));const match=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match,side:'a',delta:'4'});assert.equal(r.run('E.current(tourney()).matches[0].scoreA'),4);
+ const restored=runtime(r.memory.get('EPS_TOURNOIS_V1'));assert.equal(restored.run('tourney().config.bonusPoints'),4);assert.equal(restored.run('E.current(tourney()).matches[0].scoreA'),4);
+});
+test('Barème collectif : victoire, nul et défaite agissent sur le classement',async()=>{
+ const r=runtime();r.run("newDraft('handball');draft.mode='existing';resizeTeams(2);draft.step=4;render()");await next(r);assert.ok(r.html().includes('Victoire'));assert.ok(r.html().includes('Match nul'));assert.ok(!r.html().includes('Point bonus'));
+ for(const [field,value] of [['winPoints','5'],['drawPoints','2'],['lossPoints','1']])await r.change({dataset:{field},value});await r.action('create');const match=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match,side:'a',delta:'1'});await r.action('finish-match',{match});assert.deepEqual(plain(r.run('E.standings(tourney()).map(x=>x.points)')),[5,1]);
+});
+test('Modèle élèves téléchargeable : fichier XLSX à deux colonnes',async()=>{
+ const r=runtime(),downloads=[];r.ctx.X={...X,download:(...args)=>downloads.push(args)};r.run("newDraft('table');draft.step=2;render()");assert.ok(r.html().includes('Modèle élèves'));await r.action('player-template');assert.equal(downloads[0][1],'Modele_eleves_terrains.xlsx');const f=X.unzip(downloads[0][0]),xml=new TextDecoder().decode(f['xl/worksheets/sheet1.xml']);assert.ok(xml.includes('Nom et prénom'));assert.ok(xml.includes('Numéro de terrain'));
+});
+test('Import et glisser-déposer dans le brouillon : noms complets et terrains réellement suivis',async()=>{
+ const r=runtime();r.run("newDraft('badminton');draft.step=2;render()");r.ctx.imported=X.participantsFromRows([['Nom et prénom','Numéro de terrain'],['Martin Inès',2],['Durand Léo',2],['Diallo Adam',1],['Nguyen Zoé',1]]);r.run('applyParticipants(imported)');assert.deepEqual(plain(r.run('draft.teams.map(x=>x.name)')),['Martin Inès','Durand Léo','Diallo Adam','Nguyen Zoé']);
+ await r.action('court-players');assert.ok(r.node('modal').innerHTML.includes('data-drop-court="2"'));assert.ok(!r.node('modal').innerHTML.includes('<select'));
+ const id=r.run('draft.teams[0].id'),player={dataset:{courtPlayer:id}},court={dataset:{dropCourt:'3'}};r.listeners.get('dragstart')({target:{closest:selector=>selector==='[data-court-player]'?player:null},dataTransfer:{setData(){}}});let prevented=false;r.listeners.get('drop')({target:{closest:selector=>selector==='[data-drop-court]'?court:null},preventDefault(){prevented=true}});assert.equal(prevented,true);assert.equal(r.run('draft.teams[0].homeCourt'),3);assert.equal(r.run('draft.teams[0].members[0].courtNumber'),3);
+ const t=r.run('draftTournament()');const first=E.current(t);assert.ok(first.matches.some(m=>m.courtId===t.courts[2].id&&E.entrants(m).includes(id)));assert.equal(E.allMatches(t).length,6);
+});
+test('Déplacement au clavier pendant une rencontre : prochain terrain et scores conservés',async()=>{
+ const r=runtime();open(r,fixture('table',6,3));await r.action('start');const match=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match,side:'a',delta:'6'});const before=r.run('JSON.stringify(E.current(tourney()))'),id=r.run('E.current(tourney()).matches[0].a[0]');
+ await r.action('court-players');await r.action('select-court-player',{id});await r.action('place-court-player',{number:'3'});assert.equal(r.run('JSON.stringify(E.current(tourney()))'),before);r.ctx.player=id;assert.equal(r.run('tourney().rotations.slice(1).flatMap(r=>r.matches).find(m=>E.entrants(m).includes(player)).courtId'),r.run('tourney().courts[2].id'));
+ const restored=runtime(r.memory.get('EPS_TOURNOIS_V1'));assert.equal(restored.run('E.current(tourney()).matches[0].scoreA'),6);
+});
+test('Import invalide : le brouillon précédent reste intact',()=>{
+ const r=runtime();r.run("newDraft('badminton')");const before=r.run('JSON.stringify(draft)');r.ctx.imported=X.participantsFromRows([['Nom et prénom','Numéro de terrain'],['Inès',4],['Lou',4]]);assert.throws(()=>r.run('applyParticipants(imported)'),/dépasse/);assert.equal(r.run('JSON.stringify(draft)'),before);
+});
+
+test('Import puis choix du double : duos recomposés par terrain',async()=>{
+ const r=runtime();r.run("newDraft('badminton')");r.ctx.imported=X.participantsFromRows([['Nom et prénom','Numéro de terrain'],['Inès',1],['Lou',1],['Adam',2],['Zoé',2]]);r.run('applyParticipants(imported)');await r.change({dataset:{field:'playersPerSide'},value:'2'});assert.equal(r.run('draft.count'),2);assert.ok(r.run('draft.teams.every(x=>x.members.length===2)'));assert.deepEqual(plain(r.run('draft.teams.map(x=>x.homeCourt)')),[1,2]);
 });
