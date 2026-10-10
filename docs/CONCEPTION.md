@@ -1,6 +1,10 @@
-# Tournoi EPS · conception version 2.2
+# Tournoi EPS · conception version 2.3
 
-La palette utilise un fond clair bleuté, de l’encre bleu nuit, du bleu électrique, du rose et du vert citron. Outfit est fournie localement avec sa licence SIL OFL. Chaque activité possède un accent distinct ; aucun texte n’est couvert par un empilement de tuiles. Les titres décrivent les tâches d’EPS ; les images et les couleurs rendent les choix et les oppositions visibles. Les tuiles restent dans une grille régulière et utilisent la place disponible, sans empilement décoratif sur les textes.
+L’identité graphique suit un tableau sportif contemporain : bleu nuit #142338, orange #f47745, menthe #9adacf et fond clair #f3f5f7. Les couleurs des chasubles décrivent les équipes indépendamment de la palette de l’interface. Les dix activités utilisent des illustrations vectorielles propres à leurs équipements, avec un dessin et une palette partagés.
+
+Barlow Condensed Bold donne leur caractère aux titres, numéros et scores. Outfit reste la police des noms, explications et contrôles. Les deux polices et leurs licences SIL OFL sont locales, sans requête externe à l’exécution. La typographie d’un choix ne varie pas selon son état de sélection. Les boutons principaux orange portent un texte bleu nuit.
+
+L’accueil présente un titre éditorial, une grille régulière de dix activités et une liste compacte des tournois enregistrés. La préparation utilise un rail latéral avec l’activité et les neuf étapes ; sur mobile, il devient un repère compact de l’étape courante. L’aperçu des espaces de pratique dessine le nombre de terrains choisi. Chaque terrain associe une zone sombre pour la rencontre actuelle et une bande claire pour la prochaine rotation, sans doubler celle-ci ailleurs sur l’écran. Les tracés sont propres au sport.
 
 ## Parcours et identités
 

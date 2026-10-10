@@ -1,4 +1,4 @@
-# Tournoi EPS · version 2.2
+# Tournoi EPS · version 2.3
 
 Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
 
@@ -30,7 +30,7 @@ Un grand score ajoute un point ; le bouton − corrige. Après la formule, les s
 
 Le bouton **Joueurs** ouvre la répartition par terrain en raquettes. Déposer une carte de joueur / duo sur un terrain déplace sa rencontre avec son adversaire ; si un match est prévu sur le terrain visé, les deux rencontres échangent leurs terrains. Avant un départ, le déplacement est immédiat. Pendant une rencontre, il concerne la prochaine rencontre programmée ou est conservé jusqu’au calcul du prochain tour. Les adversaires, identifiants, résultats et chronos déjà commencés restent inchangés. La poignée accepte les gestes tactiles ; sélectionner un joueur puis « Déplacer ici » offre une alternative au clavier.
 
-La charte utilise Outfit (police locale sous SIL OFL), du bleu électrique, du rose et du vert citron. Les dix activités ont des accents distincts. Les panneaux partagent une échelle typographique. La grille des terrains adapte son nombre de colonnes à l’espace disponible et garde une hauteur minimale lisible ; les grands nombres de terrains défilent dans la grille.
+La version 2.3 reprend toute l’interface autour d’une identité sportive : fond clair, bleu nuit, orange et menthe. Les dix cartes d’activité utilisent des illustrations vectorielles spécifiques et une palette commune. Barlow Condensed signe les titres et les scores ; Outfit sert aux noms, explications et contrôles. Les deux polices et leurs licences SIL OFL sont fournies localement. La préparation utilise une colonne d’étapes sur ordinateur et un repère compact sur mobile. Les terrains affichent les scores sur fond sombre et la prochaine rencontre dans une bande claire. La grille adapte ses colonnes à la place disponible et conserve un minimum lisible ; les grands nombres de terrains défilent dans la grille.
 
 Pour AirPlay, utiliser la recopie de l’écran de l’appareil et, si utile, le bouton plein écran. La même vue sert à gérer et à projeter les rencontres.
 

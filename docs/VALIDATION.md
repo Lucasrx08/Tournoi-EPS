@@ -1,6 +1,14 @@
-# Validation · version 2.2 · 10 octobre 2026
+# Validation · version 2.3 · 11 octobre 2026
 
 107 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent les actions avec un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
+
+## Refonte graphique
+
+Les 107 tests fonctionnels existants sont conservés. L’ancienne assertion imposant dix accents de couleur différents a été retirée : le contrôle de l’ordre des activités et des onze couleurs de chasubles reste présent. Les illustrations et aperçus sont des SVG décoratifs ; les libellés et actions restent des boutons HTML.
+
+Les styles de sélection ne modifient ni la police ni la taille du texte. Les roulettes conservent des lignes de 32 px et une fenêtre de 96 px. La disposition des terrains garde son calcul et ses minima ; les scores et la prochaine rencontre sont agrandis lorsque trois terrains ou moins sont affichés. Le service worker inclut les deux polices et utilise un nouveau cache.
+
+Un contrôle de génération parcourt les neuf étapes pour les dix activités, sans erreur de rendu HTML dans le DOM simulé. Les 440 SVG produits par les dix illustrations et les aperçus de 1, 3, 7 et 24 terrains sont valides. Les glyphes français et les références locales CSS, HTML et cache ont été vérifiés. Ce contrôle ne mesure pas la mise en page dans un navigateur.
 
 ## Parcours et identités
 

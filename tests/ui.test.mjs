@@ -151,9 +151,8 @@ test('Prochaines rotations : couleurs, joueurs et arbitres restent associés au 
  for(const court of t.courts){r.ctx.court=court;const html=r.run('courtCard(tourney(),court)'),m=next.matches.find(m=>m.courtId===court.id);assert.ok(html.includes('data-next-court="'+court.id+'"'));assert.ok(html.includes(E.label(t,m.a)));assert.ok(html.includes(E.label(t,m.b)));for(const id of [...m.a,...m.b])assert.ok(html.includes(E.team(t,id).color));if(m.refereeId)assert.ok(html.includes(E.team(t,m.refereeId).name));}
 });
 
-test('Nouvel accueil : ordre demandé et dix accents différents',()=>{
+test('Accueil : ordre des activités et palette des chasubles conservés',()=>{
  const r=runtime(),ids=[...r.html().matchAll(/data-action="pick-activity"[^>]*data-id="([^"]+)"/g)].map(x=>x[1]);assert.deepEqual(ids,['handball','badminton','ultimate','basket','volley','futsal','table','rugby','football','custom']);
- const accents=[...r.html().matchAll(/--tile:(#[0-9a-f]+)/g)].map(x=>x[1]);assert.equal(new Set(accents).size,10);
  assert.deepEqual(C.BIBS.map(x=>x.name),['Bleu clair','Bleu foncé','Vert clair','Vert foncé','Orange','Rouge','Jaune fluo','Jaune','Rose','Fuchsia','Blanc']);
 });
 test('Points juste après la formule : bonus raquette enregistré, appliqué et restauré',async()=>{
