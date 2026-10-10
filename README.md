@@ -1,56 +1,57 @@
-# Tournoi EPS · Le jeu d’abord
+# Tournoi EPS · version 2.1
 
-Une application de tournois pour les cours d’EPS au collège et au lycée. La version 2 adopte une identité d’affiche sportive : activités illustrées, couleurs franches, formules en pictogrammes et grands scores sur les terrains.
+Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
 
-## Préparer une séance
+## Préparer le tournoi
 
-L’accueil est le choix d’activité. La préparation se poursuit par écrans courts : terrains et nombre de joueurs ; effectif ; noms, couleurs et logos ; formule ; fin des matchs ; départ ; récapitulatif. Les commandes de progression restent visibles sur ordinateur. Les grandes listes d’identités et de formules sont paginées.
+Choisir l’activité, puis renseigner les terrains et le nombre de joueurs par côté. Les étapes suivantes concernent l’effectif, les identités, la formule, la fin des rencontres, le départ et la validation. Les commandes de progression restent visibles sur ordinateur.
 
-Deux chemins pour l’effectif :
+Pour les sports collectifs, les équipes sont identifiées par les couleurs de chasubles : Rouge, Bleu, Vert, Jaune… Un nom personnalisé et un logo restent possibles. Deux méthodes : équipes déjà constituées, ou effectif total à répartir. Les propositions comparent les terrains utilisés, les équipes en attente, les remplaçants et l’arbitrage. Aucun nom individuel ni liste d’élèves n’est demandé pour ces équipes ; seule leur taille est conservée lorsque la répartition est calculée.
 
-- **Équipes déjà faites** : indiquer leur nombre, puis saisir leurs identités ou importer la liste.
-- **Équipes à constituer** : indiquer le nombre d’élèves et choisir une proposition. Les alternatives comparent terrains utilisés, groupes en attente, remplaçants et terrains arbitrés. Chaque élève est affecté à un groupe ; les tailles diffèrent au maximum d’un élève.
+En badminton et tennis de table, les inscriptions sont des joueurs en simple ou des duos en double. Les noms individuels et l’import de listes sont conservés. Les partenaires tournants utilisent une liste de joueurs individuels et organisent de vrais doubles.
 
-En badminton et tennis de table, l’application parle de joueurs en simple et de duos en double. Les partenaires tournants nécessitent une liste de joueurs individuels et organisent de vrais doubles.
+Les activités proposées sont basket, football, futsal, handball, volley, badminton, tennis de table, rugby, ultimate et activité personnalisée. Tennis et hockey restent lisibles dans les anciennes sauvegardes.
 
-Les activités proposées sont basket, football, futsal, handball, volley, badminton, tennis de table, rugby, ultimate et activité personnalisée. Les anciens tournois de tennis et hockey restent lisibles dans les sauvegardes.
+## Régler les durées
 
-## Temps et règles
+Les rencontres peuvent s’arrêter au chronomètre, à un objectif de score ou au signal. La formule, la fin et le départ sont choisis successivement par boutons.
 
-La formule, la fin et le départ se choisissent successivement par boutons. Trois règles de fin : au chrono, aux points, ou au signal de l’enseignant. Le mode hybride n’est plus proposé lors de la création.
+Les durées au chronomètre se règlent avec des roulettes : minutes et secondes pour les rencontres, l’installation / échauffement et les transitions ; heures, minutes et secondes pour le cours uniquement. Faire défiler, glisser, cliquer sur une valeur ou utiliser les flèches du clavier. Les secondes choisies sont conservées dans les calculs et les sauvegardes.
 
-Pour les matchs au temps, renseigner la durée totale du cours, l’installation / échauffement et le temps entre rotations pour noter les scores et se déplacer. L’application calcule le nombre de rotations, propose des durées compatibles et réserve les transitions. Elle conseille 5 minutes lorsque cette durée tient dans le cours. Une durée personnalisée reste possible ; un dépassement empêche le lancement.
+L’application réserve l’installation et le temps de noter les scores et de se déplacer entre rotations. Elle conseille 5 minutes lorsque cela tient dans le cours et affiche des alternatives. La durée choisie peut être ajustée librement ; un dépassement empêche le lancement. Les formules évolutives affichent une estimation car les résultats peuvent modifier le nombre de rotations. Les départs restent manuels.
 
-Les formules évolutives affichent une estimation : le résultat des matchs, les exemptions et un départage peuvent modifier la durée réelle. La double élimination réserve aussi une éventuelle finale supplémentaire. Les départs restent déclenchés par l’enseignant ou par terrain ; le temps de transition est une réserve dans le budget de séance.
+## Gérer les terrains
 
-## Jouer et projeter
+Une seule interface donne accès à tous les terrains, aux scores et aux réglages. Les anciens rôles, restrictions de saisie et codes enseignant ne sont plus utilisés. Les codes d’anciennes sauvegardes ne bloquent pas leur reprise.
 
-Chaque carte indique le terrain, les adversaires, les scores et la prochaine opposition. L’arbitre apparaît lorsqu’un groupe ou joueur disponible a été affecté. L’application indique « À désigner » lorsqu’il n’y a pas assez de participants disponibles pour arbitrer tous les terrains.
+Chaque carte distingue la rencontre actuelle et une zone claire pour la prochaine rotation, avec les couleurs, noms et logos des prochains adversaires. L’arbitre affecté est indiqué lorsque l’arbitrage est activé. « À désigner » apparaît lorsqu’il manque un groupe ou joueur disponible.
 
-Un grand score ajoute un point ; le bouton − corrige. Lancer, pauser et passer à la rotation suivante se font directement depuis la vue des terrains. Les annonces françaises disent « Jouez ! », « Fin du match ! » ou « Fin des matchs ! ». Un signal doux et un audio personnalisé sont également disponibles.
+Un grand score ajoute un point ; le bouton − corrige. Démarrer, pauser et passer à la rotation suivante se font depuis les terrains. Les annonces françaises disent « Jouez ! », « Fin du match ! » et « Fin des matchs ! ». Un signal doux et un son personnalisé sont également disponibles.
 
-Pour AirPlay, utiliser la recopie de l’écran de l’appareil. La même vue des terrains sert à jouer et à projeter, avec un bouton plein écran facultatif. Il n’y a plus de fenêtre TV séparée ni de recherche « Où je joue ».
+Pour AirPlay, utiliser la recopie de l’écran de l’appareil et, si utile, le bouton plein écran. La même vue sert à gérer et à projeter les rencontres.
 
-Le mode élève est en lecture seule par défaut. Un arbitre ne saisit que les scores du terrain choisi. Un code enseignant facultatif protège les commandes de gestion de cet appareil ; il ne remplace pas une authentification serveur.
+## Sauvegarder et supprimer
 
-## Sauvegarder, importer et exporter
+Les scores sont enregistrés immédiatement sur l’appareil, avec une copie IndexedDB et une sauvegarde précédente. Les sauvegardes version 1 restent compatibles. Les identifiants, résultats, noms personnalisés et logos sont conservés. Les noms collectifs par défaut « Équipe N » deviennent des couleurs de chasubles.
 
-Les scores sont enregistrés immédiatement dans le stockage local, avec une copie IndexedDB et une sauvegarde précédente. Les sauvegardes de la version 1 restent compatibles. Exporter une copie JSON permet de retrouver les tournois sur un autre appareil.
+Depuis l’accueil, la corbeille supprime directement un tournoi. « Annuler » restaure la dernière suppression pendant cette session, y compris ses résultats. Plusieurs suppressions peuvent être annulées successivement. Les tournois plus nombreux défilent dans leur liste, sans allonger toute la page sur ordinateur.
 
-Importer CSV, XLSX ou coller les cellules d’Excel / Google Sheets. Première ligne possible : NOM, Prénom, Classe, Sexe, Équipe, Couleur, Niveau. NOM ou Prénom suffit. Le premier onglet XLSX est importé. Les listes sans équipe sont réparties avec un équilibrage des effectifs et des niveaux renseignés. Aucun sexe n’est deviné.
+Les listes individuelles historiques des sports collectifs restent dans les sauvegardes JSON, pour éviter une perte de données ; elles ne sont plus affichées dans les équipes ni les exports de résultats.
 
-Exports locaux : XLSX avec couleurs, CSV, PDF paginé et JSON de restauration. Les anciens événements multisports conservent leurs activités et leur export général.
+Pour les raquettes : importer CSV, XLSX ou coller les cellules d’Excel / Google Sheets, avec les colonnes NOM et Prénom. Classe, Couleur et Niveau sont facultatifs. Le premier onglet XLSX est importé. Les effectifs et niveaux fournis peuvent servir à équilibrer les duos.
 
-## Installation
+Exports locaux : XLSX avec couleurs, CSV, PDF paginé et JSON de restauration. Les anciens événements multisports gardent leurs activités et leur export général.
 
-Sur iPad : Safari, Partager, Sur l’écran d’accueil. Sur les navigateurs compatibles, utiliser Installer. Les ressources doivent avoir été mises en cache une première fois en ligne ; le service worker nécessite HTTPS ou localhost.
+## Installation et fonctionnement local
 
-La voix dépend des voix françaises installées et des autorisations audio du navigateur. Un appareil en veille peut retarder une annonce ; garder l’écran actif pendant les matchs. La projection AirPlay et le son restent à vérifier sur le matériel utilisé. Cette version conserve les données sur l’appareil ; les navigateurs d’appareils distincts ne synchronisent pas leurs scores par réseau.
+Sur iPad : Safari, Partager, Sur l’écran d’accueil. Sur les navigateurs compatibles : Installer. Une première ouverture en ligne prépare les ressources hors connexion ; le service worker nécessite HTTPS ou localhost.
+
+La voix dépend des voix françaises installées et du navigateur. La projection AirPlay, les roulettes tactiles et les annonces doivent être vérifiées sur le matériel utilisé. Les appareils distincts ne synchronisent pas leurs scores par réseau dans cette version.
 
 ## Développement
 
-Site statique, sans téléchargement de dépendances à l’exécution. `dist/` est le dossier à héberger. L’interface (`app.js`), le moteur (`engine.js`), la préparation (`planning.js`) et les échanges (`exchange.js`) sont séparés. Pako est fourni localement avec sa licence.
+Site statique sans dépendances téléchargées à l’exécution. Héberger `dist/`. Modules : interface `app.js`, contrôles `controls.js`, moteur `engine.js`, préparation `planning.js` et échanges `exchange.js`. Pako est fourni localement avec sa licence.
 
 Tests : `npm test` ou `node --test tests/*.test.mjs`.
 
-La conception version 2 figure dans `docs/CONCEPTION.md`, la validation dans `docs/VALIDATION.md`. `dist/conception.html` est la maquette historique de la version 1.
+Conception : `docs/CONCEPTION.md`. Validation : `docs/VALIDATION.md`. `dist/conception.html` présente la maquette historique de la version 1.

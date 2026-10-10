@@ -50,8 +50,9 @@ export function estimateRotations(t){
 
 export function recommendTiming(t,availableMinutes=90,transitionSeconds=45,setupMinutes=10){
  const estimate=estimateRotations(t),rotations=Math.max(1,estimate.count);
- const budget=integer(availableMinutes,1,600)*60;
- const transition=integer(transitionSeconds,0,300),setup=integer(setupMinutes,0,60)*60;
+ const seconds=(value,min,max)=>Math.max(min,Math.min(max,Math.round(Number(value)||0)));
+ const budget=seconds(availableMinutes*60,60,36000);
+ const transition=seconds(transitionSeconds,0,300),setup=seconds(setupMinutes*60,0,3600);
  const transitionTotal=Math.max(0,rotations-1)*transition;
  const maximum=Math.floor((budget-setup-transitionTotal)/rotations/15)*15;
  const feasible=maximum>=15;

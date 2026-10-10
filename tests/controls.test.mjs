@@ -1,0 +1,33 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import * as C from '../dist/controls.js';
+
+test('Durées : les secondes sont conservées, les heures réservées au cours',()=>{
+ assert.deepEqual(C.durationParts(5427,true),{hours:1,minutes:30,seconds:27});
+ assert.deepEqual(C.durationParts(7200),{hours:0,minutes:120,seconds:0});
+ assert.equal(C.changeDuration(300,'seconds',37,C.TIME_LIMITS.duration),337);
+ assert.equal(C.changeDuration(5427,'minutes',5,C.TIME_LIMITS.availableMinutes),3927);
+ assert.equal(C.changeDuration(0,'seconds',0,C.TIME_LIMITS.duration),15);
+ assert.equal(C.changeDuration(300,'seconds',59,C.TIME_LIMITS.breakSeconds),300);
+ assert.equal(C.changeDuration(36000,'seconds',59,C.TIME_LIMITS.availableMinutes),36000);
+});
+test('Chasubles : 64 identités distinctes et noms personnalisés inchangés',()=>{
+ const teams=Array.from({length:64},(_,i)=>({...C.bibIdentity(i),bibNamed:true}));assert.equal(new Set(teams.map(x=>x.name)).size,64);
+ C.setBibColor(teams[0],C.BIBS[1].color,teams);assert.equal(new Set(teams.map(x=>x.name)).size,64);assert.match(teams[0].name,/^Bleu/);
+ teams[0].bibNamed=false;teams[0].name='Les Aigles';C.setBibColor(teams[0],C.BIBS[2].color,teams);assert.equal(teams[0].name,'Les Aigles');assert.equal(C.colorName(C.BIBS[3].color),'Jaune');
+});
+function fakeWheel(value=5){
+ const handlers={},options=Array.from({length:60},(_,i)=>({id:'option-'+i,dataset:{wheelValue:String(i)},getBoundingClientRect:()=>({height:32})}));
+ const wheel={dataset:{wheelCurrent:String(value),wheelField:'duration',wheelUnit:'seconds'},scrollTop:0,isConnected:true,querySelectorAll:()=>options,setAttribute:(k,v)=>wheel[k]=v,addEventListener:(k,v)=>handlers[k]=v,focus(){wheel.focused=true}};
+ return {wheel,handlers,options,root:{querySelectorAll:()=>[wheel],querySelector:()=>wheel}};
+}
+test('Roue : initialisation sans changement, sélection au clic et clavier',()=>{
+ const f=fakeWheel(),changes=[];C.mountWheels(f.root,(...args)=>changes.push(args));assert.equal(f.wheel.scrollTop,160);assert.equal(changes.length,0);
+ f.handlers.click({target:{closest:()=>f.options[17]}});assert.deepEqual(changes[0],['duration','seconds',17]);let prevented=false;
+ f.handlers.keydown({key:'ArrowDown',preventDefault(){prevented=true}});assert.equal(prevented,true);assert.deepEqual(changes[1],['duration','seconds',18]);assert.equal(f.wheel.focused,true);
+ f.handlers.keydown({key:'End',preventDefault(){}});assert.deepEqual(changes[2],['duration','seconds',59]);
+});
+test('Roue : défilement arrondi et ancien écran ignoré',async()=>{
+ const f=fakeWheel(),changes=[];C.mountWheels(f.root,(...args)=>changes.push(args));f.wheel.scrollTop=19*32+9;f.handlers.scroll();await new Promise(resolve=>setTimeout(resolve,170));assert.deepEqual(changes,[['duration','seconds',19]]);
+ f.wheel.isConnected=false;f.wheel.scrollTop=24*32;f.handlers.scroll();await new Promise(resolve=>setTimeout(resolve,170));assert.equal(changes.length,1);
+});

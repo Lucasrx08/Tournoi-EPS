@@ -1,29 +1,40 @@
-# Tournoi EPS · conception version 2
+# Tournoi EPS · conception version 2.1
 
-La version 2 remplace l’interface initiale par un univers d’affiche sportive : papier crème, vert terrain, jaune et corail, titres expressifs, activités dessinées et formules en pictogrammes. Les identités des équipes se retrouvent directement sur le tableau des terrains.
+La palette crème, vert, jaune et corail est conservée. Les titres décrivent les tâches d’EPS ; les images et les couleurs rendent les choix et les oppositions visibles. Les tuiles restent dans une grille régulière et utilisent la place disponible, sans empilement décoratif sur les textes.
 
-## Parcours
+## Parcours et identités
 
-Le choix d’activité constitue le premier écran. Suivent terrains / nombre de joueurs, effectif, noms / couleurs / logos, formule, fin des matchs, départ puis lancement. Les listes d’identités et de formules sont paginées ; les commandes de progression restent visibles sur ordinateur. Les variantes chiffrées sont remplacées par un paramètre nombre de joueurs.
+Activité → terrains et joueurs par côté → effectif → identités → formule → fin des rencontres → départ → validation. Les identités et les formules sont paginées lorsque nécessaire ; Retour et Continuer restent visibles sur ordinateur. Les listes longues ont leur propre zone de défilement.
 
-L’effectif offre deux chemins : groupes déjà faits ou groupes à constituer. Les propositions comparent les terrains utilisés, les remplaçants et les groupes en attente, en tenant compte d’une éventuelle tâche d’arbitrage. La répartition des personnes conserve un écart maximal d’un élève entre groupes.
+Les sports collectifs disposent de chasubles nommées et dessinées. Un nom personnalisé peut remplacer le nom de couleur ; les changements de couleur ne l’écrasent pas. Les propositions répartissent le total en effectifs équilibrés, avec un écart maximal d’un élève. Elles ne créent aucun élève fictif dans les équipes. Les sports de raquettes conservent joueurs, duos, noms et imports individuels.
 
-La préparation au chrono réserve installation et transitions. Les formules à progression dynamique annoncent une estimation. La vue des terrains affiche maintenant la prochaine rotation à la place d’un bandeau de repos ; les arbitres disponibles y sont nommés. La projection est la recopie AirPlay de cette même vue.
+Le nom, le logo et l’identifiant stable sont indépendants. Les anciennes équipes nommées par défaut sont migrées vers des couleurs ; les noms personnalisés, scores et logos sont conservés. Les listes individuelles historiques ne sont plus exposées pour les sports collectifs mais restent dans le JSON de sauvegarde.
 
-Badminton et tennis de table utilisent joueurs ou duos. Les partenaires tournants utilisent des joueurs individuels. Les exemples prêts à jouer, la recherche du terrain, la fenêtre TV distincte, le mode de fin hybride et les activités tennis / hockey sont retirés des nouveaux choix.
+## Durées et projection
+
+Les roulettes proposent minutes / secondes, et heures uniquement pour la durée totale du cours. Elles acceptent défilement, gestes tactiles, clics et clavier. Le budget est calculé à la seconde : installation + toutes les rencontres + transitions entre rotations. Une durée dépassant le cours bloque la validation. Les tours dynamiques restent annoncés comme estimés.
+
+Les cartes de terrain séparent une surface de rencontre et un panneau clair « Prochaine rotation ». Les identités des adversaires, leurs couleurs et les arbitres sont associés au terrain concerné. Les formules évolutives attendent les résultats nécessaires avant d’annoncer les adversaires. AirPlay recopie cette même vue.
+
+## Gestion unique
+
+Il n’y a plus de sélection de rôle, de restriction par profil, de code enseignant ni de verrouillage des commandes. Un ancien code est ignoré. L’affectation d’un arbitre à une rencontre est conservée : elle décrit une tâche sportive et ne définit plus un profil d’accès.
+
+La corbeille sur chaque tournoi enregistré permet une suppression directe. Une pile en mémoire conserve les suppressions de la session pour une annulation immédiate, dans l’ordre inverse. Le stockage local est mis à jour lors de la suppression et de la restauration.
 
 ## Modules
 
 | Fichier | Responsabilité |
 | --- | --- |
-| `dist/app.js` | Parcours, terrains, scores, rôles, logos, annonces, import / export et sauvegardes |
-| `dist/style.css` | Identité visuelle, écrans fixes sur ordinateur, adaptation mobile et projection |
-| `dist/planning.js` | Propositions d’effectifs, budget du cours, estimation des rotations et arbitres |
+| `dist/app.js` | Parcours, terrains, scores, logos, annonces, import / export et sauvegardes |
+| `dist/controls.js` | Chasubles, noms de couleurs, composition des durées et roulettes accessibles |
+| `dist/style.css` | Grilles adaptées, typographie, terrains, affichage ordinateur / mobile |
+| `dist/planning.js` | Répartition des effectifs, budget exact, estimation des rotations et arbitres |
 | `dist/engine.js` | Rencontres, formules, chronos, résultats et classements |
-| `dist/exchange.js` | Échanges CSV, XLSX, PDF et téléchargements |
+| `dist/exchange.js` | CSV, XLSX, PDF et téléchargements |
 | `dist/sw.js` | Cache hors connexion et mise à jour des ressources |
 
-Les sauvegardes version 1 restent lisibles. Le moteur conserve les anciens sports et règles pour cette compatibilité, même lorsqu’ils ne sont plus proposés dans la création. Aucune migration ne supprime les scores.
+Le schéma des sauvegardes et les anciennes règles sont conservés. Les nouvelles données d’effectif et d’identité utilisent des propriétés supplémentaires compatibles. Aucun serveur de synchronisation entre appareils n’est ajouté.
 
 ---
 

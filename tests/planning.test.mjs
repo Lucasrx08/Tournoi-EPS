@@ -47,3 +47,8 @@ test('Prochaine rotation dynamique : attend les résultats et conserve le tourno
 test('Logos : raster validé, URL et SVG rejetés',()=>{
  assert.equal(P.safeLogo('data:image/png;base64,YQ=='),'data:image/png;base64,YQ==');for(const x of['https://example.test/logo.png','javascript:alert(1)','data:image/svg+xml;base64,YQ==','data:image/png;base64,'+'a'.repeat(350001),null])assert.equal(P.safeLogo(x),'');
 });
+
+test('Budget précis : secondes du cours, de l’échauffement et des transitions',()=>{
+ const p=P.recommendTiming(tournament(6,3),5427/60,73,619/60);assert.equal(p.budget,5427);assert.equal(p.setup,619);assert.equal(p.transitionTotal,292);
+ for(const option of p.options){assert.equal(option.totalSeconds,619+5*option.seconds+292);assert.equal(option.remainingSeconds,5427-option.totalSeconds);assert.ok(option.totalSeconds<=5427)}
+});
