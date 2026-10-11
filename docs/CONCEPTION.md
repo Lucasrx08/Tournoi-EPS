@@ -1,4 +1,4 @@
-# Tournoi EPS · conception version 2.8
+# Tournoi EPS · conception version 2.9
 
 L’interface s’inspire d’une console de jeu de sport et de cartes de compétition. La palette utilise un fond clair #eeede8, un anthracite #202022, du blanc #fffefa et un accent citron #d9f85c. Les couleurs de chasubles restent indépendantes de cette palette et ne changent pas dans les données enregistrées.
 
@@ -6,7 +6,7 @@ Les dix cartes d’activité associent le matériel photographique local en nive
 
 Barlow Condensed Bold signe les titres, numéros et scores ; Outfit reste la police des noms, explications et contrôles. Les polices et leurs licences sont locales. Une sélection ne change pas la taille ni la police du texte.
 
-La préparation utilise un espace clair, trois repères horizontaux et sept choix successifs. Le nom et le lancement restent réunis sur le dernier écran. Les identités d’équipe sont reprises sur les terrains dans un écusson contenant la chasuble, les initiales du joueur ou son logo. Les cartes des prochaines rencontres présentent deux adversaires face à face, avec leurs couleurs de chasubles.
+La préparation utilise un espace clair, trois repères horizontaux et sept choix successifs. Le nom et le lancement restent réunis sur le dernier écran. Les identités d’équipe sont reprises sur les terrains avec une chasuble au dessin fin, les initiales du joueur ou son logo. Le cadre léger de 4 à 5 px remplace le blason crème. Les icônes sportives sont des objets vectoriels sur une grille de 24 px : ballons, raquettes, disque et ballon ovale. Un sifflet identifie l’arbitrage, une liste identifie les participants. Aucune figurine de sportif n’est utilisée. Les cartes des prochaines rencontres présentent deux adversaires face à face, avec leurs couleurs de chasubles.
 
 Le chronomètre central, les grands scores, les états de rencontre et le classement forment un tableau de compétition. Les tracés restent propres au sport. Les points, la progression vers l’objectif, le vainqueur et les premières places reposent sur les résultats réels. Les mouvements réduits sont respectés.
 
