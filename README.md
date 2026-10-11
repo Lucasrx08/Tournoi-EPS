@@ -1,4 +1,4 @@
-# Tournoi EPS · version 2.5
+# Tournoi EPS · version 2.6
 
 Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
 
@@ -30,7 +30,7 @@ Un grand score ajoute un point ; le bouton − corrige. Après la formule, les s
 
 **Menu → Répartir les joueurs** ouvre la répartition par terrain en raquettes. Déposer une carte de joueur / duo sur un terrain déplace sa rencontre avec son adversaire ; si un match est prévu sur le terrain visé, les deux rencontres échangent leurs terrains. Avant un départ, le déplacement est immédiat. Pendant une rencontre, il concerne la prochaine rencontre programmée ou est conservé jusqu’au calcul du prochain tour. Les adversaires, identifiants, résultats et chronos déjà commencés restent inchangés. La poignée accepte les gestes tactiles ; sélectionner un joueur puis « Déplacer ici » offre une alternative au clavier.
 
-La version 2.5 adopte un habillage e-sport dans toute l’application : fond bleu nuit, panneaux anguleux, accents orange et menthe, titres inclinés et cartes d’activité au rendu photographique. Barlow Condensed signe les titres et les scores ; Outfit reste la police des noms et des commandes. Les images, polices et licences sont locales ; aucun téléchargement externe n’est nécessaire à l’exécution. Les prompts des dix visuels ImageGen et leurs chemins sont dans `docs/IMAGE_PROMPTS.json`.
+La version 2.6 développe une identité « Arène EPS » dans toute l’application : fond bleu nuit, panneaux anguleux, accents orange et menthe, titres inclinés et affiches d’activité au matériel photographique, numéros en contour et bandeaux contrastés. Les terrains présentent des plaques de scores compactes sur une surface sportive visible. Barlow Condensed signe les titres et les scores ; Outfit reste la police des noms et des commandes. Les images, polices et licences sont locales ; aucun téléchargement externe n’est nécessaire à l’exécution. Les prompts des dix visuels ImageGen et leurs chemins sont dans `docs/IMAGE_PROMPTS.json`.
 
 Les deux vues principales sont **Terrains** et **Classement** ; **Menu** rassemble rencontres, répartition, exports, réglages et annonces. Sur chaque terrain, un tableau de score aux couleurs des adversaires se superpose au tracé sportif. La prochaine rencontre est séparée par une bande menthe très contrastée. Les surfaces évoquent le parquet, le gazon, un revêtement synthétique ou une table.
 

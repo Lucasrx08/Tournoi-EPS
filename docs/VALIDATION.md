@@ -1,8 +1,12 @@
-# Validation · version 2.5 · 11 octobre 2026
+# Validation · version 2.6 · 11 octobre 2026
 
 111 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent les actions avec un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
 
-## Habillage e-sport et correction de préparation
+## Arène EPS
+
+Cette version remplace les grands panneaux opaques des scores par des plaques compactes et des bandeaux d’identité. Le sol, les lignes et les surfaces de chaque sport restent visibles entre les scores. Les cartes d’activité prennent une composition d’affiche avec numéro en contour, orbite graphique et bandeau de titre contrasté. Les chasubles, logos, noms et scores restent les données réelles du tournoi.
+
+## Habillage et préparation
 
 Les 111 tests passent avec le JavaScript de l’interface exécuté en mode strict, comme les modules réels. Quatre références résiduelles à une variable de prévalidation supprimée ont été retirées ; elles pouvaient interrompre la modification des effectifs, des noms ou du texte d’une formule personnalisée.
 
