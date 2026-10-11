@@ -1,14 +1,14 @@
-# Tournoi EPS · conception version 2.3
+# Tournoi EPS · conception version 2.4
 
-L’identité graphique suit un tableau sportif contemporain : bleu nuit #142338, orange #f47745, menthe #9adacf et fond clair #f3f5f7. Les couleurs des chasubles décrivent les équipes indépendamment de la palette de l’interface. Les dix activités utilisent des illustrations vectorielles propres à leurs équipements, avec un dessin et une palette partagés.
+L’identité graphique suit un tableau sportif contemporain : bleu nuit #142338, orange #f47745, menthe #9adacf et fond clair #f3f5f7. Les couleurs des chasubles décrivent les équipes indépendamment de la palette de l’interface. Les dix activités utilisent des visuels de matériel au rendu photographique, générés avec ImageGen, sur un fond bleu nuit et avec une lumière cohérente. Les images WebP locales mesurent 768 × 512 et totalisent 511 640 octets. Les prompts exacts et leurs chemins sont dans IMAGE_PROMPTS.json.
 
 Barlow Condensed Bold donne leur caractère aux titres, numéros et scores. Outfit reste la police des noms, explications et contrôles. Les deux polices et leurs licences SIL OFL sont locales, sans requête externe à l’exécution. La typographie d’un choix ne varie pas selon son état de sélection. Les boutons principaux orange portent un texte bleu nuit.
 
-L’accueil présente un titre éditorial, une grille régulière de dix activités et une liste compacte des tournois enregistrés. La préparation utilise un rail latéral avec l’activité et les neuf étapes ; sur mobile, il devient un repère compact de l’étape courante. L’aperçu des espaces de pratique dessine le nombre de terrains choisi. Chaque terrain associe une zone sombre pour la rencontre actuelle et une bande claire pour la prochaine rotation, sans doubler celle-ci ailleurs sur l’écran. Les tracés sont propres au sport.
+L’accueil présente un titre éditorial, une grille régulière de dix activités et une liste compacte des tournois enregistrés. La préparation affiche trois repères horizontaux : Terrains, Participants et Rencontres. Les sept écrans de choix restent successifs ; le nom et le lancement du tournoi sont réunis sur le dernier, sans écran de validation supplémentaire. L’aperçu des espaces de pratique dessine le nombre de terrains choisi. Chaque terrain associe une zone sombre pour la rencontre actuelle et une bande claire pour la prochaine rotation, sans doubler celle-ci ailleurs sur l’écran. Les tracés sont propres au sport et les surfaces évoquent le parquet, le gazon, le revêtement synthétique ou une table. Le score s’affiche sur deux chiffres ; la progression vers l’objectif, le retour bref lors d’un ajout de point et la mise en évidence du vainqueur reposent sur les scores réels. Les mouvements réduits sont respectés. Les premières places du classement sont présentées après des résultats terminés, sans podium initial fictif.
 
 ## Parcours et identités
 
-Activité → terrains et joueurs par côté → effectif → identités → formule → points → fin des rencontres → départ → validation. Les identités et les formules sont paginées lorsque nécessaire ; Retour et Continuer restent visibles sur ordinateur. Les listes longues ont leur propre zone de défilement.
+Activité → terrains et joueurs par côté → effectif → identités → formule → points → fin des rencontres → nom et départ → terrains. Les identités et les formules sont paginées lorsque nécessaire ; Retour et Continuer restent visibles sur ordinateur. Les listes longues ont leur propre zone de défilement.
 
 Les sports collectifs disposent de chasubles nommées et dessinées. Un nom personnalisé peut remplacer le nom de couleur ; les changements de couleur ne l’écrasent pas. Les propositions répartissent le total en effectifs équilibrés, avec un écart maximal d’un élève. Elles ne créent aucun élève fictif dans les équipes. Les sports de raquettes conservent joueurs, duos, noms et imports individuels.
 
@@ -26,11 +26,13 @@ Les raquettes proposent un comptage normal ou un bonus de 2 à 20 points, avec +
 
 ## Durées et projection
 
-Les roulettes proposent minutes / secondes, et heures uniquement pour la durée totale du cours. Elles acceptent défilement, gestes tactiles, clics et clavier. Le budget est calculé à la seconde : installation + toutes les rencontres + transitions entre rotations. Une durée dépassant le cours bloque la validation. Les tours dynamiques restent annoncés comme estimés.
+Les roulettes proposent minutes / secondes, et heures uniquement pour la durée totale du cours. Elles acceptent défilement, gestes tactiles, clics et clavier. Le budget est calculé à la seconde : installation + toutes les rencontres + transitions entre rotations. Une durée dépassant le cours bloque le lancement. Les tours dynamiques restent annoncés comme estimés.
 
 La grille utilise une hauteur minimale de 230 px, 250 px avec arbitre, et 24 px supplémentaires avec les commandes de bonus. Les cartes séparent une surface de rencontre et un panneau clair « Prochaine rotation ». Les identités des adversaires, leurs couleurs et les arbitres sont associés au terrain concerné. Les formules évolutives attendent les résultats nécessaires avant d’annoncer les adversaires. AirPlay recopie cette même vue.
 
 ## Gestion unique
+
+Terrains et Classement sont les deux vues principales. Un menu natif rassemble les rencontres et rotations, les identités ou la répartition des joueurs, les exports, les réglages et les annonces. Les commandes courantes restent visibles sur les terrains. Le menu se ferme à la sélection d’une action, au clic extérieur et par Échap.
 
 Il n’y a plus de sélection de rôle, de restriction par profil, de code enseignant ni de verrouillage des commandes. Un ancien code est ignoré. L’affectation d’un arbitre à une rencontre est conservée : elle décrit une tâche sportive et ne définit plus un profil d’accès.
 

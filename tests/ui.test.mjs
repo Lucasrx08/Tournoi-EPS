@@ -28,6 +28,36 @@ test('Accueil : dix activités, anciens raccourcis et sports retirés absents',(
  for(const text of['Prêt à jouer','Où je joue','Écran TV','data-id="tennis"','data-id="hockey"'])assert.ok(!r.html().includes(text));
  assert.ok(r.html().includes('Tennis de table'));assert.ok(r.html().includes('Choisir l’activité'));assert.ok(!r.html().includes('On joue'));
 });
+test('Navigation simplifiée : outils accessibles et menu fermé par Échap',async()=>{
+ const r=runtime();open(r,fixture('badminton',6,3));
+ const tabs=r.html().match(/<nav class="nav-tabs"[^>]*>(.*?)<\/nav>/s)[1];
+ assert.deepEqual([...tabs.matchAll(/data-action="([^"]+)"/g)].map(x=>x[1]),['courts','rank']);
+ for(const name of['rotations','court-players','exports','settings','test-sound'])assert.ok(r.html().includes('data-action="'+name+'"'));
+ await r.action('rotations');assert.equal(r.run('tab'),'rotations');assert.ok(r.html().includes('Rencontres et rotations'));
+ await r.action('courts');assert.equal(r.run('tab'),'courts');
+ let closed=false;r.ctx.document.querySelector=selector=>selector==='.tournament-menu[open]'?{removeAttribute(name){closed=name==='open'}}:null;
+ r.listeners.get('keydown')({key:'Escape'});assert.equal(closed,true);assert.equal(r.run('E.current(tourney()).matches[0].scoreA'),0);
+});
+test('Terrain : objectif borné et vainqueur indiqué après le résultat seulement',async()=>{
+ const r=runtime();open(r,fixture('badminton',4,2,{endMode:'score',target:5}));await r.action('start');
+ const match=r.run('E.current(tourney()).matches[0].id');
+ await r.action('score',{match,side:'a',delta:'4'});assert.ok(!r.html().includes('is-winner'));assert.ok(r.html().includes('width:80%'));
+ await r.action('score',{match,side:'a',delta:'4'});assert.equal(r.run('E.current(tourney()).matches[0].scoreA'),8);
+ assert.equal((r.html().match(/is-winner/g)??[]).length,1);assert.ok(r.html().includes('width:100%'));assert.ok(!r.html().includes('width:160%'));
+});
+test('Saisie : focus conservé et retour de point respectant les mouvements réduits',()=>{
+ const r=runtime(),classes=[],focused=[];const target={dataset:{},classList:{add:name=>classes.push(name),remove(){}},focus:options=>focused.push(options)};
+ r.ctx.document.querySelector=()=>target;r.run("scoreFeedback('match','a',3)");assert.equal(target.dataset.feedback,'+3');assert.deepEqual(classes,['score-scored']);assert.equal(focused[0].preventScroll,true);
+ classes.length=0;r.ctx.matchMedia=()=>({matches:true});r.run("scoreFeedback('match','a',1)");assert.equal(classes.length,0);assert.equal(focused.length,2);
+ r.ctx.matchMedia=()=>({matches:false});r.run("scoreFeedback('match','a',-1)");assert.equal(classes.length,0);
+});
+test('Classement : les premières places apparaissent avec les seuls résultats terminés',async()=>{
+ const r=runtime();open(r,fixture('basket',6,3,{endMode:'free',winPoints:7,drawPoints:2,lossPoints:0}));await r.action('rank');assert.ok(!r.html().includes('leader-card'));
+ await r.action('courts');await r.action('start');const match=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match,side:'a',delta:'4'});
+ await r.action('rank');assert.ok(!r.html().includes('leader-card'));await r.action('finish-all');await r.action('rank');
+ const rows=plain(r.run('E.standings(tourney())'));assert.equal(rows[0].points,7);assert.equal((r.html().match(/<article class="leader-card/g)??[]).length,3);
+ assert.ok(r.html().includes('<b>7</b><small>points</small>'));assert.ok(r.html().includes(rows[0].name));assert.ok(r.html().includes('En tête du classement provisoire'));
+});
 for(const[sport,n,c]of[['basket',4,1],['basket',8,4],['handball',6,3],['badminton',18,9],['table',24,12],['basket',48,24]])test('Vue '+sport+' : '+c+' terrains et prochaines rotations',()=>{
  const r=runtime();open(r,fixture(sport,n,c));assert.equal((r.html().match(/<article class="court-card/g)??[]).length,c);
  assert.ok(r.html().includes('PROCHAINE ROTATION'));assert.equal((r.html().match(/data-next-court=/g)??[]).length,c);assert.ok(r.html().includes('upcoming-match'));
@@ -44,7 +74,7 @@ test('Création complète : répartition, identités, timing, jeu et reprise',as
  await next(r);assert.ok(r.html().includes('formula-art'));assert.ok(!r.html().includes('<select'));
  await next(r);assert.ok(r.html().includes('Définir le barème'));assert.ok(r.html().includes('Match nul'));await next(r);assert.equal(r.run('draftCfg().duration'),300);assert.ok(r.html().includes('Scores + déplacement'));
  await next(r);assert.ok(r.html().includes('Départ commun'));assert.ok(!r.html().includes('<select'));
- await next(r);assert.ok(r.html().includes('9 sur 9'));assert.equal(r.node('toast').textContent,'');
+ assert.equal(r.run('draft.step'),7);assert.ok(r.html().includes('Ouvrir les terrains'));assert.ok(r.html().includes('Nom du tournoi'));assert.equal(r.node('toast').textContent,'');
  await r.action('create');assert.ok(r.html().includes('Rotation <b>1</b>'));assert.equal(r.run('tourney().teams[0].name'),'Les Comètes');assert.equal(r.run('tourney().config.referees'),true);
  await r.action('start');assert.equal(r.spoken.at(-1).text,'Jouez !');
  const match=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match,side:'a',delta:'1'});await r.action('pause');assert.equal(r.run('E.current(tourney()).clock.status'),'paused');
@@ -91,7 +121,7 @@ test('Vue unifiée : tous les terrains sont contrôlables, arbitrage affiché sa
 test('Ancien profil élève : commandes disponibles et nouveau tournoi sans code',async()=>{
  const e=fixture('basket',6,3);e.pinHash='ancien-code';const r=runtime(snapshot(e),null,{'eps-role':'student'});await r.action('open-event',{id:e.id});
  for(const action of['start','score','settings'])assert.ok(r.html().includes('data-action="'+action+'"'));
- await r.action('pick-activity',{id:'basket'});r.run("draft.mode='existing';draft.step=8;render()");await r.action('create');assert.equal(r.run('event().pinHash'),undefined);assert.equal(r.run('event().studentScores'),undefined);
+ await r.action('pick-activity',{id:'basket'});r.run("draft.mode='existing';draft.step=7;render()");await r.action('create');assert.equal(r.run('event().pinHash'),undefined);assert.equal(r.run('event().studentScores'),undefined);
 });
 test('Annonces françaises et silence respecté',async()=>{
  const r=runtime();open(r,fixture('basket',6,3));await r.run("sound('start')");assert.equal(r.spoken.length,0);r.run("event().audio.enabled=true");await r.run("sound('start')");await r.run("sound('end')");await r.run("sound('match-end')");

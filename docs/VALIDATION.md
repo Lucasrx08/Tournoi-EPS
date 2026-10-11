@@ -1,14 +1,16 @@
-# Validation · version 2.3 · 11 octobre 2026
+# Validation · version 2.4 · 11 octobre 2026
 
-107 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent les actions avec un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
+111 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent les actions avec un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
 
 ## Refonte graphique
 
-Les 107 tests fonctionnels existants sont conservés. L’ancienne assertion imposant dix accents de couleur différents a été retirée : le contrôle de l’ordre des activités et des onze couleurs de chasubles reste présent. Les illustrations et aperçus sont des SVG décoratifs ; les libellés et actions restent des boutons HTML.
+Les 107 tests fonctionnels précédents passent. Quatre nouveaux tests couvrent l’accès aux outils après simplification de la navigation, la fermeture du menu par Échap, la progression bornée vers l’objectif et la mise en évidence du vainqueur après le résultat, le focus et les mouvements réduits lors de la saisie, et les premières places calculées uniquement après des résultats terminés.
 
-Les styles de sélection ne modifient ni la police ni la taille du texte. Les roulettes conservent des lignes de 32 px et une fenêtre de 96 px. La disposition des terrains garde son calcul et ses minima ; les scores et la prochaine rencontre sont agrandis lorsque trois terrains ou moins sont affichés. Le service worker inclut les deux polices et utilise un nouveau cache.
+La création complète ouvre maintenant les terrains depuis l’écran de départ, avec le nom du tournoi. Les styles de sélection conservent la même police et la même taille de texte. Les roulettes gardent les lignes de 32 px et la fenêtre de 96 px. Les minima de la grille restent inchangés.
 
-Un contrôle de génération parcourt les neuf étapes pour les dix activités, sans erreur de rendu HTML dans le DOM simulé. Les 440 SVG produits par les dix illustrations et les aperçus de 1, 3, 7 et 24 terrains sont valides. Les glyphes français et les références locales CSS, HTML et cache ont été vérifiés. Ce contrôle ne mesure pas la mise en page dans un navigateur.
+Les dix visuels au rendu photographique ont été inspectés individuellement : matériel identifiable, cadre entier, aucune personne, marque ou texte. Les WebP ont été décodés et leurs dimensions vérifiées (768 × 512). Ils sont inclus avec les polices dans les 26 ressources du nouveau cache. Les références locales et les délimiteurs CSS ont été contrôlés.
+
+Un contrôle de génération parcourt les sept écrans pour les dix activités et 40 aperçus de 1, 3, 7 et 24 terrains, sans erreur dans le DOM simulé. Les 918 SVG des pictogrammes, formules et aperçus sont valides. Ces contrôles ne mesurent pas la mise en page dans un navigateur réel.
 
 ## Parcours et identités
 
