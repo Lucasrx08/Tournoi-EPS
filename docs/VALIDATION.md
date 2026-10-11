@@ -1,12 +1,20 @@
-# Validation · version 2.7 · 11 octobre 2026
+# Validation · version 2.8 · 11 octobre 2026
 
-111 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent le JavaScript en mode strict dans un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
+120 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent le JavaScript en mode strict dans un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
 
-## Nouvelle direction graphique
+## Correction des commandes
+
+Le blocage de « Fin des matchs » a été reproduit dans le DOM simulé en faisant refuser la confirmation native du navigateur : trois matchs restaient en cours sans retour visible. Toutes les confirmations natives ont été remplacées par un dialogue intégré distinct des formulaires ouverts. Annulation, croix, Échap et clic extérieur ferment la confirmation sans modifier les scores. Une fermeture tardive d’une ancienne confirmation ne ferme pas la suivante.
+
+Neuf tests supplémentaires couvrent la délégation d’un clic sur Fin des matchs, la validation, l’annulation, la conservation des scores, la rotation suivante, la fin individuelle, les départages, les messages d’erreur après fermeture d’un formulaire, la réinitialisation du chrono, les confirmations périmées, deux restaurations successives et le recalcul d’un tableau avec annulation préservant le formulaire. Les confirmations périmées ne terminent pas une nouvelle rotation. Le moteur du tournoi n’est pas modifié.
+
+Le cache v28 inclut le document contenant le dialogue intégré. La syntaxe JavaScript, les identifiants HTML uniques et les 27 ressources locales ont été vérifiés.
+
+## Direction graphique conservée
 
 La palette bleu nuit / orange / menthe a été retirée des feuilles actives. Le fond est clair, les cartes et le chronomètre sont anthracite, l’accent est citron électrique. Les images d’activité sont affichées en niveaux de gris ; les couleurs de chasubles et logos restent intactes. Les cartes d’identité, écussons et affiches des prochaines oppositions utilisent les données du tournoi.
 
-L’icône SVG et ses versions PNG de 192 et 512 pixels ont été mises à jour dans la nouvelle palette. Le manifeste PWA et le cache v27 sont cohérents avec cette version. Les 27 ressources du cache existent localement. Les délimiteurs CSS, couleurs hexadécimales et syntaxe JavaScript ont été vérifiés.
+L’icône SVG et ses versions PNG de 192 et 512 pixels ont été mises à jour dans la nouvelle palette. Le manifeste PWA et le cache v28 sont cohérents avec cette version. Les 27 ressources du cache existent localement. Les délimiteurs CSS, couleurs hexadécimales et syntaxe JavaScript ont été vérifiés.
 
 Les contrastes calculés sont de 13,88:1 pour le texte anthracite sur le fond clair, 13,58:1 sur l’accent citron, 7,01:1 pour le texte secondaire sur les panneaux blancs et 16,26:1 pour le blanc sur anthracite. Les initiales des joueurs restent blanches sur anthracite, avec une bordure de leur couleur individuelle.
 

@@ -13,7 +13,7 @@ const plain=v=>JSON.parse(JSON.stringify(v));
 function runtime(snapshot,backup,legacySession={}){
  const memory=new Map(),session=new Map(Object.entries(legacySession)),nodes=new Map(),listeners=new Map(),spoken=[];
  if(snapshot)memory.set('EPS_TOURNOIS_V1',snapshot);if(backup)memory.set('EPS_TOURNOIS_V1_BACKUP',backup);
- function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',classList:{add(){},remove(){},toggle(){}},addEventListener(){},showModal(){this.open=true},close(){this.open=false},getBoundingClientRect(){return {left:0,right:1000,top:0,bottom:1000}}});return nodes.get(id)}
+ function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',classList:{add(){},remove(){},toggle(){}},listeners:new Map(),addEventListener(type,cb){this.listeners.set(type,cb)},showModal(){this.open=true},close(){this.open=false},getBoundingClientRect(){return {left:0,right:1000,top:0,bottom:1000}}});return nodes.get(id)}
  const storage=map=>({getItem:key=>map.get(key)??null,setItem:(key,v)=>map.set(key,String(v)),removeItem:key=>map.delete(key)});
  const ctx={E,X,P,C,R,crypto:webcrypto,console,structuredClone,TextEncoder,Uint8Array,URL,URLSearchParams,Date,Blob,Map,Set,Number,JSON,Math,Promise,String,Array,RegExp,Error,atob,btoa,localStorage:storage(memory),sessionStorage:storage(session),location:{search:'',href:'https://example.test/',pathname:'/'},navigator:{},document:{getElementById:node,querySelector(){return null},addEventListener:(type,cb)=>listeners.set(type,cb),visibilityState:'visible',documentElement:{requestFullscreen:async()=>{}}},setTimeout:()=>0,clearTimeout(){},setInterval:()=>0,addEventListener(){},scrollTo(){},confirm:()=>true,window:{},audioContext:null,speechSynthesis:{getVoices:()=>[{lang:'fr-FR'}],cancel(){},speak:speech=>spoken.push(speech)},SpeechSynthesisUtterance:class{constructor(text){this.text=text}}};
  vm.createContext(ctx);vm.runInContext('"use strict";\n'+source,ctx);
@@ -23,6 +23,7 @@ function fixture(sport,n,c,config={}){const t=E.newTournament({sport,courtCount:
 function snapshot(e){return JSON.stringify({schema:1,events:[e],activeId:e.id,updatedAt:0,revision:0})}
 function open(r,e){r.ctx.fixture=e;r.run("data.events=[normalizeEvent(fixture)];data.activeId=fixture.id;view='tournament';render()")}
 async function next(r){await r.action('wizard-next')}
+async function acceptAction(r,name,dataset={}){const pending=r.action(name,dataset);await r.action('confirm-accept');await pending}
 test('Accueil : dix activités, anciens raccourcis et sports retirés absents',()=>{
  const r=runtime();assert.equal((r.html().match(/data-action="pick-activity"/g)??[]).length,10);
  for(const text of['Prêt à jouer','Où je joue','Écran TV','data-id="tennis"','data-id="hockey"'])assert.ok(!r.html().includes(text));
@@ -54,7 +55,7 @@ test('Saisie : focus conservé et retour de point respectant les mouvements réd
 test('Classement : les premières places apparaissent avec les seuls résultats terminés',async()=>{
  const r=runtime();open(r,fixture('basket',6,3,{endMode:'free',winPoints:7,drawPoints:2,lossPoints:0}));await r.action('rank');assert.ok(!r.html().includes('leader-card'));
  await r.action('courts');await r.action('start');const match=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match,side:'a',delta:'4'});
- await r.action('rank');assert.ok(!r.html().includes('leader-card'));await r.action('finish-all');await r.action('rank');
+ await r.action('rank');assert.ok(!r.html().includes('leader-card'));await acceptAction(r,'finish-all');await r.action('rank');
  const rows=plain(r.run('E.standings(tourney())'));assert.equal(rows[0].points,7);assert.equal((r.html().match(/<article class="leader-card/g)??[]).length,3);
  assert.ok(r.html().includes('<b>7</b><small>points</small>'));assert.ok(r.html().includes(rows[0].name));assert.ok(r.html().includes('En tête du classement provisoire'));
 });
@@ -79,7 +80,7 @@ test('Création complète : répartition, identités, timing, jeu et reprise',as
  await r.action('start');assert.equal(r.spoken.at(-1).text,'Jouez !');
  const match=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match,side:'a',delta:'1'});await r.action('pause');assert.equal(r.run('E.current(tourney()).clock.status'),'paused');
  const restored=runtime(r.memory.get('EPS_TOURNOIS_V1'));assert.equal(restored.run('E.current(tourney()).matches[0].scoreA'),1);assert.equal(restored.run('tourney().teams[0].logo'),'data:image/png;base64,YQ==');
- await r.action('finish-all');assert.equal(r.spoken.at(-1).text,'Fin des matchs !');await r.action('advance');assert.equal(r.run('tourney().roundIndex'),1);
+ await acceptAction(r,'finish-all');assert.equal(r.spoken.at(-1).text,'Fin des matchs !');await r.action('advance');assert.equal(r.run('tourney().roundIndex'),1);
 });
 test('Création : choix d’effectif et identités uniques obligatoires',async()=>{
  const r=runtime();r.run('newDraft()');await next(r);await assert.rejects(next(r),/Choisissez/);await r.action('roster-mode',{id:'auto'});await assert.rejects(next(r),/proposition/);
@@ -215,4 +216,61 @@ test('Import invalide : le brouillon précédent reste intact',()=>{
 
 test('Import puis choix du double : duos recomposés par terrain',async()=>{
  const r=runtime();r.run("newDraft('badminton')");r.ctx.imported=X.participantsFromRows([['Nom et prénom','Numéro de terrain'],['Inès',1],['Lou',1],['Adam',2],['Zoé',2]]);r.run('applyParticipants(imported)');await r.change({dataset:{field:'playersPerSide'},value:'2'});assert.equal(r.run('draft.count'),2);assert.ok(r.run('draft.teams.every(x=>x.members.length===2)'));assert.deepEqual(plain(r.run('draft.teams.map(x=>x.homeCourt)')),[1,2]);
+});
+
+test('Fin des matchs : confirmation intégrée même si les dialogues du navigateur sont bloqués',async()=>{
+ const r=runtime();open(r,fixture('basket',6,3));await r.action('start');r.ctx.confirm=()=>{throw Error('Dialogue natif interdit')};
+ const button={dataset:{action:'finish-all'}};const pending=r.listeners.get('click')({target:{closest:selector=>selector==='[data-action]'?button:null}});assert.equal(r.node('confirmation').open,true);assert.ok(r.node('confirmation').innerHTML.includes('Terminer les matchs'));
+ assert.equal(r.run('E.current(tourney()).matches.filter(m=>m.status==="live").length'),3);
+ await r.action('confirm-accept');await pending;assert.ok(r.run('E.current(tourney()).matches.every(E.done)'));assert.equal(r.node('confirmation').open,false);
+ assert.ok(r.html().includes('data-action="advance"'));await r.action('advance');assert.equal(r.run('tourney().roundIndex'),1);
+});
+test('Annuler, fermer ou Échap conserve les matchs et les scores',async()=>{
+ for(const cancel of ['confirm-cancel','escape','close']){
+  const r=runtime();open(r,fixture('basket',6,3));await r.action('start');const id=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match:id,side:'a',delta:'2'});
+  const before=r.run('JSON.stringify(tourney())');const pending=r.action('finish-all');
+  if(cancel==='escape')r.node('confirmation').listeners.get('cancel')({preventDefault(){}});
+  else if(cancel==='close'){r.node('confirmation').close();r.node('confirmation').listeners.get('close')()}
+  else await r.action(cancel);
+  await pending;assert.equal(r.run('JSON.stringify(tourney())'),before);assert.equal(r.node('confirmation').open,false);
+ }
+});
+test('Fin individuelle : résultat et départage explicite, sans arrêter les voisins',async()=>{
+ const r=runtime();open(r,fixture('basket',6,3));await r.action('start');const id=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match:id,side:'a',delta:'2'});await r.action('finish-match',{match:id});
+ assert.equal(r.run('E.current(tourney()).matches[0].status'),'done');assert.equal(r.run('E.current(tourney()).matches[1].status'),'live');
+ const tie=runtime();open(tie,fixture('basket',4,2,{formula:'knockout',tie:'golden'}));await tie.action('start');const mid=tie.run('E.current(tourney()).matches[0].id');await tie.action('finish-match',{match:mid});
+ assert.equal(tie.run('E.current(tourney()).matches[0].tieBreak'),'golden');assert.match(tie.node('toast').textContent,/point décisif/);await tie.action('score',{match:mid,side:'a',delta:'1'});assert.equal(tie.run('E.current(tourney()).matches[0].status'),'done');
+});
+test('Erreur de rotation visible quand le formulaire de correction est fermé',async()=>{
+ const r=runtime();open(r,fixture('basket',6,3));await r.action('start');const mid=r.run('E.current(tourney()).matches[0].id');await r.action('edit-match',{match:mid});await r.action('close');
+ const node={dataset:{action:'advance'}};await r.listeners.get('click')({target:{closest:selector=>selector==='[data-action]'?node:null}});
+ assert.ok(r.node('toast').textContent);assert.equal(r.node('match-error').textContent,'');assert.equal(r.run('tourney().roundIndex'),0);
+});
+test('Réinitialisation du chrono : fenêtre de réglages conservée après annulation',async()=>{
+ const r=runtime();open(r,fixture('basket',6,3));await r.action('start');const mid=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match:mid,side:'a',delta:'2'});await r.action('clock-settings');const html=r.node('modal').innerHTML;
+ const pending=r.action('reset-clock');await r.action('confirm-cancel');await pending;assert.equal(r.node('modal').innerHTML,html);assert.equal(r.node('modal').open,true);
+ await acceptAction(r,'reset-clock');assert.equal(r.run('E.current(tourney()).matches[0].scoreA'),2);assert.equal(r.run('E.current(tourney()).clock.status'),'ready');
+});
+test('Confirmation ancienne : une nouvelle rotation ne peut pas être terminée par erreur',async()=>{
+ const r=runtime();open(r,fixture('basket',6,3));await r.action('start');const pending=r.action('finish-all');r.run('E.finishAll(tourney());E.advance(tourney())');const before=r.run('JSON.stringify(E.current(tourney()))');await r.action('confirm-accept');await assert.rejects(pending,/rotation a changé/);assert.equal(r.run('JSON.stringify(E.current(tourney()))'),before);
+});
+
+test('Restaurer deux tournois : confirmations successives sans fermeture tardive parasite',async()=>{
+ const r=runtime(),a=fixture('basket',4,2),b=fixture('handball',4,2);r.ctx.events=[a,b];r.run('data.events=events;data.activeId=events[0].id');
+ const imported={schema:1,events:[{...a,title:'Basket restauré'},{...b,title:'Handball restauré'}],activeId:a.id};r.ctx.file={size:500,text:async()=>JSON.stringify(imported)};
+ const pending=r.run('restoreFile(file)');await new Promise(resolve=>setImmediate(resolve));assert.equal(r.node('confirmation').open,true);
+ await r.action('confirm-accept');await new Promise(resolve=>setImmediate(resolve));assert.equal(r.node('confirmation').open,true);r.node('confirmation').listeners.get('close')();assert.equal(r.node('confirmation').open,true);
+ await r.action('confirm-accept');await pending;assert.deepEqual(plain(r.run('data.events.map(x=>x.title)')),['Basket restauré','Handball restauré']);
+});
+test('Fin générale avec égalité décisive : matchs départagés terminés, point décisif expliqué',async()=>{
+ const r=runtime();open(r,fixture('basket',4,2,{formula:'knockout',tie:'golden'}));await r.action('start');const mid=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match:mid,side:'a',delta:'2'});await acceptAction(r,'finish-all');
+ assert.equal(r.run('E.current(tourney()).matches[0].status'),'done');assert.equal(r.run('E.current(tourney()).matches[1].tieBreak'),'golden');assert.match(r.node('toast').textContent,/point décisif/);assert.equal(r.run('E.current(tourney()).clock.status'),'done');
+});
+
+test('Correction de tableau : confirmation intégrée et formulaire préservé après annulation',async()=>{
+ const e=fixture('basket',4,2,{formula:'knockout'}),t=e.tournaments[0];for(const m of E.current(t).matches)m.scoreA=2;E.finishAll(t);E.advance(t);
+ const r=runtime();open(r,e);const mid=t.rotations[0].matches[0].id;await r.action('edit-match',{match:mid});r.node('edit-score-a').value='0';r.node('edit-score-b').value='3';r.ctx.confirm=()=>{throw Error('Dialogue natif interdit')};
+ const before=r.run('JSON.stringify(tourney())'),html=r.node('modal').innerHTML,pending=r.action('save-match',{match:mid});assert.equal(r.node('confirmation').open,true);await r.action('confirm-cancel');await pending;
+ assert.equal(r.run('JSON.stringify(tourney())'),before);assert.equal(r.node('modal').innerHTML,html);assert.equal(r.node('edit-score-b').value,'3');
+ await acceptAction(r,'save-match',{match:mid});assert.equal(r.run('tourney().rotations.length'),1);assert.equal(r.run('tourney().rotations[0].matches[0].scoreB'),3);assert.equal(r.node('modal').open,false);
 });

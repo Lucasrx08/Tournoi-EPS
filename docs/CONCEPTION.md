@@ -1,4 +1,4 @@
-# Tournoi EPS · conception version 2.7
+# Tournoi EPS · conception version 2.8
 
 L’interface s’inspire d’une console de jeu de sport et de cartes de compétition. La palette utilise un fond clair #eeede8, un anthracite #202022, du blanc #fffefa et un accent citron #d9f85c. Les couleurs de chasubles restent indépendantes de cette palette et ne changent pas dans les données enregistrées.
 
