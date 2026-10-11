@@ -1,4 +1,4 @@
-# Tournoi EPS · version 2.4
+# Tournoi EPS · version 2.5
 
 Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
 
@@ -30,11 +30,11 @@ Un grand score ajoute un point ; le bouton − corrige. Après la formule, les s
 
 **Menu → Répartir les joueurs** ouvre la répartition par terrain en raquettes. Déposer une carte de joueur / duo sur un terrain déplace sa rencontre avec son adversaire ; si un match est prévu sur le terrain visé, les deux rencontres échangent leurs terrains. Avant un départ, le déplacement est immédiat. Pendant une rencontre, il concerne la prochaine rencontre programmée ou est conservé jusqu’au calcul du prochain tour. Les adversaires, identifiants, résultats et chronos déjà commencés restent inchangés. La poignée accepte les gestes tactiles ; sélectionner un joueur puis « Déplacer ici » offre une alternative au clavier.
 
-La version 2.4 conserve le bleu nuit, l’orange et la menthe. Dix visuels de matériel sportif au rendu photographique remplacent les dessins de l’accueil ; ils ont été créés avec l’outil intégré ImageGen et optimisés localement en WebP. Barlow Condensed signe les titres et les scores ; Outfit sert aux noms et aux contrôles. Les polices et leurs licences SIL OFL sont fournies localement.
+La version 2.5 adopte un habillage e-sport dans toute l’application : fond bleu nuit, panneaux anguleux, accents orange et menthe, titres inclinés et cartes d’activité au rendu photographique. Barlow Condensed signe les titres et les scores ; Outfit reste la police des noms et des commandes. Les images, polices et licences sont locales ; aucun téléchargement externe n’est nécessaire à l’exécution. Les prompts des dix visuels ImageGen et leurs chemins sont dans `docs/IMAGE_PROMPTS.json`.
 
-Les menus visibles pendant le tournoi se limitent à **Terrains**, **Classement** et **Menu**. Rencontres, répartition, exports, réglages et annonces sont dans Menu ; démarrage, pause, arrêt et rotation suivante restent sur la vue des terrains. Le parquet, le gazon, les surfaces synthétiques et les tables sont reconnaissables, avec des tracés propres à chaque sport. Les scores à deux chiffres sont prioritaires ; un ajout de point produit un bref retour visuel, désactivé lorsque les mouvements réduits sont préférés. Une barre montre la progression vers un objectif de score et le vainqueur est mis en évidence après la fin de la rencontre. Les trois premières places du classement apparaissent lorsque des résultats terminés le permettent.
+Les deux vues principales sont **Terrains** et **Classement** ; **Menu** rassemble rencontres, répartition, exports, réglages et annonces. Sur chaque terrain, un tableau de score aux couleurs des adversaires se superpose au tracé sportif. La prochaine rencontre est séparée par une bande menthe très contrastée. Les surfaces évoquent le parquet, le gazon, un revêtement synthétique ou une table.
 
-Chaque terrain conserve une bande claire pour la prochaine rencontre. La grille adapte ses colonnes à l’espace disponible et garde un minimum lisible ; les grands nombres de terrains défilent dans la grille. Les visuels et leurs prompts exacts sont documentés dans `docs/IMAGE_PROMPTS.json`.
+Un ajout de point déclenche un anneau lumineux et un bref +N, correspondant exactement à l’ajout demandé. Ces effets respectent les mouvements réduits. La progression vers un objectif, le vainqueur après la fin de la rencontre et les premières places du classement utilisent les résultats réels. Le calcul de la grille et les minima lisibles restent conservés ; les grands nombres de terrains défilent dans la grille.
 
 Pour AirPlay, utiliser la recopie de l’écran de l’appareil et, si utile, le bouton plein écran. La même vue sert à gérer et à projeter les rencontres.
 
@@ -58,7 +58,7 @@ La voix dépend des voix françaises installées et du navigateur. La projection
 
 ## Développement
 
-Site statique sans dépendances téléchargées à l’exécution. Héberger `dist/`. Modules : interface `app.js`, contrôles `controls.js`, moteur `engine.js`, préparation `planning.js`, affectations `rackets.js` et échanges `exchange.js`. Pako est fourni localement avec sa licence.
+Site statique sans dépendances téléchargées à l’exécution. Héberger `dist/`. Modules : interface `app.js`, contrôles `controls.js`, habillage `gaming.css`, moteur `engine.js`, préparation `planning.js`, affectations `rackets.js` et échanges `exchange.js`. Pako est fourni localement avec sa licence.
 
 Tests : `npm test` ou `node --test tests/*.test.mjs`.
 

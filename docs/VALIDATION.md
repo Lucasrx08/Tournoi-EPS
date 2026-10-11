@@ -1,16 +1,24 @@
-# Validation · version 2.4 · 11 octobre 2026
+# Validation · version 2.5 · 11 octobre 2026
 
 111 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent les actions avec un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
 
-## Refonte graphique
+## Habillage e-sport et correction de préparation
+
+Les 111 tests passent avec le JavaScript de l’interface exécuté en mode strict, comme les modules réels. Quatre références résiduelles à une variable de prévalidation supprimée ont été retirées ; elles pouvaient interrompre la modification des effectifs, des noms ou du texte d’une formule personnalisée.
+
+La feuille `gaming.css` est chargée après la feuille de disposition et intégrée au nouveau cache PWA. Elle ne modifie pas les hauteurs de lignes des roulettes ni le calcul de la grille. Les références locales, les délimiteurs CSS et les couleurs hexadécimales ont été contrôlés. Les paires de couleurs des textes principaux, boutons orange et bandes menthe dépassent un rapport de contraste de 4,5:1. Les initiales des joueurs sont claires sur fond bleu nuit, avec la couleur individuelle sur le contour.
+
+Les états de rencontre pilotent les bordures de terrain ; les points déclenchent un effet bref, respectant les mouvements réduits. Aucun rang, score, victoire ou progression fictive n’est ajouté.
+
+## Vérifications fonctionnelles
 
 Les 107 tests fonctionnels précédents passent. Quatre nouveaux tests couvrent l’accès aux outils après simplification de la navigation, la fermeture du menu par Échap, la progression bornée vers l’objectif et la mise en évidence du vainqueur après le résultat, le focus et les mouvements réduits lors de la saisie, et les premières places calculées uniquement après des résultats terminés.
 
 La création complète ouvre maintenant les terrains depuis l’écran de départ, avec le nom du tournoi. Les styles de sélection conservent la même police et la même taille de texte. Les roulettes gardent les lignes de 32 px et la fenêtre de 96 px. Les minima de la grille restent inchangés.
 
-Les dix visuels au rendu photographique ont été inspectés individuellement : matériel identifiable, cadre entier, aucune personne, marque ou texte. Les WebP ont été décodés et leurs dimensions vérifiées (768 × 512). Ils sont inclus avec les polices dans les 26 ressources du nouveau cache. Les références locales et les délimiteurs CSS ont été contrôlés.
+Les dix visuels au rendu photographique ont été inspectés individuellement : matériel identifiable, cadre entier, aucune personne, marque ou texte. Les WebP ont été décodés et leurs dimensions vérifiées (768 × 512). Ils sont inclus avec les polices dans les 27 ressources du nouveau cache. Les références locales et les délimiteurs CSS ont été contrôlés.
 
-Un contrôle de génération parcourt les sept écrans pour les dix activités et 40 aperçus de 1, 3, 7 et 24 terrains, sans erreur dans le DOM simulé. Les 918 SVG des pictogrammes, formules et aperçus sont valides. Ces contrôles ne mesurent pas la mise en page dans un navigateur réel.
+Un contrôle de génération parcourt les sept écrans pour les dix activités et 40 aperçus de 1, 3, 7 et 24 terrains, sans erreur dans le DOM simulé. Les 919 SVG des pictogrammes, formules et aperçus sont valides. Ces contrôles ne mesurent pas la mise en page dans un navigateur réel.
 
 ## Parcours et identités
 

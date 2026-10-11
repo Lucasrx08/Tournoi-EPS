@@ -1,0 +1,268 @@
+/* E-sport visual system. The base stylesheet retains layout and control geometry. */
+:root {
+  --paper: #0c1726;
+  --soft: #1b2c41;
+  --line: #344b62;
+  --muted: #b2bfcd;
+  --game-panel: #18293e;
+  --game-text: #f3f5f7;
+  --game-control: #6f8497;
+  color: var(--game-text);
+  color-scheme: dark;
+}
+body {
+  background:
+    radial-gradient(ellipse at 100% 0, #f4774513, transparent 42%),
+    radial-gradient(ellipse at 0 60%, #9adacf0a, transparent 48%),
+    linear-gradient(90deg, #ffffff03 1px, transparent 1px),
+    linear-gradient(#ffffff03 1px, transparent 1px);
+  background-color: var(--paper);
+  background-size: auto, auto, 64px 64px, 64px 64px;
+}
+.shell { position: relative; color: var(--game-text); }
+button {
+  background: var(--soft);
+  color: var(--game-text);
+  border-color: var(--game-control);
+  border-radius: 5px;
+  transition: background .16s, border-color .16s, box-shadow .16s, transform .16s;
+}
+button:hover { background: #263c53; border-color: #a1b8c8; }
+.primary {
+  background: var(--orange);
+  color: var(--ink);
+  border-color: var(--orange);
+  border-radius: 4px;
+  box-shadow: 0 3px 0 #ad492a;
+}
+.primary:hover { background: #ff9468; border-color: #ff9468; box-shadow: 0 3px 0 #ad492a, 0 0 20px #f4774526; }
+.primary:active { box-shadow: 0 1px 0 #ad492a; }
+.ghost { background: transparent; border-color: transparent; }
+.danger { color: #ffb79f; background: #392936; border-color: #9d685f; }
+.danger:hover { background: #4a303b; border-color: #ffb79f; }
+.selected { background: #233d47; color: var(--game-text); border-color: var(--mint); box-shadow: inset 3px 0 var(--mint); }
+summary:focus-visible,button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible { outline-color: var(--mint); }
+input,textarea,select { accent-color: var(--mint); }
+input[type=text],input[type=number],textarea,select {
+  color: var(--game-text);
+  background: #101d2d;
+  border-color: var(--game-control);
+  border-radius: 4px;
+}
+input[type=color] { background: #101d2d; border-color: var(--game-control); }
+input::placeholder,textarea::placeholder { color: #a5b3c3; opacity: 1; }
+a { color: var(--mint); }
+h1 { letter-spacing: .6px; transform: skewX(-4deg); transform-origin: left center; }
+h2,h3 { color: var(--game-text); }
+.eyebrow,.caps { letter-spacing: 1.8px; }
+.topbar { background: #101d2d; border-bottom: 1px solid #3b526a; box-shadow: 0 3px 20px #00000026; }
+.brand-mark { border-radius: 3px; transform: skewX(-7deg); }
+.brand-mark svg { transform: skewX(7deg); }
+.brand-word { letter-spacing: 1.1px; }
+.top-actions button { border-radius: 4px; }
+.footer { color: #99aabb; }
+.loading { color: var(--game-text); }
+
+/* Activity selection: equipment cards, bold nameplates and angular corner marks. */
+.home-heading .eyebrow { color: var(--mint); }
+.home-heading h1 { text-shadow: 3px 3px 0 #00000040; }
+.home-intro { gap: 9px; }
+.competition-badge { display: inline-flex; align-items: center; gap: 8px; align-self: flex-end; color: var(--mint); font-size: 12px; font-weight: 700; letter-spacing: 2px; }
+.competition-badge .icon { width: 20px; height: 20px; color: var(--orange); }
+.home-route b { color: var(--orange); }
+.home-route i { color: var(--mint); }
+.sport-tile { border-color: #425b74; border-radius: 5px; box-shadow: 0 5px 0 #00000025; isolation: isolate; }
+.sport-tile:after { content: ''; position: absolute; bottom: 0; right: -3px; width: 37px; height: 4px; background: var(--mint); transform: skewX(-35deg); pointer-events: none; }
+.sport-tile:hover { border-color: var(--orange); box-shadow: 0 5px 0 #00000025, 0 0 22px #f4774526; }
+.sport-tile:hover:after { background: var(--orange); }
+.sport-art img { transition: transform .25s ease; }
+.sport-tile:hover .sport-art img { transform: scale(1.035); }
+.sport-meta b { font-size: 23px; }
+.sport-meta>span { border: 1px solid #9adacf45; border-radius: 2px; color: #d5efe8; }
+.sport-name { background: linear-gradient(112deg, var(--orange) 0 4px, #17293e 4px); border-top-color: #536980; padding-left: 15px; letter-spacing: .6px; }
+.sport-name>b { border-radius: 3px; border-color: #76929f; }
+.saved-events h2 { font-family: var(--display); text-transform: uppercase; font-size: 23px; letter-spacing: .5px; }
+.saved-entry { background: var(--game-panel); border-color: var(--line); border-radius: 5px; }
+.saved-event { background: transparent; border-color: transparent; }
+.saved-event:hover { background: #21354b; }
+.saved-icon { border-radius: 4px; background: #243d47; color: var(--mint); }
+.saved-count { color: var(--mint); background: #243d47; border-radius: 3px; }
+.delete-saved { color: #dba895; background: transparent; }
+.delete-saved:hover { color: #ffc4af; background: #4a303b; }
+.undo-bar { color: var(--game-text); background: #243d47; border-radius: 4px; }
+.undo-bar button { color: var(--mint); }
+
+/* Preparation and dialogs use one coherent dark control surface. */
+.wizard-panel,.panel,.settings-card,.team-detail,dialog,.choice-card,.formula-choice,.proposal,.identity-card,.result-point,.allocation-court {
+  color: var(--game-text);
+  background: var(--game-panel);
+  border-color: var(--line);
+  border-radius: 6px;
+  box-shadow: inset 0 1px 0 #ffffff06;
+}
+.wizard-heading { border-bottom-color: #41576c; }
+.wizard-heading .eyebrow { color: var(--orange); }
+.wizard-heading h1 { text-shadow: 2px 2px 0 #00000025; }
+.wizard-footer { border-top-color: #41576c; }
+.steps .current { background: #243c50; box-shadow: inset 0 -2px var(--orange); }
+.steps b { border-color: #748b9e; border-radius: 3px; }
+.steps .past { color: var(--mint); }
+.steps .past b { color: var(--ink); }
+.setup-sport .sport-art { border: 1px solid #41576c; border-radius: 3px; }
+.setup-numbers,.points-settings { background: #101f31; border-radius: 5px; }
+.number-box { border-color: var(--game-control); border-radius: 4px; background: #101d2d; }
+.number-box>button { background: #243c50; color: var(--game-text); }
+.number-box>button:hover { background: #36536a; }
+.number-box>input { background: #101d2d; color: var(--mint); }
+.terrain-preview { background: #101f31; border: 1px solid #41576c; border-radius: 5px; }
+.mini-court { background: #224452; border-color: #7b9b9c; border-radius: 2px; }
+.mini-court svg { opacity: .6; }
+.mini-court b { border-radius: 2px; color: white; }
+.choice-card:hover,.formula-choice:hover,.proposal:hover { background: #21354b; border-color: #94aebd; }
+.choice-card.selected,.formula-choice.selected,.proposal.selected,.duration-choice.selected {
+  color: var(--game-text);
+  background: #233d47;
+  border-color: var(--mint);
+  box-shadow: inset 3px 0 var(--mint);
+}
+.choice-card .icon,.formula-art,.points-symbol,.start-art { color: var(--mint); }
+.choice-card>span:not(.start-drawing):not(.points-symbol),.formula-choice small { color: var(--muted); }
+.proposal-tag { color: var(--ink); background: var(--mint); border-radius: 2px; }
+.proposal-stats { border-top-color: #587080; }
+.proposal i { color: var(--mint); }
+.roster-next,.notice,.timing-note,.sound-preview { color: var(--game-text); background: #203b44; border-radius: 4px; }
+.notice.error,.timing-note.error { background: #3e2d35; color: #ffc0a8; border-color: #ffad89; }
+.error-inline { color: #ffc0a8; }
+.identity-card { border-top-color: var(--team-color); }
+.identity-top .team-token { background: #ffffff08; }
+.identity-top .player-token { background: var(--color); color: var(--ink); }
+.bib-swatch { background: #101d2d; border-color: #6f8497; border-radius: 3px; }
+.bib-swatch.selected { outline-color: var(--mint); }
+.result-symbol { border-radius: 3px; color: var(--ink); }
+.duration-picker { background: #101f31; border-color: #536b80; border-radius: 5px; }
+.wheel-window:before { background: var(--mint); border-color: var(--mint); }
+.wheel-window:after { background: linear-gradient(#101f31cc,transparent 30%,transparent 70%,#101f31cc); }
+.wheel-option { color: var(--muted); font-family: var(--display); font-size: 26px; font-weight: 700; }
+.wheel-option[aria-selected=true] { color: var(--ink); }
+.duration-choice { color: var(--game-text); background: #1b3045; border-color: #6f8497; border-radius: 4px; }
+.duration-choice:hover { background: #263c53; }
+dialog { border-color: #658194; box-shadow: 0 25px 80px #00000080; }
+dialog::backdrop { background: #050c17c9; }
+.modal-header { border-bottom-color: #41576c; }
+.modal-header h2 { letter-spacing: .6px; }
+.modal-header .ghost { color: var(--muted); }
+.allocation-court>header { border-bottom-color: #41576c; }
+.allocation-player { color: var(--game-text); background: #101f31; border-color: #647b90; border-radius: 4px; }
+.allocation-player:hover { background: #243c50; }
+.allocation-court.drop-active { background: #233d47; border-color: var(--mint); box-shadow: inset 0 0 0 1px var(--mint); }
+.allocation-court.drop-active:focus-visible { outline-color: var(--orange); }
+.team-input input { color: var(--game-text); }
+.top-actions .menu-popover { background: #101f31; border-color: #607b90; border-radius: 5px; box-shadow: 0 15px 40px #00000080; }
+.top-actions .menu-popover button { color: var(--game-text); border-radius: 3px; }
+.top-actions .menu-popover button:hover { background: #243c50; }
+.menu-popover .icon { color: var(--mint); }
+.tournament-menu>summary { border-radius: 4px; }
+
+/* Match HUD: restrained light, team colours, central timer and true score feedback. */
+.tournament-heading h1 { text-shadow: 2px 2px 0 #00000030; }
+.nav-tabs { background: #1b2c41; border: 1px solid #506b82; border-radius: 5px; }
+.nav-tabs button { border-radius: 3px; color: #d4deea; }
+.nav-tabs button.selected { background: var(--mint); color: var(--ink); }
+.clock-bar { background: linear-gradient(115deg,#20344b,#101f31); color: var(--game-text); border: 1px solid #60788e; border-left: 4px solid var(--orange); border-radius: 5px; }
+.clock-caption h2 b { color: var(--orange); }
+.clock-value { color: white; text-shadow: 0 3px 0 #00000045; padding-inline: 17px; border-inline: 1px solid #4b6478; letter-spacing: 1px; }
+.clock-value.urgent { color: #ffb091; }
+.clock-value.final { letter-spacing: .5px; }
+.court-card { position: relative; border-radius: 5px; border-color: #658197; box-shadow: 0 4px 0 #00000026; }
+.court-card.match-live { border-color: #f4a47b; box-shadow: 0 4px 0 #00000026, 0 0 18px #f4774510; }
+.court-card.match-paused { border-color: var(--mint); }
+.court-head { background: linear-gradient(110deg,#142338,#233a51); border-bottom: 1px solid #5c7588; }
+.court-head>strong { letter-spacing: .8px; }
+.court-head>strong .icon { color: var(--orange); }
+.state { border-radius: 2px; font-size: 11px; letter-spacing: .15px; }
+.state.live { background: var(--orange); color: var(--ink); }
+.state.live:before { content: ''; display: inline-block; width: 5px; height: 5px; margin: 0 4px 1px 0; background: var(--ink); border-radius: 50%; }
+.court-floor { opacity: .7; }
+.score-team { background: linear-gradient(0deg,#0c1726f2,#142338c9); border: 1px solid #8aa6b76b; border-top: 3px solid var(--team-color); border-radius: 4px; box-shadow: 0 3px 6px #00000030; }
+.side-identity { border-bottom-color: #a3bbcb4d; padding-bottom: 3px; }
+.side-identity .team-token { border-radius: 3px; background: #ffffff0d; }
+.side-identity .player-token { background: var(--color); color: var(--ink); }
+.side-identity .bib { filter: drop-shadow(0 0 1px #ffffff); }
+.score-button,.score-value { background: transparent; color: white; border: 0; border-radius: 3px; }
+.score-button:hover { background: #ffffff12; border-color: transparent; }
+.score-button span,.score-value { text-shadow: 0 4px 0 #00000050; letter-spacing: 1px; }
+.score-button small { border-radius: 2px; }
+.score-progress { left: 32px; right: 8px; bottom: 3px; background: #ffffff33; }
+.score-progress i { background: var(--mint); }
+.score-team:not(:has(.minus)) .score-progress { left: 8px; }
+.versus { background: #101f31; color: var(--mint); border-color: #79959e; border-radius: 3px; transform: translate(-50%,-50%) rotate(45deg); font-size: 0; }
+.versus:after { content: 'VS'; font-size: 9px; transform: rotate(-45deg); }
+.one .versus:after { font-size: 13px; }
+.minus { background: #101f31; border-color: #99afbb; border-radius: 3px; }
+.bonus-score { background: var(--mint); color: var(--ink); border-radius: 3px; }
+.court-foot { color: #edf4f3; }
+.court-foot>span { background: #142338e6; color: #edf4f3; padding: 2px 5px; border-radius: 2px; }
+.court-foot button { background: #142338e6; border-color: #a3b8c4; border-radius: 3px; }
+.court-foot button:hover { background: #2b4559; }
+.referee-line { background: #142338c9; border-radius: 2px; }
+.court-upcoming { background: var(--mint); border-top: 3px solid #5ba79b; color: var(--ink); }
+.upcoming-heading>strong { color: var(--ink); letter-spacing: .75px; }
+.upcoming-heading .icon { color: var(--ink); }
+.upcoming-heading>span { border-radius: 2px; }
+.upcoming-side .team-token { border-radius: 3px; }
+.upcoming-side .player-token { border-color: #14233880; }
+.upcoming-versus { color: #395b59; }
+.upcoming-ref,.upcoming-empty { color: #294849; }
+.empty-court strong { color: white; background: #142338d9; padding: 8px 12px; border-radius: 3px; }
+.score-team.is-winner { border-color: var(--mint); box-shadow: inset 0 0 0 1px var(--mint), 0 0 15px #9adacf1a; }
+.score-team.is-winner .score-value { color: var(--mint); }
+.score-team:has(.score-scored) { box-shadow: inset 0 0 0 1px var(--mint), 0 0 16px #9adacf30; }
+.score-scored:before { content: ''; position: absolute; left: 50%; top: 50%; width: 65px; height: 65px; border: 2px solid var(--mint); border-radius: 50%; pointer-events: none; animation: arena-point-ring .45s ease-out forwards; }
+.score-scored:after { font-family: var(--display); font-size: 28px; right: -25px; top: 8%; text-shadow: 1px 2px 0 #0c1726; }
+@keyframes arena-point-ring { from { opacity: .85; transform: translate(-50%,-50%) scale(.55); } to { opacity: 0; transform: translate(-50%,-50%) scale(1.45); } }
+
+/* Standings are tournament results, styled as a competition board. */
+.leader-card { background: #1b2c41; border-color: #526c81; border-top-color: var(--mint); border-radius: 5px; box-shadow: 0 4px 0 #00000026; }
+.leader-card.leader-first { background: linear-gradient(120deg,#263d54,#142338); border-top-color: var(--orange); }
+.leader-rank { font-size: 52px; text-shadow: 2px 2px 0 #00000040; }
+.leader-points b { font-size: 40px; }
+.leader-first .leader-identity { color: white; }
+.ranking th { background: #101f31; color: #cbd7e1; border-bottom: 2px solid #6d919a; }
+.ranking td { border-bottom-color: #41566b; }
+.ranking tbody tr:first-child { background: #243d47; }
+.ranking tbody tr:hover { background: #21354b; }
+.rank-number { color: var(--mint); }
+.winner-banner { border: 1px solid #f4a47b; border-left: 4px solid var(--orange); background: linear-gradient(110deg,#263d54,#142338); border-radius: 5px; }
+.rotation-card { background: var(--game-panel); border-color: var(--line); border-radius: 5px; }
+.rotation-heading { background: #263c53; }
+.rotation-heading.active { background: #243d47; border-left: 4px solid var(--mint); }
+.fixture { background: var(--game-panel); color: var(--game-text); border-color: #41566b; }
+.fixture:hover { background: #243c50; }
+.fixture .state { color: var(--ink); }
+.court-label { color: #bdcbd7; }
+#toast { border: 1px solid #78959d; border-left: 4px solid var(--mint); border-radius: 4px; background: #142338; box-shadow: 0 8px 30px #00000070; }
+.team-token.player-token { background: #142338; color: #f3f5f7; border: 2px solid var(--color); }
+
+@media(max-width:899px) {
+  .competition-badge { align-self: flex-start; }
+  .wizard-footer { background: var(--game-panel); }
+  .clock-value { padding-inline: 12px; }
+}
+@media(max-width:580px) {
+  .competition-badge { font-size: 11px; }
+  .leader-rank { font-size: 40px; }
+  .leader-points b { font-size: 32px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .sport-tile:hover .sport-art img { transform: none; }
+  .sport-tile:hover { transform: none; }
+  .score-scored:before,.score-scored:after { display: none; }
+}
+@media print {
+  :root { --paper: white; --muted: #566477; color-scheme: light; }
+  body { background: white; color: #142338; }
+  .shell,.panel,.ranking,.leader-card,.wizard-panel,dialog { color: #142338; background: white; }
+  h2,h3,.rank-number { color: #142338; }
+  .court-card,.leader-card,.panel { box-shadow: none; }
+  .ranking th,.ranking tbody tr:first-child { background: #eef2f5; color: #142338; }
+}

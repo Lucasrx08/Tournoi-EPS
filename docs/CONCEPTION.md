@@ -1,10 +1,12 @@
-# Tournoi EPS · conception version 2.4
+# Tournoi EPS · conception version 2.5
 
-L’identité graphique suit un tableau sportif contemporain : bleu nuit #142338, orange #f47745, menthe #9adacf et fond clair #f3f5f7. Les couleurs des chasubles décrivent les équipes indépendamment de la palette de l’interface. Les dix activités utilisent des visuels de matériel au rendu photographique, générés avec ImageGen, sur un fond bleu nuit et avec une lumière cohérente. Les images WebP locales mesurent 768 × 512 et totalisent 511 640 octets. Les prompts exacts et leurs chemins sont dans IMAGE_PROMPTS.json.
+L’identité graphique suit une direction e-sport : bleu nuit #142338, orange #f47745, menthe #9adacf avec fond profond #0c1726 et texte clair #f3f5f7. Les couleurs des chasubles décrivent les équipes indépendamment de la palette de l’interface. Les dix activités utilisent des visuels de matériel au rendu photographique, générés avec ImageGen, sur un fond bleu nuit et avec une lumière cohérente. Les images WebP locales mesurent 768 × 512 et totalisent 511 640 octets. Les prompts exacts et leurs chemins sont dans IMAGE_PROMPTS.json.
 
 Barlow Condensed Bold donne leur caractère aux titres, numéros et scores. Outfit reste la police des noms, explications et contrôles. Les deux polices et leurs licences SIL OFL sont locales, sans requête externe à l’exécution. La typographie d’un choix ne varie pas selon son état de sélection. Les boutons principaux orange portent un texte bleu nuit.
 
-L’accueil présente un titre éditorial, une grille régulière de dix activités et une liste compacte des tournois enregistrés. La préparation affiche trois repères horizontaux : Terrains, Participants et Rencontres. Les sept écrans de choix restent successifs ; le nom et le lancement du tournoi sont réunis sur le dernier, sans écran de validation supplémentaire. L’aperçu des espaces de pratique dessine le nombre de terrains choisi. Chaque terrain associe une zone sombre pour la rencontre actuelle et une bande claire pour la prochaine rotation, sans doubler celle-ci ailleurs sur l’écran. Les tracés sont propres au sport et les surfaces évoquent le parquet, le gazon, le revêtement synthétique ou une table. Le score s’affiche sur deux chiffres ; la progression vers l’objectif, le retour bref lors d’un ajout de point et la mise en évidence du vainqueur reposent sur les scores réels. Les mouvements réduits sont respectés. Les premières places du classement sont présentées après des résultats terminés, sans podium initial fictif.
+Les panneaux sombres, leurs angles nets, les marqueurs de coins et les titres inclinés créent une identité gaming cohérente sur l’accueil, la préparation, les menus, les réglages et les classements. Les accents orange et menthe sont conservés. Les commandes restent lisibles et ne varient pas de taille selon la sélection.
+
+L’accueil présente un titre éditorial, une grille régulière de dix activités et une liste compacte des tournois enregistrés. La préparation affiche trois repères horizontaux : Terrains, Participants et Rencontres. Les sept écrans de choix restent successifs ; le nom et le lancement du tournoi sont réunis sur le dernier, sans écran de validation supplémentaire. L’aperçu des espaces de pratique dessine le nombre de terrains choisi. Chaque terrain associe une zone sombre pour la rencontre actuelle et une bande menthe contrastée pour la prochaine rotation, sans doubler celle-ci ailleurs sur l’écran. Les tracés sont propres au sport et les surfaces évoquent le parquet, le gazon, le revêtement synthétique ou une table. Le score s’affiche sur deux chiffres ; la progression vers l’objectif, l’anneau lumineux et le +N bref lors d’un ajout de point et la mise en évidence du vainqueur reposent sur les scores réels. Les mouvements réduits sont respectés. Les premières places du classement sont présentées après des résultats terminés, sans podium initial fictif.
 
 ## Parcours et identités
 
@@ -45,7 +47,8 @@ La corbeille sur chaque tournoi enregistré permet une suppression directe. Une 
 | `dist/app.js` | Parcours, terrains, scores, logos, annonces, import / export et sauvegardes |
 | `dist/controls.js` | Chasubles, roulettes, calcul de la grille et gestes tactiles |
 | `dist/rackets.js` | Noms complets, duos importés, terrains de départ et déplacements de rencontres |
-| `dist/style.css` | Grilles adaptées, typographie, terrains, affichage ordinateur / mobile |
+| `dist/style.css` | Grilles, géométrie des contrôles et affichage ordinateur / mobile |
+| `dist/gaming.css` | Habillage e-sport, surfaces sombres, contrastes, marqueurs et effets de points |
 | `dist/planning.js` | Répartition des effectifs, budget exact, estimation des rotations et arbitres |
 | `dist/engine.js` | Rencontres, formules, chronos, résultats et classements |
 | `dist/exchange.js` | CSV, XLSX, PDF et téléchargements |
