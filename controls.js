@@ -46,11 +46,11 @@ export function mountWheels(root,onChange){
 
 // Keep a readable minimum cell size; large sets scroll inside the board.
 export function courtLayout(count,width,height,referees=false,bonus=false){
- const dense=count>=8,gap=10,minWidth=dense?190:width<580?220:235,minHeight=dense?190+(referees?32:0)+(bonus?48:0):(referees?250:230)+(bonus?24:0);
+ const dense=count>=8,gap=10,minWidth=dense?190:width<580?220:235,minHeight=dense?220+(referees?30:0)+(bonus?48:0):(referees?250:230)+(bonus?24:0);
  const max=Math.max(1,Math.min(6,count,Math.floor((width+gap)/(minWidth+gap))));
  if(count<=3&&max>=count)return {cols:count,rows:1,minHeight};
- const options=Array.from({length:max},(_,i)=>{const cols=i+1,rows=Math.ceil(count/cols),w=(width-gap*(cols-1))/cols,h=(height-gap*(rows-1))/rows;return {cols,rows,fits:h>=minHeight,cost:Math.abs(Math.log(Math.max(.1,w/h)/1.35))+(cols*rows-count)*.08}});
- const fitting=options.filter(x=>x.fits),choice=fitting.length?fitting.sort((a,b)=>a.cost-b.cost)[0]:options[max-1];
+ const options=Array.from({length:max},(_,i)=>{const cols=i+1,rows=Math.ceil(count/cols),w=(width-gap*(cols-1))/cols,h=(height-gap*(rows-1))/rows;return {cols,rows,fits:h>=minHeight,cost:Math.abs(Math.log(Math.max(.1,w/h)/1.35))+(cols*rows-count)*.5}});
+ const fitting=options.filter(x=>x.fits),choice=fitting.length?fitting.sort((a,b)=>a.cost-b.cost)[0]:options.sort((a,b)=>a.cost-b.cost)[0];
  return {cols:choice.cols,rows:choice.rows,minHeight};
 }
 export function courtTypography(width,height,referees=false,bonus=false,dense=false){
