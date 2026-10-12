@@ -486,6 +486,29 @@ dialog::backdrop { background:#202022b8; }
   .courts-grid.dense .upcoming-ref { font-size:10px; }
 }
 
+/* Bound the results view to the viewport and keep every rank reachable. */
+@media(min-width:900px) {
+ .stage-live>.content-view { height:100%; min-height:0; min-width:0; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; scrollbar-gutter:stable; }
+ .ranking-view .leaders { margin-bottom:8px; gap:8px; }
+ .ranking-view .leader-card { padding:8px 12px; }
+ .ranking-view .leader-rank { font-size:32px; }
+ .ranking-view .leader-identity>strong { font-size:15px; }
+ .ranking-view .leader-points b { font-size:28px; }
+ .ranking-view .panel { padding:12px; }
+ .ranking-view h2 { font-size:20px; }
+ .ranking-view .ranking-rules { margin:5px 0 9px; font-size:12px; line-height:1.3; }
+ .ranking-view .ranking { font-size:13px; }
+ .ranking-view .ranking td { padding:5px 8px; height:32px; }
+ .ranking-view .ranking th { padding:7px 8px; font-size:11px; }
+ .ranking-view .rank-number { font-size:21px; }
+ .ranking-view .team-chip { gap:6px; }
+ .ranking-view .color-dot { width:12px; height:12px; }
+ .ranking-view .ranking-pagination { margin-top:10px; font-size:12px; }
+ .ranking-view .ranking-pagination button { min-height:30px; padding:5px 9px; font-size:12px; }
+}
+.ranking-rules { margin:10px 0 20px; }
+.ranking-view .ranking-rules { overflow-wrap:anywhere; }
+
 @media print {
   body { background:white; }
   .court-card,.leader-card,.panel { box-shadow:none; }
