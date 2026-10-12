@@ -1,4 +1,4 @@
-# Tournoi EPS · version 2.14
+# Tournoi EPS · version 2.15
 
 Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
 
@@ -77,3 +77,5 @@ La version 2.12 répartit le réglage du temps sur deux écrans courts, ajoute l
 Version 2.13 : synthèse de répartition horizontale sur ordinateur, retrait des mentions inutiles en simple, grille dense utilisant la hauteur disponible et textes réduits. La vérification visuelle Safari reste à réaliser.
 
 Version 2.14 : classement compact paginé par huit participants, total et plage de rangs visibles, zone de défilement bornée sur ordinateur. Test du parcours des 18 rangs et des limites de pages. Rendu Safari non contrôlé.
+
+Version 2.15 : typographie fluide et retours à la ligne sur accueil, préparation, terrains, classement et réglages. Les très petites hauteurs autorisent le défilement de la page. Les terrains denses réservent des rangées distinctes aux scores, commandes et arbitres, y compris après la fin du match. Le minimum de hauteur prévaut sur le nombre de cartes visibles. Le rendu Safari reste à contrôler.

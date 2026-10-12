@@ -1,6 +1,6 @@
-# Validation · version 2.14 · 12 octobre 2026
+# Validation · version 2.15 · 12 octobre 2026
 
-130 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent le JavaScript en mode strict dans un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
+131 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent le JavaScript en mode strict dans un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
 
 ## Corrections à partir des captures du 12 octobre
 
@@ -105,3 +105,5 @@ Les tests couvrent le passage entre les deux écrans de temps, le retour et la c
 Version 2.13 : synthèse de répartition horizontale sur ordinateur, retrait des mentions inutiles en simple, grille dense utilisant la hauteur disponible et textes réduits. La vérification visuelle Safari reste à réaliser.
 
 Version 2.14 : classement compact paginé par huit participants, total et plage de rangs visibles, zone de défilement bornée sur ordinateur. Test du parcours des 18 rangs et des limites de pages. Rendu Safari non contrôlé.
+
+Version 2.15 : typographie fluide et retours à la ligne sur accueil, préparation, terrains, classement et réglages. Les très petites hauteurs autorisent le défilement de la page. Les terrains denses réservent des rangées distinctes aux scores, commandes et arbitres, y compris après la fin du match. Le minimum de hauteur prévaut sur le nombre de cartes visibles. Le rendu Safari reste à contrôler.

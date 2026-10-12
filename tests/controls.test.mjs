@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import * as C from '../dist/controls.js';
 test('Terrains sur ordinateur : sept terrains tiennent sur deux rangées, minimum lisible conservé',()=>{
  const x=C.courtLayout(7,1325,482);assert.equal(x.cols,4);assert.equal(x.rows,2);assert.ok((482-10*(x.rows-1))/x.rows>=x.minHeight);
- for(const n of[1,3,4,7,9,12,24])for(const w of[1024,1325,1880]){const x=C.courtLayout(n,w,482,true);assert.ok(x.cols>=1&&x.cols<=6);assert.equal(x.rows,Math.ceil(n/x.cols));assert.ok(x.minHeight>=(n>=8?222:250));if(x.cols>1)assert.ok((w-10*(x.cols-1))/x.cols>=(n>=8?190:235))}
+ for(const n of[1,3,4,7,9,12,24])for(const w of[1024,1325,1880]){const x=C.courtLayout(n,w,482,true);assert.ok(x.cols>=1&&x.cols<=6);assert.equal(x.rows,Math.ceil(n/x.cols));assert.ok(x.minHeight>=250);if(x.cols>1)assert.ok((w-10*(x.cols-1))/x.cols>=(n>=8?190:235))}
  assert.equal(C.courtLayout(7,1325,482,true,true).minHeight,274);
 });
 test('Déplacement tactile : poignée, seuil, cible et annulation',()=>{
@@ -58,7 +58,7 @@ test('Grille montée : trois terrains et scores recalculés quand la hauteur dim
 });
 
 test('Douze tables : toutes visibles en deux rangées sur un ordinateur de largeur 1325 px',()=>{
- const g=C.courtLayout(12,1325,420);assert.equal(g.cols,6);assert.equal(g.rows,2);assert.ok(g.minHeight*2+10<=420);
+ const g=C.courtLayout(12,1325,500);assert.equal(g.cols,6);assert.equal(g.rows,2);assert.ok(g.minHeight*2+10<=500);
  const m=C.courtTypography((1325-50)/6,(420-10)/2,false,false,true);assert.ok(m.scoreSize>=32);assert.equal(m.nameSize,13);
 });
 test('Trois terrains : hauteur plafonnée par leur largeur pour éviter les tracés étirés',()=>{
@@ -69,4 +69,9 @@ test('La grille dense utilise toute la hauteur disponible sans agrandir les text
  const styles=new Map(),grid={children:Array.from({length:12},()=>({})),clientWidth:1325,clientHeight:650,style:{setProperty:(k,v)=>styles.set(k,String(v))}};
  C.mountCourtLayout({querySelector:()=>grid});
  const rows=Number(styles.get('--rows')),height=parseInt(styles.get('--court-height'));assert.ok(Math.abs(height*rows+10*(rows-1)-650)<rows);assert.ok(parseInt(styles.get('--score-size'))<=36);assert.equal(styles.get('--name-size'),'13px');
+});
+
+test('Petite fenêtre : une hauteur minimale protège noms, scores et arbitrage',()=>{
+ for(const height of [180,260,400]){const g=C.courtLayout(8,1100,height,true);assert.ok(g.minHeight>=250);assert.ok(g.cols<=5);assert.ok(g.rows>=2);}
+ const g=C.courtLayout(8,1200,500,true);assert.equal(g.cols,4);assert.equal(g.rows,2);
 });
