@@ -349,6 +349,51 @@ dialog::backdrop { background:#202022b8; }
   .tournament-menu>summary { padding-inline:7px; }
 }
 
+
+/* A fixed viewport grid prevents Safari flex children from growing the page. */
+@media(min-width:900px) {
+  html,body,#app { height:100dvh; max-height:100dvh; overflow:hidden; }
+  .shell { display:grid; height:100dvh; max-height:100dvh; min-height:0; }
+  .stage-home,.stage-wizard { grid-template-rows:52px minmax(0,1fr) auto; }
+  .stage-live { grid-template-rows:52px auto minmax(0,1fr) auto; }
+  .topbar { height:52px; }
+  .wizard-step-3 .identity-grid { flex:none; grid-template-columns:repeat(4,minmax(0,1fr)); grid-auto-rows:auto; align-items:start; align-content:start; min-height:0; }
+  .identity-card { min-height:0; }
+  .identity-bottom { margin-top:4px; }
+  .wizard-step-3 { justify-content:flex-start; }
+  .wizard-step-6 .finish-choices .choice-card { min-height:58px; padding:7px 10px; }
+  .wizard-step-6 .timing-layout { min-height:0; gap:7px; }
+  .timing-wheels { align-items:start; }
+  .duration-picker { margin:0; }
+  .timing-proposals { min-height:0; }
+  .duration-choices { align-items:stretch; }
+  .duration-choice { grid-template-columns:minmax(0,1fr); gap:3px; min-height:0; padding:7px 9px; }
+  .duration-choice strong { grid-column:1; grid-row:auto; font-size:25px; line-height:1; }
+  .duration-choice small { font-size:9px; }
+  .duration-choice span { font-size:12px; line-height:1.2; }
+  .timing-note { font-size:11px; line-height:1.25; padding:6px 8px; }
+}
+/* The whole score row stays within its playing surface, regardless of court count. */
+.courts-grid .court-now { padding:4px 6px; gap:2px; min-height:0; overflow:hidden; }
+.courts-grid .score-row { min-height:0; align-items:stretch; }
+.courts-grid .score-team { display:grid; grid-template-rows:auto minmax(0,1fr) auto; justify-items:center; align-content:stretch; align-items:stretch; min-height:0; padding:0; gap:2px; }
+.courts-grid .score-team .side-identity { height:var(--identity-height,44px); min-height:0; max-height:var(--identity-height,44px); padding:2px 4px; max-width:100%; }
+.courts-grid .score-team .team-name { font-size:var(--name-size,16px); line-height:1.05; }
+.courts-grid .score-team .team-crest { width:28px; height:28px; padding:2px; }
+.courts-grid .score-team .score-button,.courts-grid .score-team .score-value { font-size:var(--score-size,48px); min-height:0; height:auto; line-height:1; margin:0; padding:0 3px; align-self:center; }
+.courts-grid .court-foot { min-height:20px; gap:5px; }
+.courts-grid .court-foot button { min-height:20px; padding:3px 5px; }
+.courts-grid .court-upcoming { min-height:84px; padding:8px 10px; gap:5px; }
+.courts-grid .court-upcoming .upcoming-side strong { font-size:16px; }
+.courts-grid .court-upcoming .upcoming-side .team-token { width:24px; height:24px; min-width:24px; }
+.courts-grid .referee-line { min-height:18px; padding:0; }
+.courts-grid .versus { pointer-events:none; }
+@media(max-width:899px) {
+  .courts-grid .score-team .score-button,.courts-grid .score-team .score-value { font-size:76px; }
+  .courts-grid .score-row { min-height:135px; }
+  .courts-grid .score-team .side-identity { height:44px; max-height:44px; }
+}
+
 @media print {
   body { background:white; }
   .court-card,.leader-card,.panel { box-shadow:none; }

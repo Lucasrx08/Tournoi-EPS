@@ -2,7 +2,7 @@
 
 Le dépôt est https://github.com/Lucasrx08/Tournoi-EPS.
 
-Au contrôle du 12 octobre 2026, GitHub Pages n’était pas activé. La branche `gh-pages` contient les fichiers de `dist/` directement à sa racine, avec `.nojekyll`, le manifeste, les icônes et le service worker. Aucun fichier `.openai` n’est copié sur cette branche.
+GitHub Pages a été activé le 12 octobre 2026 ; la publication a été confirmée par le workflow GitHub. Le lien est https://lucasrx08.github.io/Tournoi-EPS/. La branche `gh-pages` contient les fichiers de `dist/` directement à sa racine, avec `.nojekyll`, le manifeste, les icônes et le service worker. Aucun fichier `.openai` n’est copié sur cette branche.
 
 ## Activation par le propriétaire
 
@@ -11,7 +11,7 @@ Au contrôle du 12 octobre 2026, GitHub Pages n’était pas activé. La branche
 3. Choisir la branche **gh-pages**, le dossier **/ (root)**, puis **Save**.
 4. Attendre que GitHub affiche l’adresse publiée. L’URL prévue est https://lucasrx08.github.io/Tournoi-EPS/ ; elle n’est utilisable qu’après activation et déploiement réussi.
 
-Le dépôt est privé. GitHub Pages sur un dépôt privé nécessite un abonnement compatible (Pro, Team ou Enterprise). Avec GitHub Free, il faudrait choisir de rendre le dépôt public ou utiliser un autre hébergement. Le dépôt reste privé dans cette mise à jour.
+Le dépôt a été rendu public par son propriétaire pour activer GitHub Pages.
 
 ## iPad
 
