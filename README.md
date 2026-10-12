@@ -1,4 +1,4 @@
-# Tournoi EPS · version 2.11
+# Tournoi EPS · version 2.12
 
 Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
 
@@ -71,3 +71,5 @@ La version 2.11 remplace les figurines sportives par des pictogrammes vectoriels
 La version 2.11 corrige la lisibilité du titre, ajoute « Créé par L. RIGAUX » et compacte les écrans de préparation sur ordinateur. Les identités sont paginées par quatre. Voir [l’installation sur tablette](docs/INSTALLATION.md) pour activer GitHub Pages à partir de la branche `gh-pages`.
 
 La version 2.11 corrige les dimensions repérées sur les captures : cartes d’identité stables, propositions de durée compactes, scores calculés par cellule et en-têtes de terrain protégés. GitHub Pages est activé : https://lucasrx08.github.io/Tournoi-EPS/. Les mises à jour doivent être publiées sur `main` et `gh-pages`.
+
+La version 2.12 répartit le réglage du temps sur deux écrans courts, ajoute la saisie directe des deux résultats dans les sports de raquettes et limite la hauteur des terrains. À partir de huit terrains, les noms et scores sont présentés en lignes compactes ; douze tables peuvent être réparties en six colonnes et deux rangées lorsque la largeur disponible le permet. Les tracés conservent leurs proportions.

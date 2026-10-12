@@ -74,7 +74,7 @@ test('Création complète : répartition, identités, timing, jeu et reprise',as
  r.run("draft.teams[0].logo='data:image/png;base64,YQ==';render()");assert.ok(r.html().includes('data:image/png;base64,YQ=='));
  await next(r);assert.ok(r.html().includes('formula-art'));assert.ok(!r.html().includes('<select'));
  await next(r);assert.ok(r.html().includes('Définir le barème'));assert.ok(r.html().includes('Match nul'));await next(r);assert.equal(r.run('draftCfg().duration'),300);assert.ok(r.html().includes('Scores + déplacement'));
- await next(r);assert.ok(r.html().includes('Départ commun'));assert.ok(!r.html().includes('<select'));
+ await next(r);assert.ok(r.html().includes('Choisir la durée des rencontres'));await next(r);assert.ok(r.html().includes('Départ commun'));assert.ok(!r.html().includes('<select'));
  assert.equal(r.run('draft.step'),7);assert.ok(r.html().includes('Ouvrir les terrains'));assert.ok(r.html().includes('Nom du tournoi'));assert.equal(r.node('toast').textContent,'');
  await r.action('create');assert.ok(r.html().includes('Rotation <b>1</b>'));assert.equal(r.run('tourney().teams[0].name'),'Les Comètes');assert.equal(r.run('tourney().config.referees'),true);
  await r.action('start');assert.equal(r.spoken.at(-1).text,'Jouez !');
@@ -157,9 +157,10 @@ test('Sports collectifs : uniquement effectifs, aucune liste individuelle même 
 });
 test('Roulettes : heures pour le cours seulement, budget et rencontres précis à la seconde',async()=>{
  const r=runtime();r.run("newDraft();draft.mode='existing';draft.step=6;render()");
- assert.equal((r.html().match(/class="duration-picker"/g)??[]).length,4);
+ assert.equal((r.html().match(/class="duration-picker"/g)??[]).length,3);
  assert.equal((r.html().match(/data-wheel-unit="hours"/g)??[]).length,1);assert.ok(r.html().includes('data-wheel-field="availableMinutes" data-wheel-unit="hours"'));
- for(const field of['availableMinutes','setupMinutes','breakSeconds','duration'])for(const unit of['minutes','seconds'])assert.ok(r.html().includes('data-wheel-field="'+field+'" data-wheel-unit="'+unit+'"'));
+ for(const field of['availableMinutes','setupMinutes','breakSeconds'])for(const unit of['minutes','seconds'])assert.ok(r.html().includes('data-wheel-field="'+field+'" data-wheel-unit="'+unit+'"'));
+ await r.action('timing-page',{id:'matches'});assert.equal((r.html().match(/class="duration-picker"/g)??[]).length,1);for(const unit of ['minutes','seconds'])assert.ok(r.html().includes('data-wheel-field="duration" data-wheel-unit="'+unit+'"'));assert.ok(!r.html().includes('data-wheel-unit="hours"'));
  r.run("updateDurationWheel('availableMinutes','seconds',27);updateDurationWheel('setupMinutes','seconds',19);updateDurationWheel('breakSeconds','minutes',1);updateDurationWheel('breakSeconds','seconds',13);updateDurationWheel('duration','minutes',2);updateDurationWheel('duration','seconds',37)");
  const p=plain(r.run('draftTiming()'));assert.equal(p.budget,5427);assert.equal(p.setup,619);assert.equal(p.transition,73);assert.equal(r.run('draftCfg().duration'),157);
  await r.action('create');assert.equal(r.run('tourney().config.duration'),157);assert.equal(r.run('E.current(tourney()).clock.remaining'),157000);
@@ -282,4 +283,22 @@ test('Identités compactes : quatre cartes par page, saisies et réduction conse
  await r.action('team-page',{delta:'1'});assert.equal((r.html().match(/<article class="identity-card/g)??[]).length,1);assert.ok(r.html().includes('9–9 / 9'));
  r.input({dataset:{teamName:'8'},value:'Les Lynx'});await r.action('team-page',{delta:'-1'});await r.action('team-page',{delta:'1'});assert.ok(r.html().includes('value="Les Lynx"'));
  r.run('resizeTeams(4);render()');assert.equal(r.run('draft.teamPage'),0);assert.equal((r.html().match(/<article class="identity-card/g)??[]).length,4);
+});
+
+test('Temps en deux écrans : progression, retour et valeurs conservées',async()=>{
+ const r=runtime();r.run("newDraft('ultimate');draft.mode='existing';draft.step=6;render()");assert.ok(r.html().includes('timing-budget'));assert.ok(!r.html().includes('class="timing-proposals"'));
+ r.run("updateDurationWheel('availableMinutes','seconds',20);updateDurationWheel('breakSeconds','seconds',50)");await next(r);assert.equal(r.run('draft.step'),6);assert.equal(r.run('draft.timingPage'),1);assert.ok(r.html().includes('Durées proposées'));assert.ok(!r.html().includes('class="finish-choices"'));
+ r.run("updateDurationWheel('duration','minutes',3);updateDurationWheel('duration','seconds',15)");await r.action('wizard-back');assert.equal(r.run('draft.timingPage'),0);assert.equal(r.run('draftCfg().duration'),195);assert.equal(r.run('draftCfg().breakSeconds'),50);
+ await next(r);assert.equal(r.run('draftCfg().duration'),195);await next(r);assert.equal(r.run('draft.step'),7);await r.action('wizard-back');assert.equal(r.run('draft.timingPage'),1);
+});
+
+test('Raquettes : résultat saisi au clavier, classement et voisins préservés',async()=>{
+ for(const sport of ['badminton','table']){
+  const r=runtime();open(r,fixture(sport,6,3,{endMode:'free'}));await r.action('start');const id=r.run('E.current(tourney()).matches[0].id');assert.ok(r.html().includes('data-action="quick-result"'));assert.ok(r.html().includes('data-action="score"'));await r.action('quick-result',{match:id});assert.ok(r.node('modal').innerHTML.includes('Saisir le résultat'));assert.ok(r.node('modal').innerHTML.includes('inputmode="numeric"'));
+  r.node('edit-score-a').value='21';r.node('edit-score-b').value='15';await r.action('save-match',{match:id,resultEntry:'quick'});assert.equal(r.run('E.current(tourney()).matches[0].scoreA'),21);assert.equal(r.run('E.current(tourney()).matches[0].scoreB'),15);assert.equal(r.run('E.current(tourney()).matches[0].status'),'done');assert.equal(r.run('E.current(tourney()).matches[1].status'),'live');assert.ok(r.run('E.standings(tourney()).some(x=>x.played===1)'));
+ }
+});
+test('Saisie directe : score vide refusé, égalité décisive conservée',async()=>{
+ const r=runtime();open(r,fixture('table',4,2,{formula:'knockout'}));const id=r.run('E.current(tourney()).matches[0].id');await r.action('quick-result',{match:id});r.node('edit-score-a').value='';r.node('edit-score-b').value='11';await assert.rejects(r.action('save-match',{match:id,resultEntry:'quick'}),/deux scores/);assert.equal(r.run('E.current(tourney()).matches[0].status'),'scheduled');
+ r.node('edit-score-a').value='11';await r.action('save-match',{match:id,resultEntry:'quick'});assert.equal(r.run('E.current(tourney()).matches[0].tieBreak'),'golden');assert.match(r.node('toast').textContent,/point décisif/);
 });

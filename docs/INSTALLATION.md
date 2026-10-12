@@ -26,3 +26,5 @@ La branche `main` conserve le projet complet ; la branche `gh-pages` contient un
 Sources :
 - https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
 - https://support.apple.com/fr-be/guide/ipad/ipad8f1f7a29/ipados
+
+Version 2.12 : le cache web est renouvelé ; rouvrir l’application avec une connexion pour recevoir les nouveaux écrans et commandes.
