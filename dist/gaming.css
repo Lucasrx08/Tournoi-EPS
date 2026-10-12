@@ -458,6 +458,34 @@ dialog::backdrop { background:#202022b8; }
   .courts-grid.dense .score-row { min-height:94px; }
 }
 
+/* Compact preparation, with a horizontal summary instead of a tall card. */
+@media(min-width:900px) {
+  .wizard-step-2 { gap:10px; }
+  .wizard-step-2 .mode-choices .choice-card { min-height:70px; padding:9px 12px; }
+  .wizard-step-2 .mode-choices strong { font-size:17px; }
+  .wizard-step-2 .mode-choices span { font-size:14px; }
+  .wizard-step-2 .roster-tools { padding:0; gap:8px; }
+  .wizard-step-2 .roster-tools .number-field>span { font-size:14px; }
+  .wizard-step-2 .roster-tools .number-box input { font-size:30px; }
+  .wizard-step-2 .proposal { min-height:0; padding:10px 12px; gap:5px; }
+  .wizard-step-2 .proposal>strong { font-size:27px; }
+  .wizard-step-2 .proposal-stats { padding:6px 0; gap:8px; }
+  .wizard-step-2 .proposal-stats b { font-size:20px; }
+  .wizard-step-2 .proposal-single .proposal { display:grid; grid-template-columns:minmax(180px,.7fr) minmax(0,2fr); align-items:center; column-gap:20px; }
+  .wizard-step-2 .proposal-single .proposal-tag { grid-column:1; justify-self:start; }
+  .wizard-step-2 .proposal-single .proposal>strong { grid-column:1; }
+  .wizard-step-2 .proposal-single .proposal>span:not(.proposal-tag) { grid-column:1; }
+  .wizard-step-2 .proposal-single .proposal-stats { grid-column:2; grid-row:1/4; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); border-top:0; border-left:1px solid var(--line); padding:8px 16px; }
+  .wizard-step-2 .proposal-single .proposal>i { grid-column:1/-1; margin-top:2px; }
+  .courts-grid.dense .court-now { padding:8px 8px 6px; gap:6px; }
+  .courts-grid.dense .score-row { gap:8px; }
+  .courts-grid.dense .score-team .team-name { font-size:13px; line-height:1.2; }
+  .courts-grid.dense .court-head>strong { font-size:15px; }
+  .courts-grid.dense .court-upcoming { padding:9px 8px; gap:7px; }
+  .courts-grid.dense .upcoming-side strong { font-size:11px; line-height:1.2; }
+  .courts-grid.dense .upcoming-ref { font-size:10px; }
+}
+
 @media print {
   body { background:white; }
   .court-card,.leader-card,.panel { box-shadow:none; }

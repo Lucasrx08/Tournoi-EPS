@@ -1,4 +1,4 @@
-# Tournoi EPS · conception version 2.12
+# Tournoi EPS · conception version 2.13
 
 L’interface s’inspire d’une console de jeu de sport et de cartes de compétition. La palette utilise un fond clair #eeede8, un anthracite #202022, du blanc #fffefa et un accent citron #d9f85c. Les couleurs de chasubles restent indépendantes de cette palette et ne changent pas dans les données enregistrées.
 
@@ -145,3 +145,5 @@ PWA statique à modules JavaScript, sans dépendance réseau à l’exécution. 
 Depuis la version 2.11, les cartes d’identité gardent la même largeur sur toutes les pages. Les terrains de un à trois occupent une rangée si la largeur le permet. La typographie de score dépend de la cellule et les noms ne peuvent pas déborder sur son en-tête. Le cadre ordinateur est une grille de hauteur explicite 100dvh.
 
 Depuis la version 2.12, la préparation du temps distingue le budget de séance et la durée des rencontres, avec retour possible sans perdre les valeurs. La saisie rapide des deux scores termine la rencontre selon les règles existantes, y compris le départage. La grille limite la hauteur des cartes selon leur largeur ; les SVG préservent leur rapport de forme. Pour huit terrains ou plus, chaque adversaire occupe une ligne avec son nom et son score. Les prochaines rotations restent visibles dans une zone dédiée.
+
+Version 2.13 : synthèse de répartition horizontale sur ordinateur, retrait des mentions inutiles en simple, grille dense utilisant la hauteur disponible et textes réduits. La vérification visuelle Safari reste à réaliser.

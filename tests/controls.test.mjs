@@ -59,8 +59,14 @@ test('Grille montée : trois terrains et scores recalculés quand la hauteur dim
 
 test('Douze tables : toutes visibles en deux rangées sur un ordinateur de largeur 1325 px',()=>{
  const g=C.courtLayout(12,1325,420);assert.equal(g.cols,6);assert.equal(g.rows,2);assert.ok(g.minHeight*2+10<=420);
- const m=C.courtTypography((1325-50)/6,(420-10)/2,false,false,true);assert.ok(m.scoreSize>=32);assert.equal(m.nameSize,14);
+ const m=C.courtTypography((1325-50)/6,(420-10)/2,false,false,true);assert.ok(m.scoreSize>=32);assert.equal(m.nameSize,13);
 });
 test('Trois terrains : hauteur plafonnée par leur largeur pour éviter les tracés étirés',()=>{
  const styles=new Map(),grid={children:[{},{},{}],clientWidth:1200,clientHeight:900,style:{setProperty:(k,v)=>styles.set(k,String(v))}};C.mountCourtLayout({querySelector:()=>grid});const w=(1200-20)/3,h=parseInt(styles.get('--court-height'));assert.ok(h<=w*.5+140);assert.ok(h<400);
+});
+
+test('La grille dense utilise toute la hauteur disponible sans agrandir les textes',()=>{
+ const styles=new Map(),grid={children:Array.from({length:12},()=>({})),clientWidth:1325,clientHeight:650,style:{setProperty:(k,v)=>styles.set(k,String(v))}};
+ C.mountCourtLayout({querySelector:()=>grid});
+ const rows=Number(styles.get('--rows')),height=parseInt(styles.get('--court-height'));assert.ok(Math.abs(height*rows+10*(rows-1)-650)<rows);assert.ok(parseInt(styles.get('--score-size'))<=36);assert.equal(styles.get('--name-size'),'13px');
 });
