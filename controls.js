@@ -48,14 +48,20 @@ export function mountWheels(root,onChange){
 export function courtLayout(count,width,height,referees=false,bonus=false){
  const gap=10,minWidth=width<580?220:235,minHeight=(referees?250:230)+(bonus?24:0);
  const max=Math.max(1,Math.min(6,count,Math.floor((width+gap)/(minWidth+gap))));
+ if(count<=3&&max>=count)return {cols:count,rows:1,minHeight};
  const options=Array.from({length:max},(_,i)=>{const cols=i+1,rows=Math.ceil(count/cols),w=(width-gap*(cols-1))/cols,h=(height-gap*(rows-1))/rows;return {cols,rows,fits:h>=minHeight,cost:Math.abs(Math.log(Math.max(.1,w/h)/1.35))+(cols*rows-count)*.08}});
  const fitting=options.filter(x=>x.fits),choice=fitting.length?fitting.sort((a,b)=>a.cost-b.cost)[0]:options[max-1];
  return {cols:choice.cols,rows:choice.rows,minHeight};
 }
+export function courtTypography(width,height,referees=false,bonus=false){
+ const nameSize=width>=360?18:16,identityHeight=nameSize===18?48:44;
+ const scoreSpace=Math.max(32,height-32-84-8-20-4-identityHeight-(referees?18:0)-(bonus?24:0));
+ return {scoreSize:Math.max(32,Math.min(132,Math.floor(width*.22),Math.floor(scoreSpace))),nameSize,identityHeight,scoreSpace};
+}
 let courtObserver;
 export function mountCourtLayout(root,referees=false,bonus=false){
  courtObserver?.disconnect();const grid=root.querySelector('.courts-grid');if(!grid)return;
- const fit=()=>{const x=courtLayout(grid.children.length,grid.clientWidth,grid.clientHeight,referees,bonus);grid.style.setProperty('--cols',x.cols);grid.style.setProperty('--rows',x.rows);grid.style.setProperty('--court-min',x.minHeight+'px')};
+ const fit=()=>{const x=courtLayout(grid.children.length,grid.clientWidth,grid.clientHeight,referees,bonus);grid.style.setProperty('--cols',x.cols);grid.style.setProperty('--rows',x.rows);grid.style.setProperty('--court-min',x.minHeight+'px');const m=courtTypography((grid.clientWidth-10*(x.cols-1))/x.cols,Math.max(x.minHeight,(grid.clientHeight-10*(x.rows-1))/x.rows),referees,bonus);grid.style.setProperty('--score-size',m.scoreSize+'px');grid.style.setProperty('--name-size',m.nameSize+'px');grid.style.setProperty('--identity-height',m.identityHeight+'px')};
  fit();if(typeof ResizeObserver!=='undefined'){courtObserver=new ResizeObserver(fit);courtObserver.observe(grid)}
 }
 export function mountCourtDrag(root,onMove){
