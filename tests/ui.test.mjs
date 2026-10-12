@@ -274,3 +274,12 @@ test('Correction de tableau : confirmation intégrée et formulaire préservé a
  assert.equal(r.run('JSON.stringify(tourney())'),before);assert.equal(r.node('modal').innerHTML,html);assert.equal(r.node('edit-score-b').value,'3');
  await acceptAction(r,'save-match',{match:mid});assert.equal(r.run('tourney().rotations.length'),1);assert.equal(r.run('tourney().rotations[0].matches[0].scoreB'),3);assert.equal(r.node('modal').open,false);
 });
+
+test('Identités compactes : quatre cartes par page, saisies et réduction conservées',async()=>{
+ const r=runtime();r.run("newDraft('handball');draft.mode='existing';resizeTeams(9);draft.step=3;render()");
+ assert.equal((r.html().match(/<article class="identity-card/g)??[]).length,4);assert.ok(r.html().includes('1–4 / 9'));
+ await r.action('team-page',{delta:'1'});assert.equal((r.html().match(/<article class="identity-card/g)??[]).length,4);assert.ok(r.html().includes('5–8 / 9'));
+ await r.action('team-page',{delta:'1'});assert.equal((r.html().match(/<article class="identity-card/g)??[]).length,1);assert.ok(r.html().includes('9–9 / 9'));
+ r.input({dataset:{teamName:'8'},value:'Les Lynx'});await r.action('team-page',{delta:'-1'});await r.action('team-page',{delta:'1'});assert.ok(r.html().includes('value="Les Lynx"'));
+ r.run('resizeTeams(4);render()');assert.equal(r.run('draft.teamPage'),0);assert.equal((r.html().match(/<article class="identity-card/g)??[]).length,4);
+});

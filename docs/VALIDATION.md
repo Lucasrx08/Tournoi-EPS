@@ -1,10 +1,20 @@
-# Validation · version 2.9 · 11 octobre 2026
+# Validation · version 2.10 · 11 octobre 2026
 
-120 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent le JavaScript en mode strict dans un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
+121 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent le JavaScript en mode strict dans un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
+
+## Mise en page sur ordinateur et signature
+
+La couleur du bouton de marque masquait « TOURNOI » sur le bandeau anthracite. La marque utilise désormais explicitement du blanc ; « Créé par L. RIGAUX » apparaît dans le bandeau et le pied de page.
+
+Sur ordinateur (largeur à partir de 900 px), la hauteur du cadre est bornée à celle de la fenêtre. Les éléments centraux gardent un minimum nul ; le pied de page et les commandes Retour / Continuer ne se rétrécissent pas. Sous 800 px de hauteur, les en-têtes, cartes et explications sont compacts. Les durées occupent quatre colonnes et les propositions sont côte à côte. Les identités affichent quatre cartes par page, sur une rangée sur ordinateur. Un nouveau test couvre les pages 1–4, 5–8 et 9, la conservation d’un nom saisi et le retour à une page valide après réduction d’effectif.
+
+Les listes longues gardent un défilement interne. Les roulettes gardent leurs 32 px par ligne et leur fenêtre de 96 px. La grille des terrains conserve son minimum de lisibilité ; un grand nombre de terrains peut nécessiter un défilement du tableau.
+
+Aucun navigateur de contrôle compatible n’est disponible : les règles CSS ont été contrôlées, mais les hauteurs réelles sur Safari et les appareils restent à vérifier.
 
 ## Pictogrammes et chasubles
 
-120 tests passent après remplacement des icônes et chasubles. Les contours des équipements partagent une grille de 24 px et un trait de 1,65 px. Les 11 glyphes de matériel, listes et arbitrage, ainsi que les 11 couleurs de chasubles, ont été rendus avec librsvg et inspectés sur une planche à 24 et 80 pixels. Les 22 SVG sont valides. Le cadre crème, les grosses bordures et les ombres des chasubles ont été supprimés. Les logos et couleurs enregistrés restent inchangés.
+121 tests passent après remplacement des icônes et chasubles. Les contours des équipements partagent une grille de 24 px et un trait de 1,65 px. Les 11 glyphes de matériel, listes et arbitrage, ainsi que les 11 couleurs de chasubles, ont été rendus avec librsvg et inspectés sur une planche à 24 et 80 pixels. Les 22 SVG sont valides. Le cadre crème, les grosses bordures et les ombres des chasubles ont été supprimés. Les logos et couleurs enregistrés restent inchangés.
 
 Les figures de joueur de handball ont été remplacées par un ballon sur les terrains, l’aperçu et les listes de tournois. La palette et la disposition approuvées sont conservées. Cette inspection porte sur les glyphes vectoriels, pas sur une capture du navigateur.
 
@@ -14,13 +24,13 @@ Le blocage de « Fin des matchs » a été reproduit dans le DOM simulé en fais
 
 Neuf tests supplémentaires couvrent la délégation d’un clic sur Fin des matchs, la validation, l’annulation, la conservation des scores, la rotation suivante, la fin individuelle, les départages, les messages d’erreur après fermeture d’un formulaire, la réinitialisation du chrono, les confirmations périmées, deux restaurations successives et le recalcul d’un tableau avec annulation préservant le formulaire. Les confirmations périmées ne terminent pas une nouvelle rotation. Le moteur du tournoi n’est pas modifié.
 
-Le cache v29 inclut le document contenant le dialogue intégré. La syntaxe JavaScript, les identifiants HTML uniques et les 27 ressources locales ont été vérifiés.
+Le cache v210 inclut le document contenant le dialogue intégré. La syntaxe JavaScript, les identifiants HTML uniques et les 27 ressources locales ont été vérifiés.
 
 ## Direction graphique conservée
 
 La palette bleu nuit / orange / menthe a été retirée des feuilles actives. Le fond est clair, les cartes et le chronomètre sont anthracite, l’accent est citron électrique. Les images d’activité sont affichées en niveaux de gris ; les couleurs de chasubles et logos restent intactes. Les cartes d’identité, écussons et affiches des prochaines oppositions utilisent les données du tournoi.
 
-L’icône SVG et ses versions PNG de 192 et 512 pixels ont été mises à jour dans la nouvelle palette. Le manifeste PWA et le cache v29 sont cohérents avec cette version. Les 27 ressources du cache existent localement. Les délimiteurs CSS, couleurs hexadécimales et syntaxe JavaScript ont été vérifiés.
+L’icône SVG et ses versions PNG de 192 et 512 pixels ont été mises à jour dans la nouvelle palette. Le manifeste PWA et le cache v210 sont cohérents avec cette version. Les 27 ressources du cache existent localement. Les délimiteurs CSS, couleurs hexadécimales et syntaxe JavaScript ont été vérifiés.
 
 Les contrastes calculés sont de 13,88:1 pour le texte anthracite sur le fond clair, 13,58:1 sur l’accent citron, 7,01:1 pour le texte secondaire sur les panneaux blancs et 16,26:1 pour le blanc sur anthracite. Les initiales des joueurs restent blanches sur anthracite, avec une bordure de leur couleur individuelle.
 
