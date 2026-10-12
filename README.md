@@ -1,4 +1,4 @@
-# Tournoi EPS · version 2.13
+# Tournoi EPS · version 2.14
 
 Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
 
@@ -75,3 +75,5 @@ La version 2.11 corrige les dimensions repérées sur les captures : cartes d’
 La version 2.12 répartit le réglage du temps sur deux écrans courts, ajoute la saisie directe des deux résultats dans les sports de raquettes et limite la hauteur des terrains. À partir de huit terrains, les noms et scores sont présentés en lignes compactes ; douze tables peuvent être réparties en six colonnes et deux rangées lorsque la largeur disponible le permet. Les tracés conservent leurs proportions.
 
 Version 2.13 : synthèse de répartition horizontale sur ordinateur, retrait des mentions inutiles en simple, grille dense utilisant la hauteur disponible et textes réduits. La vérification visuelle Safari reste à réaliser.
+
+Version 2.14 : classement compact paginé par huit participants, total et plage de rangs visibles, zone de défilement bornée sur ordinateur. Test du parcours des 18 rangs et des limites de pages. Rendu Safari non contrôlé.

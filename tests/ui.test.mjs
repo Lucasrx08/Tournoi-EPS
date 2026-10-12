@@ -302,3 +302,12 @@ test('Saisie directe : score vide refusé, égalité décisive conservée',async
  const r=runtime();open(r,fixture('table',4,2,{formula:'knockout'}));const id=r.run('E.current(tourney()).matches[0].id');await r.action('quick-result',{match:id});r.node('edit-score-a').value='';r.node('edit-score-b').value='11';await assert.rejects(r.action('save-match',{match:id,resultEntry:'quick'}),/deux scores/);assert.equal(r.run('E.current(tourney()).matches[0].status'),'scheduled');
  r.node('edit-score-a').value='11';await r.action('save-match',{match:id,resultEntry:'quick'});assert.equal(r.run('E.current(tourney()).matches[0].tieBreak'),'golden');assert.match(r.node('toast').textContent,/point décisif/);
 });
+
+test('Classement : toutes les équipes accessibles par pages de huit',async()=>{
+ const r=runtime();open(r,fixture('ultimate',18,8));await r.action('rank');
+ const ranks=()=>[...r.html().matchAll(/class="rank-number">(\d+)</g)].map(x=>Number(x[1]));
+ assert.deepEqual(ranks(),[1,2,3,4,5,6,7,8]);assert.match(r.html(),/1–8 \/ 18 équipes/);
+ await r.action('ranking-page',{delta:'1'});assert.deepEqual(ranks(),[9,10,11,12,13,14,15,16]);
+ await r.action('ranking-page',{delta:'1'});assert.deepEqual(ranks(),[17,18]);assert.match(r.html(),/17–18 \/ 18 équipes/);
+ await r.action('ranking-page',{delta:'1'});assert.deepEqual(ranks(),[17,18]);await r.action('rank');assert.deepEqual(ranks(),[1,2,3,4,5,6,7,8]);
+});

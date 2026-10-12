@@ -1,6 +1,6 @@
-# Validation · version 2.13 · 12 octobre 2026
+# Validation · version 2.14 · 12 octobre 2026
 
-129 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent le JavaScript en mode strict dans un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
+130 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent le JavaScript en mode strict dans un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
 
 ## Corrections à partir des captures du 12 octobre
 
@@ -103,3 +103,5 @@ Aucun navigateur de contrôle compatible n’est disponible dans cet environneme
 Les tests couvrent le passage entre les deux écrans de temps, le retour et la conservation des durées. La saisie directe 21–15 termine uniquement la rencontre choisie et met à jour le classement ; une saisie vide est refusée et une égalité conserve le départage. Les calculs de grille sont vérifiés pour douze tables dans une zone de 1325 × 420 px (six colonnes, deux rangées) et pour trois terrains dont la hauteur reste bornée. Ces tests de dimensions ne remplacent pas une vérification visuelle dans Safari.
 
 Version 2.13 : synthèse de répartition horizontale sur ordinateur, retrait des mentions inutiles en simple, grille dense utilisant la hauteur disponible et textes réduits. La vérification visuelle Safari reste à réaliser.
+
+Version 2.14 : classement compact paginé par huit participants, total et plage de rangs visibles, zone de défilement bornée sur ordinateur. Test du parcours des 18 rangs et des limites de pages. Rendu Safari non contrôlé.
