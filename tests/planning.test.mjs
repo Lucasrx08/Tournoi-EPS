@@ -17,7 +17,7 @@ test('Propositions : choix de compromis attente / remplaçants',()=>{
 });
 test('Prévision : toutes les formules estimées sans mutation du tournoi',()=>{
  for(const formula of Object.keys(E.FORMULAS)){
-  const t=tournament(8,3,formula,formula==='custom'?{customPairs:[[0,1],[2,3],[4,5]]}:{}),before=JSON.stringify(t),plan=P.estimateRotations(t);assert.ok(plan.count>=t.rotations.length);assert.ok(plan.count<500);assert.equal(JSON.stringify(t),before);
+  const t=tournament(8,3,formula,formula==='custom'?{customPairs:[[0,1],[2,3],[4,5]]}:formula==='multisport'?{courtSports:['handball','basket','ultimate']}:{}),before=JSON.stringify(t),plan=P.estimateRotations(t);assert.ok(plan.count>=t.rotations.length);assert.ok(plan.count<500);assert.equal(JSON.stringify(t),before);
  }
 });
 test('90 minutes : matchs de 5 minutes, déplacements et installation inclus',()=>{

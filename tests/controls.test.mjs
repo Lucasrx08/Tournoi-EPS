@@ -75,3 +75,5 @@ test('Petite fenêtre : une hauteur minimale protège noms, scores et arbitrage'
  for(const height of [180,260,400]){const g=C.courtLayout(8,1100,height,true);assert.ok(g.minHeight>=250);assert.ok(g.cols<=5);assert.ok(g.rows>=2);}
  const g=C.courtLayout(8,1200,500,true);assert.equal(g.cols,4);assert.equal(g.rows,2);
 });
+
+test('Multisport : la hauteur réserve la seconde ligne du titre du terrain',()=>{assert.equal(C.courtLayout(12,1325,500,true,false,true).minHeight,C.courtLayout(12,1325,500,true).minHeight+24);});

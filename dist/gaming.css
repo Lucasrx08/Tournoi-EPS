@@ -599,6 +599,17 @@ dialog::backdrop { background:#202022b8; }
  .ranking { min-width:540px; }
 }
 
+/* One activity on each court, one shared tournament. */
+.multisport-entry { background:var(--ink); color:var(--lime); border-color:var(--ink); }
+.multisport-courts { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px; overflow:auto; align-content:start; }
+.multisport-court { border:1px solid var(--line); border-radius:7px; padding:12px; background:var(--soft); }
+.court-sport-label { display:block; font-family:Outfit,system-ui,sans-serif; font-size:10px; font-weight:500; line-height:1.2; letter-spacing:0; text-transform:none; margin-top:3px; }
+.courts-grid .court-head:has(.court-sport-label) { min-height:42px; }
+.multisport-exposure { min-height:0; overflow:auto; }
+.multisport-exposure h3 { margin-bottom:8px; font-size:16px; }
+.multisport-exposure .ranking { font-size:13px; }
+.multisport-exposure .ranking td,.multisport-exposure .ranking th { padding:6px 8px; }
+
 @media print {
   body { background:white; }
   .court-card,.leader-card,.panel { box-shadow:none; }

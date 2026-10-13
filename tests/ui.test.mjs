@@ -311,3 +311,13 @@ test('Classement : toutes les équipes accessibles par pages de huit',async()=>{
  await r.action('ranking-page',{delta:'1'});assert.deepEqual(ranks(),[17,18]);assert.match(r.html(),/17–18 \/ 18 équipes/);
  await r.action('ranking-page',{delta:'1'});assert.deepEqual(ranks(),[17,18]);await r.action('rank');assert.deepEqual(ranks(),[1,2,3,4,5,6,7,8]);
 });
+
+test('Multisport : parcours complet, activités visibles par terrain et exports',async()=>{
+ const r=runtime();assert.ok(r.html().includes('data-action="new-multisport"'));await r.action('new-multisport');assert.equal((r.html().match(/data-court-sport=/g)??[]).length,3);
+ await next(r);await r.action('roster-mode',{id:'existing'});await next(r);await next(r);assert.ok(r.html().includes('Passages prévus par équipe'));assert.deepEqual(plain(r.run('E.sportExposure(draftTournament()).map(x=>Object.values(x.counts))')),Array.from({length:6},()=>[2,2,2]));
+ await next(r);await next(r);assert.ok(!r.html().includes('data-id="score"'));await next(r);await next(r);await r.action('create');
+ assert.ok(r.html().includes('court-sport-label'));for(const sport of ['Handball','Basket-ball','Ultimate'])assert.ok(r.html().includes(sport));assert.equal(r.run('tourney().rotations.length'),6);
+ await r.action('rank');assert.ok(!r.html().includes('<th>Marqués</th>'));assert.ok(r.html().includes('Départage : victoires'));
+ const sheets=plain(r.run('sheets(tourney())'));assert.ok(sheets.find(s=>s.name==='Rotations et résultats').rows[0].includes('Sport'));assert.equal(r.run('validData(JSON.parse(JSON.stringify(data)))'),true);
+ await r.action('stats');assert.ok(r.node('modal').innerHTML.includes('Passages prévus par équipe'));
+});
