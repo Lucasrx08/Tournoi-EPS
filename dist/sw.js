@@ -1,4 +1,4 @@
-const CACHE='tournoi-eps-v216-20261013';
+const CACHE='tournoi-eps-v217-20261013';
 const ASSETS=['./','./index.html','./style.css','./gaming.css','./app.js','./engine.js','./planning.js','./controls.js','./rackets.js','./fonts/outfit-variable.ttf','./fonts/barlow-condensed-bold.ttf','./exchange.js','./vendor/pako-inflate.min.js','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./images/activity-handball.webp','./images/activity-badminton.webp','./images/activity-ultimate.webp','./images/activity-basket.webp','./images/activity-volley.webp','./images/activity-futsal.webp','./images/activity-table.webp','./images/activity-rugby.webp','./images/activity-football.webp','./images/activity-custom.webp'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('tournoi-eps-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

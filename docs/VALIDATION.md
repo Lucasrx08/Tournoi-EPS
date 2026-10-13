@@ -1,6 +1,6 @@
-# Validation · version 2.16 · 13 octobre 2026
+# Validation · version 2.17 · 13 octobre 2026
 
-140 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent le JavaScript en mode strict dans un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
+157 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent le JavaScript en mode strict dans un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
 
 ## Corrections à partir des captures du 12 octobre
 
@@ -111,3 +111,13 @@ Version 2.15 : typographie fluide et retours à la ligne sur accueil, préparati
 Version 2.16 : un tournoi multisport permet de choisir un sport collectif sur chaque terrain. Le nombre de rotations est fixé avant le lancement. Un calcul déterministe répartit les matchs et optimise les passages par sport, les répétitions consécutives et les adversaires. La répartition tient compte du nombre de terrains par sport et reste consultable avant le lancement et dans Statistiques. Les terrains du plan restent fixés après la création ; seuls les déplacements vers un terrain du même sport sont autorisés. Le classement utilise victoire/nul/défaite, puis victoires, défaites et nom ; les buts de sports différents ne départagent pas les équipes. Le sport est conservé par rencontre et exporté dans les feuilles de résultats.
 
 Les cas six équipes / trois sports / six rotations (2–2–2), cinq rotations (2–2–1), les effectifs impairs, les attentes, les capacités inégales, la progression, la correction, les sauvegardes et le parcours de préparation sont testés. Le calcul cherche l’équilibre ; il ne garantit pas l’optimum pour chaque combinaison de contraintes. Le rendu sur Safari et les commandes tactiles restent à vérifier sur appareil.
+
+Version 2.17 : le multisport se trouve dans Activité personnalisée. Le badminton distingue terrains entiers et demi-terrains ; les joueurs de raquettes n’ont plus de logos. Une nouvelle séance peut recommencer un tournoi ou réutiliser son classement pour choisir une autre formule, sans modifier l’original. Les poules proposent des répartitions et des effectifs modifiables dont la somme est validée ; les niveaux proches et poules équilibrées sont distingués.
+
+Le classement collectif utilise les points de victoire/nul/défaite, puis les points marqués, la différence et les points d’une mini-ligue des confrontations entre participants encore ex æquo. Les raquettes utilisent victoires, points marqués et points bonus. Les places imposées par les formules à élimination ou la montante-descendante restent prioritaires. Les points normaux et bonus sont suivis séparément, avec correction explicite et annulation du dernier point. Les anciens bonus sans détail restent non renseignés.
+
+L’export iDoceo propose XLSX et CSV : une ligne par élève ou membre d’un duo en raquettes (nom, prénom, classe, classement, niveau de poule, victoires, points normaux, points bonus), une ligne par équipe en sports collectifs (classement, victoires, nuls, défaites). Aucune identité d’élève n’est inventée pour les équipes collectives. Les niveaux sont renseignés pour les groupes de niveau et la montante-descendante terminée ; les poules équilibrées ne sont pas hiérarchisées.
+
+Les tests couvrent les deux surfaces de badminton, l’absence de commandes et de logos pour les raquettes, le redémarrage indépendant, l’enchaînement classement → poules, les tailles de poules et leurs erreurs, tous les départages, le suivi normal/bonus, le détail inconnu des anciens scores et les deux schémas iDoceo. La mise en page Safari/iPad et l’import natif iDoceo n’ont pas été contrôlés dans cet environnement.
+
+Les fichiers XLSX et CSV iDoceo ont été générés : XML du classeur valide, cellules numériques distinctes pour normal et bonus, accents et neuf colonnes CSV vérifiés. L’export ne modifie pas les participants et n’exporte pas les élèves de remplissage.

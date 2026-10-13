@@ -1,4 +1,4 @@
-# Tournoi EPS · version 2.16
+# Tournoi EPS · version 2.17
 
 Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
 
@@ -83,3 +83,11 @@ Version 2.15 : typographie fluide et retours à la ligne sur accueil, préparati
 Version 2.16 : un tournoi multisport permet de choisir un sport collectif sur chaque terrain. Le nombre de rotations est fixé avant le lancement. Un calcul déterministe répartit les matchs et optimise les passages par sport, les répétitions consécutives et les adversaires. La répartition tient compte du nombre de terrains par sport et reste consultable avant le lancement et dans Statistiques. Les terrains du plan restent fixés après la création ; seuls les déplacements vers un terrain du même sport sont autorisés. Le classement utilise victoire/nul/défaite, puis victoires, défaites et nom ; les buts de sports différents ne départagent pas les équipes. Le sport est conservé par rencontre et exporté dans les feuilles de résultats.
 
 Les cas six équipes / trois sports / six rotations (2–2–2), cinq rotations (2–2–1), les effectifs impairs, les attentes, les capacités inégales, la progression, la correction, les sauvegardes et le parcours de préparation sont testés. Le calcul cherche l’équilibre ; il ne garantit pas l’optimum pour chaque combinaison de contraintes. Le rendu sur Safari et les commandes tactiles restent à vérifier sur appareil.
+
+Version 2.17 : le multisport se trouve dans Activité personnalisée. Le badminton distingue terrains entiers et demi-terrains ; les joueurs de raquettes n’ont plus de logos. Une nouvelle séance peut recommencer un tournoi ou réutiliser son classement pour choisir une autre formule, sans modifier l’original. Les poules proposent des répartitions et des effectifs modifiables dont la somme est validée ; les niveaux proches et poules équilibrées sont distingués.
+
+Le classement collectif utilise les points de victoire/nul/défaite, puis les points marqués, la différence et les points d’une mini-ligue des confrontations entre participants encore ex æquo. Les raquettes utilisent victoires, points marqués et points bonus. Les places imposées par les formules à élimination ou la montante-descendante restent prioritaires. Les points normaux et bonus sont suivis séparément, avec correction explicite et annulation du dernier point. Les anciens bonus sans détail restent non renseignés.
+
+L’export iDoceo propose XLSX et CSV : une ligne par élève ou membre d’un duo en raquettes (nom, prénom, classe, classement, niveau de poule, victoires, points normaux, points bonus), une ligne par équipe en sports collectifs (classement, victoires, nuls, défaites). Aucune identité d’élève n’est inventée pour les équipes collectives. Les niveaux sont renseignés pour les groupes de niveau et la montante-descendante terminée ; les poules équilibrées ne sont pas hiérarchisées.
+
+Pour iDoceo, ouvrir le fichier XLSX ou CSV dans iDoceo et associer les colonnes de noms dans l’assistant d’import : https://www.idoceo.net/index.php/en/component/content/article/idoceoimportdata?Itemid=246&catid=17. Le schéma exporté et la génération du fichier sont vérifiés ; l’import dans une installation réelle d’iDoceo reste à tester.

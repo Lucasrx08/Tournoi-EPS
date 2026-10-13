@@ -610,6 +610,19 @@ dialog::backdrop { background:#202022b8; }
 .multisport-exposure .ranking { font-size:13px; }
 .multisport-exposure .ranking td,.multisport-exposure .ranking th { padding:6px 8px; }
 
+/* Session tools and pool allocation use the same compact workspace. */
+.custom-menu { margin-top:14px; }
+.custom-menu .choice-card { min-height:140px; display:flex; align-items:flex-start; padding:16px; gap:8px; }
+.pool-setup { display:flex; flex-direction:column; gap:10px; }
+.pool-proposals { display:flex; flex-wrap:wrap; gap:7px; }
+.pool-sizes { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr)); gap:8px; }
+.pool-sizes .field { border:1px solid var(--line); padding:10px; border-radius:6px; }
+.pool-sizes .field>span { font-size:12px; }
+.bonus-breakdown { margin-top:12px; margin-bottom:8px; }
+.identity-top:not(:has(.team-token))>div { flex:1; }
+.team-crest:empty { display:none; }
+.badminton-layout { flex-shrink:0; }
+
 @media print {
   body { background:white; }
   .court-card,.leader-card,.panel { box-shadow:none; }
