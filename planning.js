@@ -36,7 +36,7 @@ export function teamProposals(students,courts,players,referees=false){
 export function syntheticParticipants(count){return Array.from({length:count},(_,i)=>({id:E.uid(),first:'Élève '+(i+1),last:'',className:'',sex:'',level:0,placeholder:true}));}
 
 export function estimateRotations(t){
- if(['rr','pools','levels','custom'].includes(t.config.formula))return {count:t.rotations.length,estimated:false};
+ if(['rr','pools','levels','custom','multisport'].includes(t.config.formula))return {count:t.rotations.length,estimated:false};
  const copy=structuredClone(t);copy.roundIndex=0;copy.completed=false;
  let visits=0;
  while(!copy.completed&&visits++<500){

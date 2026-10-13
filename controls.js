@@ -45,13 +45,13 @@ export function mountWheels(root,onChange){
 }
 
 // Keep a readable minimum cell size; large sets scroll inside the board.
-export function courtLayout(count,width,height,referees=false,bonus=false){
- const dense=count>=8,gap=10,minWidth=dense?190:width<580?220:235,minHeight=dense?220+(referees?30:0)+(bonus?48:0):(referees?250:230)+(bonus?24:0);
+export function courtLayout(count,width,height,referees=false,bonus=false,multisport=false){
+ const dense=count>=8,gap=10,minWidth=dense?190:width<580?220:235,minHeight=dense?220+(referees?30:0)+(bonus?48:0):(referees?250:230)+(bonus?24:0);const safeHeight=minHeight+(multisport?24:0);
  const max=Math.max(1,Math.min(6,count,Math.floor((width+gap)/(minWidth+gap))));
- if(count<=3&&max>=count)return {cols:count,rows:1,minHeight};
- const options=Array.from({length:max},(_,i)=>{const cols=i+1,rows=Math.ceil(count/cols),w=(width-gap*(cols-1))/cols,h=(height-gap*(rows-1))/rows;return {cols,rows,fits:h>=minHeight,cost:Math.abs(Math.log(Math.max(.1,w/h)/1.35))+(cols*rows-count)*.5}});
+ if(count<=3&&max>=count)return {cols:count,rows:1,minHeight:safeHeight};
+ const options=Array.from({length:max},(_,i)=>{const cols=i+1,rows=Math.ceil(count/cols),w=(width-gap*(cols-1))/cols,h=(height-gap*(rows-1))/rows;return {cols,rows,fits:h>=safeHeight,cost:Math.abs(Math.log(Math.max(.1,w/h)/1.35))+(cols*rows-count)*.5}});
  const fitting=options.filter(x=>x.fits),choice=fitting.length?fitting.sort((a,b)=>a.cost-b.cost)[0]:options.sort((a,b)=>a.cost-b.cost)[0];
- return {cols:choice.cols,rows:choice.rows,minHeight};
+ return {cols:choice.cols,rows:choice.rows,minHeight:safeHeight};
 }
 export function courtTypography(width,height,referees=false,bonus=false,dense=false){
  if(dense){const scoreSpace=Math.max(32,(height-28-60-8-20-4-(referees?32:0)-(bonus?48:0))/2);return {scoreSize:Math.max(32,Math.min(36,Math.floor(width*.16),Math.floor(scoreSpace))),nameSize:13,identityHeight:32,scoreSpace}}
@@ -60,9 +60,9 @@ export function courtTypography(width,height,referees=false,bonus=false,dense=fa
  return {scoreSize:Math.max(32,Math.min(132,Math.floor(width*.22),Math.floor(scoreSpace))),nameSize,identityHeight,scoreSpace};
 }
 let courtObserver;
-export function mountCourtLayout(root,referees=false,bonus=false){
+export function mountCourtLayout(root,referees=false,bonus=false,multisport=false){
  courtObserver?.disconnect();const grid=root.querySelector('.courts-grid');if(!grid)return;
- const fit=()=>{const x=courtLayout(grid.children.length,grid.clientWidth,grid.clientHeight,referees,bonus);grid.style.setProperty('--cols',x.cols);grid.style.setProperty('--rows',x.rows);grid.style.setProperty('--court-min',x.minHeight+'px');const width=(grid.clientWidth-10*(x.cols-1))/x.cols,available=Math.max(x.minHeight,(grid.clientHeight-10*(x.rows-1))/x.rows),height=grid.children.length>=8?available:Math.min(available,Math.max(x.minHeight,width*.5+140));grid.style.setProperty('--court-height',Math.floor(height)+'px');const m=courtTypography(width,height,referees,bonus,grid.children.length>=8);grid.style.setProperty('--score-size',m.scoreSize+'px');grid.style.setProperty('--name-size',m.nameSize+'px');grid.style.setProperty('--identity-height',m.identityHeight+'px')};
+ const fit=()=>{const x=courtLayout(grid.children.length,grid.clientWidth,grid.clientHeight,referees,bonus,multisport);grid.style.setProperty('--cols',x.cols);grid.style.setProperty('--rows',x.rows);grid.style.setProperty('--court-min',x.minHeight+'px');const width=(grid.clientWidth-10*(x.cols-1))/x.cols,available=Math.max(x.minHeight,(grid.clientHeight-10*(x.rows-1))/x.rows),height=grid.children.length>=8?available:Math.min(available,Math.max(x.minHeight,width*.5+140));grid.style.setProperty('--court-height',Math.floor(height)+'px');const m=courtTypography(width,height,referees,bonus,grid.children.length>=8);grid.style.setProperty('--score-size',m.scoreSize+'px');grid.style.setProperty('--name-size',m.nameSize+'px');grid.style.setProperty('--identity-height',m.identityHeight+'px')};
  fit();if(typeof ResizeObserver!=='undefined'){courtObserver=new ResizeObserver(fit);courtObserver.observe(grid)}
 }
 export function mountCourtDrag(root,onMove){
