@@ -106,3 +106,7 @@ export function nextRotation(t){
  if(!E.advance(copy))return null;
  R.applyPending(copy);assignReferees(copy);return E.current(copy);
 }
+
+export function poolSizes(count,pools){pools=integer(pools,1,Math.floor(count/2));return Array.from({length:pools},(_,i)=>Math.floor(count/pools)+(i<count%pools?1:0));}
+export function poolProposals(count,courts){const values=[Math.ceil(count/4),Math.min(courts,Math.floor(count/2)),Math.ceil(count/3)].map(x=>integer(x,1,Math.floor(count/2)));return [...new Set(values)].map(pools=>({count:pools,sizes:poolSizes(count,pools)}));}
+export function idoceoSheet(t){const individual=isIndividual(t.config.sport),header=individual?['Nom et prénom','Nom','Prénom','Classe','Classement général','Niveau de poule','Victoires','Points normaux','Points bonus']:['Équipe','Classement général','Victoires','Matchs nuls','Défaites'];const rows=[header];for(const s of E.standings(t)){const x=E.team(t,s.id);if(individual){const named=(x.members??[]).filter(p=>!p.placeholder),players=named.length?named:[{fullName:x.name}];if(x.nameEdited&&players.length===1)players[0]={fullName:x.name,className:players[0].className};for(const p of players)rows.push([R.playerName(p),p.last??'',p.first??'',p.className??'',s.rank,s.poolLevel??'',s.wins,s.normalPoints??'',s.bonusPoints??'']);}else rows.push([s.name,s.rank,s.wins,s.draws,s.losses]);}return {name:'iDoceo',rows};}
