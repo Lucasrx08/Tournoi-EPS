@@ -1,1 +1,1 @@
-{"name":"tournoi-eps","version":"2.17.0","type":"module","private":true,"scripts":{"test":"node --test tests/*.test.mjs"}}
+{"name":"tournoi-eps","version":"2.18.0","type":"module","private":true,"scripts":{"test":"node --test tests/*.test.mjs"}}

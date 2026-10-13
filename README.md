@@ -1,4 +1,4 @@
-# Tournoi EPS · version 2.17
+# Tournoi EPS · version 2.18
 
 Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
 
@@ -91,3 +91,7 @@ Le classement collectif utilise les points de victoire/nul/défaite, puis les po
 L’export iDoceo propose XLSX et CSV : une ligne par élève ou membre d’un duo en raquettes (nom, prénom, classe, classement, niveau de poule, victoires, points normaux, points bonus), une ligne par équipe en sports collectifs (classement, victoires, nuls, défaites). Aucune identité d’élève n’est inventée pour les équipes collectives. Les niveaux sont renseignés pour les groupes de niveau et la montante-descendante terminée ; les poules équilibrées ne sont pas hiérarchisées.
 
 Pour iDoceo, ouvrir le fichier XLSX ou CSV dans iDoceo et associer les colonnes de noms dans l’assistant d’import : https://www.idoceo.net/index.php/en/component/content/article/idoceoimportdata?Itemid=246&catid=17. Le schéma exporté et la génération du fichier sont vérifiés ; l’import dans une installation réelle d’iDoceo reste à tester.
+
+Version 2.18 : Activité personnalisée garde son libellé sur deux lignes sans couper le dernier mot. Le demi-terrain de badminton possède un seul couloir. Utiliser le classement ouvre le choix des formules avant la configuration. Les nouvelles formules Poules avec montée/descente et Poules de niveau avec montée/descente sont accessibles sur la troisième page des formules.
+
+Après un tournoi de poules terminé, le premier de chaque poule monte d’un niveau et le dernier descend ; tous les autres restent. Le premier de la poule supérieure et le dernier de l’inférieure restent à leur niveau. La même règle s’applique aux poules de tailles différentes, en conservant leurs effectifs. La préparation de la séance suivante remappe ces affectations vers de nouveaux identifiants et affiche les groupes proposés. Choisir une autre taille ou un autre nombre de poules réinitialise cette affectation au profit d’une nouvelle répartition. L’ancien tournoi reste conservé.

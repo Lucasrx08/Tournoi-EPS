@@ -1,6 +1,6 @@
-# Validation · version 2.17 · 13 octobre 2026
+# Validation · version 2.18 · 13 octobre 2026
 
-157 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent le JavaScript en mode strict dans un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
+164 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent le JavaScript en mode strict dans un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.
 
 ## Corrections à partir des captures du 12 octobre
 
@@ -121,3 +121,9 @@ L’export iDoceo propose XLSX et CSV : une ligne par élève ou membre d’un d
 Les tests couvrent les deux surfaces de badminton, l’absence de commandes et de logos pour les raquettes, le redémarrage indépendant, l’enchaînement classement → poules, les tailles de poules et leurs erreurs, tous les départages, le suivi normal/bonus, le détail inconnu des anciens scores et les deux schémas iDoceo. La mise en page Safari/iPad et l’import natif iDoceo n’ont pas été contrôlés dans cet environnement.
 
 Les fichiers XLSX et CSV iDoceo ont été générés : XML du classeur valide, cellules numériques distinctes pour normal et bonus, accents et neuf colonnes CSV vérifiés. L’export ne modifie pas les participants et n’exporte pas les élèves de remplissage.
+
+Version 2.18 : Activité personnalisée garde son libellé sur deux lignes sans couper le dernier mot. Le demi-terrain de badminton possède un seul couloir. Utiliser le classement ouvre le choix des formules avant la configuration. Les nouvelles formules Poules avec montée/descente et Poules de niveau avec montée/descente sont accessibles sur la troisième page des formules.
+
+Après un tournoi de poules terminé, le premier de chaque poule monte d’un niveau et le dernier descend ; tous les autres restent. Le premier de la poule supérieure et le dernier de l’inférieure restent à leur niveau. La même règle s’applique aux poules de tailles différentes, en conservant leurs effectifs. La préparation de la séance suivante remappe ces affectations vers de nouveaux identifiants et affiche les groupes proposés. Choisir une autre taille ou un autre nombre de poules réinitialise cette affectation au profit d’une nouvelle répartition. L’ancien tournoi reste conservé.
+
+Les tests vérifient les déplacements pour trois et quatre participants par poule, les effectifs différents (2/3/4), les extrémités, l’absence de doublons, la copie des affectations, le refus d’un tournoi inachevé, les trois pages de formules et le parcours complet jusqu’à la sauvegarde. Le rendu Safari des libellés et tracés reste à vérifier sur appareil.
