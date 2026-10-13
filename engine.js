@@ -13,7 +13,7 @@ export const SPORTS={
  hockey:{name:'Hockey',icon:'hockey',formats:[['5x5','5 contre 5',5,'hockey',3],['custom','Personnalisé',5,'hockey',3]]},
  custom:{name:'Activité personnalisée',icon:'trophy',formats:[['custom','Personnalisé',1,'custom',10]]}
 };
-export const FORMULAS={multisport:'Tournoi multisport',rr:'Championnat · tous se rencontrent',pools:'Poules',poolfinal:'Poules + phases finales',classification:'Matchs de classement',knockout:'Élimination directe',double:'Double élimination',swiss:'Ronde suisse',ladder:'Montante-descendante',king:'King / Queen of the Court',americano:'Americano · partenaires tournants',levels:'Groupes de niveaux',custom:'Rencontres personnalisées'};
+export const FORMULAS={multisport:'Tournoi multisport',rr:'Championnat · tous se rencontrent',pools:'Poules',poolfinal:'Poules + phases finales',classification:'Matchs de classement',knockout:'Élimination directe',double:'Double élimination',swiss:'Ronde suisse',ladder:'Montante-descendante',king:'King / Queen of the Court',americano:'Americano · partenaires tournants',levels:'Groupes de niveaux',custom:'Rencontres personnalisées',poolladder:'Poules avec montée / descente',levelsladder:'Poules de niveau avec montée / descente'};
 export const uid=()=>globalThis.crypto?.randomUUID?.()??'id-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
 export const ids=x=>Array.isArray(x)?x:[x];
 export const entrants=m=>[...ids(m.a),...ids(m.b)];
@@ -85,13 +85,14 @@ export function newTournament(config={},teams=makeTeams(8)){
  const roster=t.teams.map(x=>x.id);
  if(cfg.formula==='multisport')scheduleMultisport(t);
  else if(cfg.formula==='rr'){const rounds=roundRobin(roster);schedule(t,rounds.flat(),rounds)}
- else if(['pools','poolfinal','levels'].includes(cfg.formula)){
+ else if(['pools','poolfinal','levels','poolladder','levelsladder'].includes(cfg.formula)){
   const count=cfg.poolCount;if(count>Math.floor(roster.length/2))throw Error('Chaque poule doit compter au moins deux participants.');
   const sizes=cfg.poolSizes??Array.from({length:count},(_,i)=>Math.floor(roster.length/count)+(i<roster.length%count?1:0));
   if(sizes.length!==count||sizes.some(x=>!Number.isInteger(x)||x<2)||sizes.reduce((a,b)=>a+b,0)!==roster.length)throw Error('Les effectifs des poules doivent correspondre au nombre de participants.');
   if(cfg.formula==='poolfinal'&&sizes.some(x=>x<cfg.qualifiers))throw Error('Le nombre de qualifiés dépasse l’effectif d’une poule.');
-  cfg.poolSizes=sizes.slice();const leveled=cfg.formula==='levels'||cfg.poolSeeding==='levels',ordered=t.teams.slice().sort((a,b)=>(a.seedRank??Infinity)-(b.seedRank??Infinity)||b.level-a.level),groups=sizes.map((size,i)=>({name:leveled?'Niveau '+(i+1)+' · Poule '+poolLabel(i):'Poule '+poolLabel(i),level:leveled?i+1:null,ids:[],size}));
-  if(leveled){let start=0;groups.forEach(g=>{g.ids=ordered.slice(start,start+g.size).map(x=>x.id);start+=g.size;});}
+  cfg.poolSizes=sizes.slice();const leveled=['levels','levelsladder'].includes(cfg.formula)||cfg.poolSeeding==='levels',ordered=t.teams.slice().sort((a,b)=>(a.seedRank??Infinity)-(b.seedRank??Infinity)||b.level-a.level),groups=sizes.map((size,i)=>({name:leveled?'Niveau '+(i+1)+' · Poule '+poolLabel(i):'Poule '+poolLabel(i),level:leveled||['poolladder','levelsladder'].includes(cfg.formula)?i+1:null,ids:[],size}));
+  if(cfg.poolAssignments){if(!Array.isArray(cfg.poolAssignments)||cfg.poolAssignments.some(g=>!Array.isArray(g)))throw Error('Les poules prédéfinies ne correspondent pas aux participants.');const flat=cfg.poolAssignments.flat();if(cfg.poolAssignments.length!==count||cfg.poolAssignments.some((g,i)=>!Array.isArray(g)||g.length!==sizes[i])||flat.length!==roster.length||new Set(flat).size!==roster.length||flat.some(id=>!roster.includes(id)))throw Error('Les poules prédéfinies ne correspondent pas aux participants.');groups.forEach((g,i)=>g.ids=cfg.poolAssignments[i].slice());}
+  else if(leveled){let start=0;groups.forEach(g=>{g.ids=ordered.slice(start,start+g.size).map(x=>x.id);start+=g.size;});}
   else{let remaining=ordered.map(x=>x.id),reverse=false;while(remaining.length){const targets=groups.slice();if(reverse)targets.reverse();for(const g of targets)if(remaining.length&&g.ids.length<g.size)g.ids.push(remaining.shift());reverse=!reverse;}}
   t.engine.groups=groups;const pairs=groups.flatMap(g=>roundRobin(g.ids).flat().map(p=>({...p,group:g.name,phase:'Poules'})));schedule(t,pairs);
  }
@@ -119,9 +120,16 @@ export function standings(t,group=null){
   const score=racket?b.wins-a.wins||b.for-a.for||(b.bonusPoints===null||a.bonusPoints===null?0:b.bonusPoints-a.bonusPoints):b.points-a.points||b.for-a.for||(b.for-b.against)-(a.for-a.against)||(head.get(b.id)??0)-(head.get(a.id)??0);
   return score||a.name.localeCompare(b.name,'fr');});entries.forEach((e,i)=>{e.rank=i+1;if(t.config.formula==='ladder'&&t.completed)e.poolLevel=Math.ceil(e.rank/2);});return entries;
 }
-export function freshTeams(t,fromRanking=false){const roster=fromRanking?standings(t).map(x=>team(t,x.id)):t.teams;return roster.map((x,i)=>({...structuredClone(x),id:uid(),active:true,seedRank:fromRanking?i+1:undefined,level:fromRanking?roster.length-i:x.level,members:structuredClone(x.members??[]),logo:['badminton','table'].includes(t.config.sport)?'':x.logo}));}
-export function restartTournament(t){const cfg=structuredClone(t.config);if(['pools','levels','poolfinal'].includes(cfg.formula)&&!cfg.poolSizes&&t.engine.groups.length){cfg.poolCount=t.engine.groups.length;cfg.poolSizes=t.engine.groups.map(g=>g.ids.length);cfg.qualifiers=Math.min(cfg.qualifiers,...cfg.poolSizes);}const copy=newTournament(cfg,freshTeams(t));copy.sourceTournamentId=t.id;copy.courts.forEach((c,i)=>{c.name=t.courts[i].name;});return copy;}
+export function freshTeams(t,fromRanking=false){const roster=fromRanking?standings(t).map(x=>team(t,x.id)):t.teams;return roster.map((x,i)=>({...structuredClone(x),id:uid(),sourceTeamId:x.id,active:true,seedRank:fromRanking?i+1:undefined,level:fromRanking?roster.length-i:x.level,members:structuredClone(x.members??[]),logo:['badminton','table'].includes(t.config.sport)?'':x.logo}));}
+export function restartTournament(t){const cfg=structuredClone(t.config);if(['pools','levels','poolfinal','poolladder','levelsladder'].includes(cfg.formula)&&!cfg.poolSizes&&t.engine.groups.length){cfg.poolCount=t.engine.groups.length;cfg.poolSizes=t.engine.groups.map(g=>g.ids.length);cfg.qualifiers=Math.min(cfg.qualifiers,...cfg.poolSizes);}const teams=freshTeams(t),ids=new Map(teams.map(x=>[x.sourceTeamId,x.id]));if(cfg.poolAssignments)cfg.poolAssignments=cfg.poolAssignments.map(g=>g.map(id=>ids.get(id)));const copy=newTournament(cfg,teams);copy.sourceTournamentId=t.id;copy.courts.forEach((c,i)=>{c.name=t.courts[i].name;});return copy;}
 
+export function promotionPlan(t){
+ if(!t.completed)throw Error('Terminez le tournoi avant de calculer les montées et descentes.');
+ if(!t.engine.groups.length)throw Error('Ce tournoi ne contient pas de poules.');
+ const groups=t.engine.groups.map(g=>({...structuredClone(g),ids:[]})),moves=[];
+ t.engine.groups.forEach((g,i)=>{const rows=standings(t,g.ids);rows.forEach((row,j)=>{const target=j===0&&i>0?i-1:j===rows.length-1&&i<groups.length-1?i+1:i;groups[target].ids.push(row.id);moves.push({id:row.id,name:row.name,rank:j+1,from:i,to:target,movement:target<i?'up':target>i?'down':'stay'});});});
+ return {groups,moves};
+}
 function winner(m){if(m.reason==='both-absent'||m.status==='cancelled')return null;return m.scoreA>m.scoreB?m.a:m.scoreB>m.scoreA?m.b:null}
 function loser(m){const w=winner(m);return w===m.a?m.b:w===m.b?m.a:null}
 function generateBracket(t){const pairs=[];t.engine.bracket=[];for(const [track,g]of t.engine.tracks.entries()){if(g.ids.length===1){t.engine.placements[g.ids[0]]=g.start;continue}const entry={track,start:g.start,byes:[],ids:g.ids};let v=g.ids.slice();if(v.length%2)entry.byes.push(v.shift());while(v.length){const a=v.shift(),b=v.pop();pairs.push({a,b,track,phase:g.start===1&&g.ids.length===2?'Finale':`Places ${g.start} à ${g.start+g.ids.length-1}`})}t.engine.bracket.push(entry)}if(!pairs.length){t.completed=true;return false}schedule(t,pairs,null,++t.engine.stage);checkpoint(t);return true}
@@ -162,7 +170,7 @@ export function resetRotation(t){for(const m of current(t).matches){m.status='sc
 export function correctScore(t,matchId,a,b,discardFuture=false,parts=null){
  const index=t.rotations.findIndex(r=>r.matches.some(m=>m.id===matchId));if(index<0)throw Error('Match introuvable.');if(!Number.isInteger(a)||!Number.isInteger(b)||a<0||b<0||a>999||b>999)throw Error('Scores invalides.');
  if(parts&&([parts.bonusA,parts.bonusB].some(x=>!Number.isInteger(x)||x<0)||parts.bonusA>a||parts.bonusB>b))throw Error('Les points bonus doivent être compris entre zéro et le score total.');
- const m=t.rotations[index].matches.find(m=>m.id===matchId),dynamic=!['rr','pools','levels','custom','multisport'].includes(t.config.formula),future=t.rotations.some(r=>r.stage>m.stage),wasCompleted=t.completed;
+ const m=t.rotations[index].matches.find(m=>m.id===matchId),dynamic=!['rr','pools','levels','custom','multisport','poolladder','levelsladder'].includes(t.config.formula),future=t.rotations.some(r=>r.stage>m.stage),wasCompleted=t.completed;
  if(dynamic&&(future||wasCompleted)){if(future&&!discardFuture)throw Error('RECALCUL_REQUIRED');const history=t.engine.history,snapshot=history?.[m.stage];if(!snapshot)throw Error('État de l’étape introuvable.');t.rotations=t.rotations.filter(r=>r.stage<=m.stage);t.roundIndex=Math.min(index,t.rotations.length-1);t.engine={...structuredClone(snapshot),history:Object.fromEntries(Object.entries(history).filter(([key])=>Number(key)<=m.stage))};t.completed=false}
  for(const [side,value]of[['a',a],['b',b]]){const old=scoreParts(t,m,side),bonus=parts?parts['bonus'+side.toUpperCase()]:old.bonus===null?null:Math.min(old.bonus,value);m['bonus'+side.toUpperCase()]=bonus;m['normal'+side.toUpperCase()]=bonus===null?null:value-bonus;}m.pointLog=[];m.scoreA=a;m.scoreB=b;m.status='done';m.reason='corrected';m.tieBreak=null;freeze(m,Date.now());if(a===b&&decisive(t)){m.status='live';m.tieBreak='golden';m.clock=null;t.roundIndex=index;t.completed=false}
  else if(wasCompleted&&dynamic&&!future&&t.rotations.filter(r=>r.stage===m.stage).every(r=>r.matches.every(done))){t.roundIndex=t.rotations.length-1;advance(t)}record(t,'correct-score',m.id);return m;

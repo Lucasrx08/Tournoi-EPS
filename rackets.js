@@ -23,7 +23,7 @@ export function prepareStart(t){
  defaultCourts(t.teams,t.courts.length);
  // The complete round robin can begin with the imported court groups.
  // Other formulas keep their bracket and only place the existing oppositions.
- if(['rr','pools','levels'].includes(t.config.formula)){
+ if(['rr','pools','levels','poolladder','levelsladder'].includes(t.config.formula)){
   const all=E.allMatches(t),used=new Set(),opening=[],courts=t.courts.filter(c=>c.available);
   const add=(m,c)=>{opening.push({...m,courtId:c.id});E.entrants(m).forEach(id=>used.add(id))};
   // A manual move wins over the automatic starting distribution.

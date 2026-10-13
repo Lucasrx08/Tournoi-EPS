@@ -623,6 +623,18 @@ dialog::backdrop { background:#202022b8; }
 .team-crest:empty { display:none; }
 .badminton-layout { flex-shrink:0; }
 
+/* Keep the custom activity name on two deliberate lines. */
+.sport-custom { container-type:inline-size; }
+.sport-custom .sport-name { display:block; padding-inline:10px; font-size:clamp(13px,10.5cqw,24px); }
+.sport-custom .sport-name>b { display:none; }
+.sport-custom .activity-word { display:block; white-space:nowrap; overflow-wrap:normal; word-break:normal; }
+.formula-bottom>div { display:flex; gap:5px; flex-wrap:wrap; }
+.promotion-preview { display:flex; flex-direction:column; gap:8px; }
+.promotion-groups { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr)); gap:8px; }
+.promotion-groups .panel { padding:10px; }
+.promotion-groups p { font-size:13px; margin-top:5px; }
+.promotion-groups p>span { display:inline-block; min-width:15px; font-weight:700; }
+
 @media print {
   body { background:white; }
   .court-card,.leader-card,.panel { box-shadow:none; }
