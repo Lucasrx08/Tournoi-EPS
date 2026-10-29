@@ -2,6 +2,7 @@ import * as E from './engine.js';
 import * as R from './rackets.js';
 
 export const ACTIVITIES=['handball','badminton','ultimate','basket','volley','futsal','table','rugby','football','custom'];
+export const individualRoster=c=>c?.formula==='melee'||isIndividual(c?.sport);
 export const isIndividual=sport=>['badminton','table'].includes(sport);
 export const noun=(sport,plural=false)=>isIndividual(sport)?plural?'joueurs':'joueur':plural?'équipes':'équipe';
 export const safeLogo=value=>typeof value==='string'&&value.length<=350000&&/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(value)?value:'';
@@ -36,7 +37,7 @@ export function teamProposals(students,courts,players,referees=false){
 export function syntheticParticipants(count){return Array.from({length:count},(_,i)=>({id:E.uid(),first:'Élève '+(i+1),last:'',className:'',sex:'',level:0,placeholder:true}));}
 
 export function estimateRotations(t){
- if(['rr','pools','levels','custom','multisport','poolladder','levelsladder'].includes(t.config.formula))return {count:t.rotations.length,estimated:false};
+ if(['rr','pools','levels','custom','multisport','poolladder','levelsladder','melee'].includes(t.config.formula))return {count:t.rotations.length,estimated:false};
  const copy=structuredClone(t);copy.roundIndex=0;copy.completed=false;
  let visits=0;
  while(!copy.completed&&visits++<500){
@@ -63,14 +64,15 @@ export function recommendTiming(t,availableMinutes=90,transitionSeconds=45,setup
  return {...estimate,rotations,budget,setup,transition,transitionTotal,maximum,recommended,feasible,options};
 }
 
-export function assignReferees(t){
+export function assignReferees(t){if(t.config.formula==='melee'){for(const r of t.rotations)for(const m of r.matches){m.refereeIds=t.config.referees?(m.groupPlayers??[]).filter(id=>!E.entrants(m).includes(id)&&E.team(t,id)?.active):[];m.refereeId=m.refereeIds[0]??null;}return t;}
  const usage=new Map(t.teams.map(x=>[x.id,0]));
  for(const r of t.rotations){
-  const playing=new Set(r.matches.filter(m=>m.status!=='cancelled').flatMap(E.entrants));
+  const playing=new Set(r.matches.filter(m=>!E.done(m)).flatMap(E.entrants));
   const available=t.teams.filter(x=>x.active&&!playing.has(x.id));
   const assigned=new Set();
   for(const m of r.matches){
    if(!t.config.referees||m.status==='cancelled'){m.refereeId=null;continue}
+   if(E.done(m)){if(m.refereeId)usage.set(m.refereeId,(usage.get(m.refereeId)??0)+1);continue;}
    const previous=available.find(x=>x.id===m.refereeId&&!assigned.has(x.id));
    const candidate=previous??available.filter(x=>!assigned.has(x.id)).sort((a,b)=>(usage.get(a.id)||0)-(usage.get(b.id)||0)||a.name.localeCompare(b.name,'fr'))[0];
    m.refereeId=candidate?.id??null;
@@ -100,7 +102,7 @@ export function assignReferees(t){
 
 export function nextRotation(t){
  if(t.completed)return null;
- if(t.rotations[t.roundIndex+1])return t.rotations[t.roundIndex+1];
+ const future=t.rotations.slice(t.roundIndex+1).find(r=>r.matches.length);if(future)return future;
  if(!E.current(t).matches.every(E.done))return null;
  const copy=structuredClone(t);
  if(!E.advance(copy))return null;
@@ -109,4 +111,4 @@ export function nextRotation(t){
 
 export function poolSizes(count,pools){pools=integer(pools,1,Math.floor(count/2));return Array.from({length:pools},(_,i)=>Math.floor(count/pools)+(i<count%pools?1:0));}
 export function poolProposals(count,courts){const values=[Math.ceil(count/4),Math.min(courts,Math.floor(count/2)),Math.ceil(count/3)].map(x=>integer(x,1,Math.floor(count/2)));return [...new Set(values)].map(pools=>({count:pools,sizes:poolSizes(count,pools)}));}
-export function idoceoSheet(t){const individual=isIndividual(t.config.sport),header=individual?['Nom et prénom','Nom','Prénom','Classe','Classement général','Niveau de poule','Victoires','Points normaux','Points bonus']:['Équipe','Classement général','Victoires','Matchs nuls','Défaites'];const rows=[header];for(const s of E.standings(t)){const x=E.team(t,s.id);if(individual){const named=(x.members??[]).filter(p=>!p.placeholder),players=named.length?named:[{fullName:x.name}];if(x.nameEdited&&players.length===1)players[0]={fullName:x.name,className:players[0].className};for(const p of players)rows.push([R.playerName(p),p.last??'',p.first??'',p.className??'',s.rank,s.poolLevel??'',s.wins,s.normalPoints??'',s.bonusPoints??'']);}else rows.push([s.name,s.rank,s.wins,s.draws,s.losses]);}return {name:'iDoceo',rows};}
+export function idoceoSheet(t){const individual=individualRoster(t.config),melee=t.config.formula==='melee',header=melee?['Nom et prénom','Nom','Prénom','Classe','Classement général','Groupe','Victoires','Matchs nuls','Défaites','Points personnels','Buts marqués','Différence de buts']:individual?['Nom et prénom','Nom','Prénom','Classe','Classement général','Niveau de poule','Victoires','Points normaux','Points bonus']:['Équipe','Classement général','Victoires','Matchs nuls','Défaites'];const rows=[header];for(const s of E.standings(t)){const x=E.team(t,s.id);if(individual){const named=(x.members??[]).filter(p=>!p.placeholder),players=named.length?named:[{fullName:x.name}];if(x.nameEdited&&players.length===1)players[0]={fullName:x.name,className:players[0].className};for(const p of players)rows.push([R.playerName(p),p.last??'',p.first??'',p.className??'',...(melee?[s.rank,t.engine.groups.find(g=>g.ids.includes(s.id))?.name??'',s.wins,s.draws,s.losses,s.points,s.for,s.for-s.against]:[s.rank,s.poolLevel??'',s.wins,s.normalPoints??'',s.bonusPoints??''])]);}else rows.push([s.name,s.rank,s.wins,s.draws,s.losses]);}return {name:'iDoceo',rows};}
