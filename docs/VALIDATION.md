@@ -127,3 +127,18 @@ Version 2.18 : Activité personnalisée garde son libellé sur deux lignes sans 
 Après un tournoi de poules terminé, le premier de chaque poule monte d’un niveau et le dernier descend ; tous les autres restent. Le premier de la poule supérieure et le dernier de l’inférieure restent à leur niveau. La même règle s’applique aux poules de tailles différentes, en conservant leurs effectifs. La préparation de la séance suivante remappe ces affectations vers de nouveaux identifiants et affiche les groupes proposés. Choisir une autre taille ou un autre nombre de poules réinitialise cette affectation au profit d’une nouvelle répartition. L’ancien tournoi reste conservé.
 
 Les tests vérifient les déplacements pour trois et quatre participants par poule, les effectifs différents (2/3/4), les extrémités, l’absence de doublons, la copie des affectations, le refus d’un tournoi inachevé, les trois pages de formules et le parcours complet jusqu’à la sauvegarde. Le rendu Safari des libellés et tracés reste à vérifier sur appareil.
+
+
+## Version 2.19 · 29 octobre 2026
+
+195 tests automatisés passent (moteur, interface, préparations, imports et exports). Le chrono atteint un état d’attente de score : les rencontres non rapportées ne comptent pas au classement, même après rechargement. Les départages sont appliqués après validation. Le refus de lecture audio ne bloque pas le démarrage des matchs.
+
+Les tests supplémentaires couvrent les rotations partielles sans conflit de joueurs ni d’arbitres, la conservation de tous les matchs après enchaînement, le saut des rotations vidées, l’égalité du nombre de matchs de phase finale pour 5 à 17 participants, les nouvelles identités lors de la reprise d’une première rotation choisie, les modèles à la mêlée à 6/7/8 et les groupes non standards. Une première rotation complète de championnat conserve n−1 rotations (effectif pair) ou n (impair). Les archives de 137 tournois sont recherchables et le dernier tournoi reste accessible.
+
+Contrôles effectués dans Chrome, fenêtre de 1363 × 936 : création collective avec saisie de 8 équipes et 2 terrains ; fiche de formule ; option de première rotation ; saisie de 21–18 sur les chiffres ; remplacement direct par 22 ; lancement d’une rencontre disponible pendant que la voisine continue ; plein écran occupant la fenêtre, tracés non déformés et scores agrandis. Pour 12 tables et 24 joueurs, les douze cartes restent visibles sans défilement de la grille ; les boutons +1 et les chiffres disposent de colonnes distinctes et ne se chevauchent pas.
+
+Le parcours À la mêlée à 14 élèves / 2 terrains propose 7 rotations et un arbitre par groupe. Un vrai chrono de 15 secondes a été laissé expirer, puis un score de 15–12 a été rapporté : les vainqueurs reçoivent chacun 3 points et les perdants chacun 1 ; l’autre terrain reste en attente de score. Recherche des archives et lecture des fichiers start.mp3/end.mp3 vérifiées dans le navigateur.
+
+Les MP3 intégrés, les icônes et toutes les ressources du cache hors connexion sont présents. Les fichiers audio utilisent un lecteur HTML persistant et le sélecteur AirPlay de Safari lorsqu’il est disponible. L’annonce synthétisée reste remplaçable par un fichier audio local de départ et de fin. Aucun appel à un service de génération n’est nécessaire dans l’application.
+
+Limites de vérification : absence d’iPad, d’iPhone et d’Apple TV physiques dans cet environnement. Le routage sonore AirPlay, le verrouillage effectif des gestes en web app iPad et la navigation tactile native demandent un essai sur ces appareils. Les scénarios de calcul et de mise en page adaptative sont couverts par les tests ; aucune validation Safari matérielle n’est revendiquée.

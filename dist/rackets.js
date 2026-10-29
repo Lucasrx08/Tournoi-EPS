@@ -19,7 +19,7 @@ export function validateCourts(list,count){
 function courtNumber(t,id){return t.courts.findIndex(c=>c.id===id)+1}
 export function unstarted(r){return r.clock.status==='ready'&&r.matches.every(m=>m.status==='scheduled'&&m.scoreA===0&&m.scoreB===0)}
 export function prepareStart(t){
- if(!isRacket(t)||!t.teams.some(x=>x.homeCourt))return t;
+ if(t.config.chooseOpening||!isRacket(t)||!t.teams.some(x=>x.homeCourt))return t;
  defaultCourts(t.teams,t.courts.length);
  // The complete round robin can begin with the imported court groups.
  // Other formulas keep their bracket and only place the existing oppositions.
@@ -33,7 +33,7 @@ export function prepareStart(t){
   }
   for(const c of courts.filter(c=>!opening.some(m=>m.courtId===c.id))){const n=courtNumber(t,c.id),m=all.find(m=>E.entrants(m).every(id=>!used.has(id)&&E.team(t,id).homeCourt===n));if(m)add(m,c)}
   for(const c of courts.filter(c=>!opening.some(m=>m.courtId===c.id))){const n=courtNumber(t,c.id),free=all.filter(m=>!opening.some(x=>x.id===m.id)&&E.entrants(m).every(id=>!used.has(id)));free.sort((a,b)=>E.entrants(b).filter(id=>E.team(t,id).homeCourt===n).length-E.entrants(a).filter(id=>E.team(t,id).homeCourt===n).length);if(free[0])add(free[0],c)}
-  if(opening.length){const first={...t.rotations[0],matches:opening},remaining=all.filter(m=>!opening.some(x=>x.id===m.id));t.rotations=[first];if(remaining.length)E.schedule(t,remaining,null,first.stage)}
+  if(opening.length){if(t.config.formula==='rr')E.setOpeningRound(t,opening.map(m=>({courtNumber:courtNumber(t,m.courtId),a:m.a[0],b:m.b[0]})));else{const first={...t.rotations[0],matches:opening},remaining=all.filter(m=>!opening.some(x=>x.id===m.id));t.rotations=[first];if(remaining.length)E.schedule(t,remaining,null,first.stage)}}
  }else{
   const r=E.current(t),free=t.courts.filter(c=>c.available).slice();
   const priority=m=>Math.max(0,...E.entrants(m).map(id=>E.team(t,id).courtPriority??0));

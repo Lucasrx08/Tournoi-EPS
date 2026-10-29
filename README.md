@@ -1,4 +1,4 @@
-# Tournoi EPS · version 2.18
+# Tournoi EPS · version 2.19
 
 Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
 
@@ -26,7 +26,7 @@ Une seule interface donne accès à tous les terrains, aux scores et aux réglag
 
 Chaque carte distingue la rencontre actuelle et une zone claire pour la prochaine rotation, avec les couleurs, noms et logos des prochains adversaires. L’arbitre affecté est indiqué lorsque l’arbitrage est activé. « À désigner » apparaît lorsqu’il manque un groupe ou joueur disponible.
 
-Un grand score ajoute un point ; le bouton − corrige. Après la formule, les sports de raquettes proposent **Point normal** ou **Point bonus**. Le bonus vaut 3 points par défaut et se règle entre 2 et 20 ; il ajoute cette valeur au score, sans ajouter un point normal en plus. Les boutons +1 et bonus restent disponibles. Le critère de réussite est défini avec les élèves. Les sports collectifs proposent les points de classement pour une victoire, un nul et une défaite, avec 3 / 1 / 0 par défaut. Démarrer, pauser et passer à la rotation suivante se font depuis les terrains. Les annonces françaises disent « Jouez ! », « Fin du match ! » et « Fin des matchs ! ». Un signal doux et un son personnalisé sont également disponibles.
+Toucher un grand score ouvre la saisie numérique du résultat ; les boutons +1 et − permettent de suivre le score point par point. Après la formule, les sports de raquettes proposent **Point normal** ou **Point bonus**. Le bonus vaut 3 points par défaut et se règle entre 2 et 20 ; il ajoute cette valeur au score, sans ajouter un point normal en plus. Les boutons +1 et bonus restent disponibles. Le critère de réussite est défini avec les élèves. Les sports collectifs proposent les points de classement pour une victoire, un nul et une défaite, avec 3 / 1 / 0 par défaut. Démarrer, pauser et passer à la rotation suivante se font depuis les terrains. Les annonces françaises disent « Jouez ! », « Fin du match ! » et « Fin des matchs ! ». Un signal doux et un son personnalisé sont également disponibles.
 
 **Menu → Répartir les joueurs** ouvre la répartition par terrain en raquettes. Déposer une carte de joueur / duo sur un terrain déplace sa rencontre avec son adversaire ; si un match est prévu sur le terrain visé, les deux rencontres échangent leurs terrains. Avant un départ, le déplacement est immédiat. Pendant une rencontre, il concerne la prochaine rencontre programmée ou est conservé jusqu’au calcul du prochain tour. Les adversaires, identifiants, résultats et chronos déjà commencés restent inchangés. La poignée accepte les gestes tactiles ; sélectionner un joueur puis « Déplacer ici » offre une alternative au clavier.
 
@@ -42,7 +42,7 @@ Pour AirPlay, utiliser la recopie de l’écran de l’appareil et, si utile, le
 
 Les scores sont enregistrés immédiatement sur l’appareil, avec une copie IndexedDB et une sauvegarde précédente. Les sauvegardes version 1 restent compatibles. Les identifiants, résultats, noms personnalisés et logos sont conservés. Les noms collectifs par défaut « Équipe N » deviennent des couleurs de chasubles.
 
-Depuis l’accueil, la corbeille supprime directement un tournoi. « Annuler » restaure la dernière suppression pendant cette session, y compris ses résultats. Plusieurs suppressions peuvent être annulées successivement. Les tournois plus nombreux défilent dans leur liste, sans allonger toute la page sur ordinateur.
+Depuis l’accueil, la corbeille supprime directement un tournoi. « Annuler » restaure la dernière suppression pendant cette session, y compris ses résultats. Plusieurs suppressions peuvent être annulées successivement. L’accueil présente les trois tournois récents. « Rechercher / tous les tournois » ouvre les archives par pages de huit, avec recherche par nom.
 
 Les listes individuelles historiques des sports collectifs restent dans les sauvegardes JSON, pour éviter une perte de données ; elles ne sont plus affichées dans les équipes ni les exports de résultats.
 
@@ -54,7 +54,7 @@ Exports locaux : XLSX avec couleurs, CSV, PDF paginé et JSON de restauration. L
 
 Sur iPad : Safari, Partager, Sur l’écran d’accueil. Sur les navigateurs compatibles : Installer. Une première ouverture en ligne prépare les ressources hors connexion ; le service worker nécessite HTTPS ou localhost.
 
-La voix dépend des voix françaises installées et du navigateur. La projection AirPlay, les roulettes tactiles et les annonces doivent être vérifiées sur le matériel utilisé. Les appareils distincts ne synchronisent pas leurs scores par réseau dans cette version.
+Les annonces intégrées sont des fichiers MP3 locaux et passent par un lecteur HTML audio persistant. Le bouton « Sortie AirPlay » ouvre le sélecteur natif de Safari lorsqu’il existe ; sinon, utiliser le centre de contrôle. Les fichiers de départ et de fin peuvent être remplacés par des enregistrements importés (512 Ko maximum chacun). Le routage Apple TV, le verrouillage des gestes dans la web app iPad et les roulettes tactiles doivent être vérifiés sur le matériel utilisé. Les appareils distincts ne synchronisent pas leurs scores par réseau dans cette version.
 
 ## Développement
 
@@ -95,3 +95,16 @@ Pour iDoceo, ouvrir le fichier XLSX ou CSV dans iDoceo et associer les colonnes 
 Version 2.18 : Activité personnalisée garde son libellé sur deux lignes sans couper le dernier mot. Le demi-terrain de badminton possède un seul couloir. Utiliser le classement ouvre le choix des formules avant la configuration. Les nouvelles formules Poules avec montée/descente et Poules de niveau avec montée/descente sont accessibles sur la troisième page des formules.
 
 Après un tournoi de poules terminé, le premier de chaque poule monte d’un niveau et le dernier descend ; tous les autres restent. Le premier de la poule supérieure et le dernier de l’inférieure restent à leur niveau. La même règle s’applique aux poules de tailles différentes, en conservant leurs effectifs. La préparation de la séance suivante remappe ces affectations vers de nouveaux identifiants et affiche les groupes proposés. Choisir une autre taille ou un autre nombre de poules réinitialise cette affectation au profit d’une nouvelle répartition. L’ancien tournoi reste conservé.
+
+
+## Version 2.19 · 29 octobre 2026
+
+- Identité : écusson de compétition avec trophée et ballon, icônes d’installation harmonisées. Le plein écran réserve la fenêtre aux terrains et au chrono ; une commande permet d’en sortir.
+- Chrono : sonner signifie « score à saisir ». Aucun 0–0 n’est compté avant validation. Toucher les grands chiffres ou « Fin du match » ouvre la saisie ; les champs sélectionnent leur contenu pour le remplacer directement. « Corriger » reste disponible. Le départage prévu s’applique après le rapport du score.
+- Objectif / signal : arrêt individuel sur le terrain. « Enchaîner les disponibles » lance une rencontre prévue sur un terrain libéré, en vérifiant les joueurs et arbitres encore occupés. Les autres rencontres continuent. Le programme conserve ses identifiants et saute les rotations vidées.
+- Championnat, poules et poules puis finales : option de première rotation manuelle, sans perdre les autres oppositions. Les formules disposent d’une fiche Organisation / Progression / Classement.
+- Poules puis finales : tous les participants continuent pour les places de classement. Les perdants poursuivent aussi ; des rencontres complémentaires égalisent le nombre de matchs de la phase finale. Avec des effectifs impairs, cela peut ajouter des rotations ; les places déjà obtenues sont conservées pendant ces compléments.
+- Activité personnalisée → Rotation individuelle : formule « À la mêlée / Mexicain », en trois contre trois. Les modèles de 6, 7 et 8 élèves par terrain suivent la fiche fournie (5 / 7 / 7 rotations). Avec d’autres effectifs, le calcul équilibre le temps de jeu et limite les partenaires répétés. Les points sont personnels : victoire 3, nul 2, défaite 1 par défaut ; différence de buts facultative. Les élèves non engagés arbitrent si l’option est activée. L’export iDoceo distingue les points personnels, V/N/D, buts et différence.
+- Raquettes : résultats intermédiaires par poule ou terrain ; le classement général n’apparaît qu’à la fin. Points normaux, bonus et total sont séparés lorsque le bonus est activé.
+- Audio : annonces synthétisées localement et incluses dans le cache hors connexion. Aucun service de génération n’est appelé à l’utilisation. Les signaux doux utilisent aussi le lecteur média.
+- iPad installé : prévention du pincement et du double toucher sur l’interface ; le défilement à un doigt reste disponible.

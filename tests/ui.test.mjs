@@ -22,6 +22,7 @@ function runtime(snapshot,backup,legacySession={}){
 function fixture(sport,n,c,config={}){const t=E.newTournament({sport,courtCount:c,format:E.SPORTS[sport].formats[0][0],...config},E.makeTeams(n));return {id:E.uid(),title:'Test EPS',tournaments:[t],selectedId:t.id,pinHash:null,pinSalt:'salt',studentScores:false,audio:{enabled:false,volume:.5,sound:'buzzer',start:false,alert30:false},createdAt:0}}
 function snapshot(e){return JSON.stringify({schema:1,events:[e],activeId:e.id,updatedAt:0,revision:0})}
 function open(r,e){r.ctx.fixture=e;r.run("data.events=[normalizeEvent(fixture)];data.activeId=fixture.id;view='tournament';render()")}
+async function submitMatch(r,id,a,b){r.node('edit-score-a').value=String(a);r.node('edit-score-b').value=String(b);await r.action('save-match',{match:id,resultEntry:'quick'});}
 async function next(r){await r.action('wizard-next')}
 async function acceptAction(r,name,dataset={}){const pending=r.action(name,dataset);await r.action('confirm-accept');await pending}
 test('Accueil : dix activités, anciens raccourcis et sports retirés absents',()=>{
@@ -195,7 +196,7 @@ test('Points juste après la formule : bonus raquette enregistré, appliqué et 
 });
 test('Barème collectif : victoire, nul et défaite agissent sur le classement',async()=>{
  const r=runtime();r.run("newDraft('handball');draft.mode='existing';resizeTeams(2);draft.step=4;render()");await next(r);assert.ok(r.html().includes('Victoire'));assert.ok(r.html().includes('Match nul'));assert.ok(!r.html().includes('Point bonus'));
- for(const [field,value] of [['winPoints','5'],['drawPoints','2'],['lossPoints','1']])await r.change({dataset:{field},value});await r.action('create');const match=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match,side:'a',delta:'1'});await r.action('finish-match',{match});assert.deepEqual(plain(r.run('E.standings(tourney()).map(x=>x.points)')),[5,1]);
+ for(const [field,value] of [['winPoints','5'],['drawPoints','2'],['lossPoints','1']])await r.change({dataset:{field},value});await r.action('create');const match=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match,side:'a',delta:'1'});await r.action('finish-match',{match});await submitMatch(r,match,1,0);assert.deepEqual(plain(r.run('E.standings(tourney()).map(x=>x.points)')),[5,1]);
 });
 test('Modèle élèves téléchargeable : fichier XLSX à deux colonnes',async()=>{
  const r=runtime(),downloads=[];r.ctx.X={...X,download:(...args)=>downloads.push(args)};r.run("newDraft('table');draft.step=2;render()");assert.ok(r.html().includes('Modèle élèves'));await r.action('player-template');assert.equal(downloads[0][1],'Modele_eleves_terrains.xlsx');const f=X.unzip(downloads[0][0]),xml=new TextDecoder().decode(f['xl/worksheets/sheet1.xml']);assert.ok(xml.includes('Nom et prénom'));assert.ok(xml.includes('Numéro de terrain'));
@@ -237,9 +238,9 @@ test('Annuler, fermer ou Échap conserve les matchs et les scores',async()=>{
  }
 });
 test('Fin individuelle : résultat et départage explicite, sans arrêter les voisins',async()=>{
- const r=runtime();open(r,fixture('basket',6,3));await r.action('start');const id=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match:id,side:'a',delta:'2'});await r.action('finish-match',{match:id});
+ const r=runtime();open(r,fixture('basket',6,3));await r.action('start');const id=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match:id,side:'a',delta:'2'});await r.action('finish-match',{match:id});assert.equal(r.run('E.current(tourney()).matches[0].status'),'live');await submitMatch(r,id,2,0);
  assert.equal(r.run('E.current(tourney()).matches[0].status'),'done');assert.equal(r.run('E.current(tourney()).matches[1].status'),'live');
- const tie=runtime();open(tie,fixture('basket',4,2,{formula:'knockout',tie:'golden'}));await tie.action('start');const mid=tie.run('E.current(tourney()).matches[0].id');await tie.action('finish-match',{match:mid});
+ const tie=runtime();open(tie,fixture('basket',4,2,{formula:'knockout',tie:'golden'}));await tie.action('start');const mid=tie.run('E.current(tourney()).matches[0].id');await tie.action('finish-match',{match:mid});await submitMatch(tie,mid,0,0);
  assert.equal(tie.run('E.current(tourney()).matches[0].tieBreak'),'golden');assert.match(tie.node('toast').textContent,/point décisif/);await tie.action('score',{match:mid,side:'a',delta:'1'});assert.equal(tie.run('E.current(tourney()).matches[0].status'),'done');
 });
 test('Erreur de rotation visible quand le formulaire de correction est fermé',async()=>{
@@ -332,3 +333,78 @@ test('Poules : écran dédié et retour vers les formules sans perdre les effect
 test('Accueil et demi-terrain : mot complet et un seul couloir',async()=>{const r=runtime();assert.ok(r.html().includes('<span class="activity-word">personnalisée</span>'));const svg=r.run("courtDrawing('badminton-half')");assert.ok(svg.includes('M50 5v90M5 18h90'));assert.ok(!svg.includes('M5 82h90'));});
 test('Formules : les deux poules avec progression sont accessibles sur la troisième page',async()=>{const r=runtime();r.run("newDraft('badminton');draft.mode='existing';draft.step=4;render()");assert.ok(r.html().includes('data-id="2"'));await r.action('formula-page',{id:'2'});for(const id of ['poolladder','levelsladder'])assert.ok(r.html().includes('data-action="formula-choice" data-id="'+id+'"'));await r.action('formula-choice',{id:'levelsladder'});assert.ok(r.html().includes('Le premier monte'));assert.equal(r.run('draftTournament().config.formula'),'levelsladder');});
 test('Séance suivante : choix de formule avant poules, montée automatique puis sauvegarde',async()=>{const r=runtime(),e=fixture('badminton',9,3,{formula:'levelsladder',poolCount:3,poolSizes:[3,3,3]});open(r,e);r.run("while(!tourney().completed){for(const m of E.current(tourney()).matches){m.scoreA=21;m.scoreB=10;E.finishMatch(tourney(),m,'manual',0,false)}E.advance(tourney())}save();render()");const source=r.run('JSON.stringify(tourney())'),id=r.run('event().id'),expected=plain(r.run('E.promotionPlan(tourney()).groups.map(g=>g.ids.map(id=>E.team(tourney(),id).name))'));await r.action('seed-event',{id});assert.ok(r.html().includes('Choisir la formule'));assert.ok(!r.html().includes('Configurer les poules'));await r.action('formula-choice',{id:'levelsladder'});assert.ok(r.html().includes('Poules générées pour la nouvelle séance'));assert.deepEqual(plain(r.run('draftTournament().engine.groups.map(g=>g.ids.map(id=>E.team(draftTournament(),id)?.name))')),expected);await next(r);await next(r);await next(r);await next(r);await r.action('create');assert.deepEqual(plain(r.run('tourney().engine.groups.map(g=>g.ids.map(id=>E.team(tourney(),id).name))')),expected);assert.equal(r.run('JSON.stringify(data.events[0].tournaments[0])'),source);assert.equal(r.run('validData(JSON.parse(JSON.stringify(data)))'),true);});
+
+test('Score collectif : les grands chiffres ouvrent une saisie directe, même après le chrono',async()=>{
+ const r=runtime();open(r,fixture('handball',6,3,{endMode:'score'}));
+ assert.equal((r.html().match(/class="score-button"/g)??[]).length,6);assert.ok(!r.html().includes('data-action="finish-all"'));
+ const id=r.run('E.current(tourney()).matches[0].id');await r.action('quick-result',{match:id,side:'b'});assert.ok(r.node('modal').innerHTML.includes('Valider et terminer'));
+ await submitMatch(r,id,21,18);assert.equal(r.run('E.current(tourney()).matches[0].scoreA'),21);assert.equal(r.run('E.current(tourney()).matches[0].status'),'done');assert.ok(r.html().includes('Corriger'));
+ const timed=runtime();open(timed,fixture('handball',4,2,{duration:15}));timed.run('E.startAll(tourney(),1000);E.tick(tourney(),16000);render()');assert.ok(timed.html().includes('SCORES À RENSEIGNER'));
+ const mid=timed.run('E.current(tourney()).matches[0].id');await timed.action('finish-match',{match:mid});await submitMatch(timed,mid,15,11);assert.equal(timed.run('E.current(tourney()).matches[1].status'),'awaiting_score');
+});
+
+test('Corriger : focus et sélection du chiffre existant sans effacement préalable',async()=>{
+ const r=runtime();open(r,fixture('handball',4,2));const focus=[];r.node('edit-score-b').focus=()=>focus.push('focus');r.node('edit-score-b').select=()=>focus.push('select');
+ const id=r.run('E.current(tourney()).matches[0].id');await r.action('edit-match',{match:id,side:'b'});assert.deepEqual(focus,['focus','select']);
+ let selected=false;r.listeners.get('focusin')({target:{matches:s=>s==='input[type=number]',select:()=>selected=true}});assert.ok(selected);
+});
+
+test('Formules : détails explicatifs et première rotation préparée avant création',async()=>{
+ const r=runtime();r.run("newDraft('handball');draft.mode='existing';draft.step=4;render()");assert.ok(r.html().includes('Comprendre la formule'));
+ await r.action('formula-help',{id:'poolfinal'});assert.ok(r.node('modal').innerHTML.includes('rencontres complémentaires'));await r.action('close');
+ r.run('draft.step=7;render()');assert.ok(r.html().includes('data-field="chooseOpening"'));await r.change({dataset:{field:'chooseOpening'},type:'checkbox',checked:true});
+ assert.ok(r.html().includes('data-opening-index'));assert.ok(r.run('draftCfg().openingPairs.length>0'));
+ await r.action('create');assert.equal(r.run('tourney().config.chooseOpening'),true);
+});
+
+test('Archives : plus de cent tournois conservés, recherche et navigation jusqu’au plus ancien',async()=>{
+ const e=fixture('handball',2,1),events=Array.from({length:137},(_,i)=>({...structuredClone(e),id:'archive-'+i,title:'Séance '+String(i).padStart(3,'0'),createdAt:i*86400000}));
+ const r=runtime(JSON.stringify({schema:1,updatedAt:0,revision:0,events,activeId:events[0].id}));assert.equal(r.run('data.events.length'),137);
+ await r.action('archive');assert.equal((r.node('modal').innerHTML.match(/class="archive-item"/g)??[]).length,8);assert.ok(r.node('modal').innerHTML.includes('Séance 136'));
+ r.run('archiveQuery="Séance 000";archiveModal()');assert.ok(r.node('modal').innerHTML.includes('Séance 000'));assert.ok(!r.node('modal').innerHTML.includes('Séance 136'));
+ r.run('archiveQuery="";archivePage=17;archiveModal()');assert.ok(r.node('modal').innerHTML.includes('Séance 000'));await r.action('open-event',{id:'archive-0'});assert.equal(r.run('event().title'),'Séance 000');
+});
+
+test('À la mêlée : parcours dédié, trois noms par côté et classement en points personnels',async()=>{
+ const r=runtime();await r.action('pick-activity',{id:'custom'});assert.ok(r.node('modal').innerHTML.includes('Rotation individuelle'));await r.action('new-melee');
+ assert.equal(r.run('draftCfg().formula'),'melee');assert.equal(r.run('draftCfg().playersPerSide'),3);assert.equal(r.run('draftCfg().drawPoints'),2);
+ r.run('resizeTeams(14);draftCfg().courtCount=2;draft.step=4;render()');assert.ok(r.html().includes('points personnels'));await r.action('create');
+ assert.equal((r.html().match(/class="melee-player"/g)??[]).length,24);const id=r.run('E.current(tourney()).matches[0].id');await r.action('quick-result',{match:id});await submitMatch(r,id,4,2);
+ await r.action('rank');assert.ok(r.html().includes('Points personnels'));assert.ok(r.html().includes('<b>3</b><small>points</small>'));assert.ok(!r.html().includes('Classement : victoires, points marqués, points bonus.'));
+});
+
+test('Raquettes : aucun classement global provisoire et colonnes de points bonus distinctes',async()=>{
+ const r=runtime();open(r,fixture('badminton',8,4,{scoreMode:'bonus',bonusPoints:3}));await r.action('rank');
+ assert.ok(!r.html().includes('Classement provisoire'));assert.ok(!r.html().includes('leader-card'));assert.ok(r.html().includes('classement général sera disponible à la fin'));
+ assert.ok(r.html().includes('Points normaux'));assert.ok(r.html().includes('Points bonus'));assert.ok(!r.html().includes('<th>Diff.</th>'));
+});
+
+test('Audio : annonces en fichiers média locaux et choix de sortie AirPlay',async()=>{
+ const r=runtime();open(r,fixture('handball',4,2));const player=r.node('announcements'),played=[];Object.assign(player,{dataset:{},play:async()=>played.push(player.src),pause(){}});
+ await r.action('test-sound',{id:'start'});assert.equal(played.at(-1),'./audio/start.mp3');assert.equal(r.spoken.length,0);
+ await r.action('test-sound',{id:'end'});assert.equal(played.at(-1),'./audio/end.mp3');
+ let picker=false;player.webkitShowPlaybackTargetPicker=()=>picker=true;await r.action('audio-route');assert.ok(picker);
+ await r.action('settings');assert.ok(r.node('modal').innerHTML.includes('Sortie AirPlay'));assert.ok(r.node('modal').innerHTML.includes('Importer une voix de départ'));
+});
+
+test('Application installée : les gestes de zoom sont bloqués sans bloquer le défilement simple',()=>{
+ const r=runtime();r.ctx.navigator.standalone=true;let prevented=0;
+ r.listeners.get('gesturestart')({preventDefault:()=>prevented++});r.listeners.get('touchmove')({touches:[{},{}],preventDefault:()=>prevented++});
+ r.listeners.get('touchmove')({touches:[{}],preventDefault:()=>prevented++});assert.equal(prevented,2);
+ r.listeners.get('dblclick')({target:{closest:()=>null},preventDefault:()=>prevented++});assert.equal(prevented,3);
+});
+
+test('Saisie numérique : effectif conservé dès la frappe avant de changer d’étape',async()=>{
+ const r=runtime();r.run("newDraft('handball');draft.mode='existing';draft.step=2;render()");r.input({type:'number',dataset:{field:'teamCount'},value:'8'});assert.equal(r.run('draft.count'),8);await next(r);assert.equal(r.run('draft.teams.length'),8);
+});
+
+test('À la mêlée : proposition selon six joueurs actifs par terrain et modèles 5/7 rotations',async()=>{
+ const r=runtime();await r.action('new-melee');await r.change({dataset:{field:'courtCount'},value:'2'});await r.change({dataset:{field:'teamCount'},value:'14'});assert.equal(r.run('draftCfg().roundCount'),7);
+ await r.change({dataset:{field:'studentCount'},value:'14'});await r.action('roster-mode',{id:'auto'});assert.equal(r.run('proposals()[0].activeCourts'),2);assert.equal(r.run('proposals()[0].minimum'),7);await r.action('proposal',{id:'14'});assert.equal(r.run('draft.teams.length'),14);
+ await r.change({dataset:{field:'roundCount'},value:'9'});await r.change({dataset:{field:'teamCount'},value:'16'});assert.equal(r.run('draftCfg().roundCount'),9);
+});
+
+test('Une restriction audio ne bloque jamais le départ des matchs',async()=>{
+ const r=runtime();open(r,fixture('handball',4,2));const player=r.node('announcements');Object.assign(player,{dataset:{},play:async()=>{throw Error('NotAllowedError')},pause(){}});
+ await r.action('start');assert.ok(r.run('E.current(tourney()).matches.every(m=>m.status==="live")'));
+});
