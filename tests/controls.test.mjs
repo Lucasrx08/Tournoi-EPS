@@ -77,3 +77,16 @@ test('Petite fenêtre : une hauteur minimale protège noms, scores et arbitrage'
 });
 
 test('Multisport : la hauteur réserve la seconde ligne du titre du terrain',()=>{assert.equal(C.courtLayout(12,1325,500,true,false,true).minHeight,C.courtLayout(12,1325,500,true).minHeight+24);});
+
+test('Identités : huit et vingt équipes tiennent dans la fenêtre, sans pagination',()=>{
+ for(const [count,width,height] of [[8,1259,496],[20,1259,496],[8,940,330],[20,940,330],[64,1259,496]]){
+  const x=C.identityLayout(count,width,height);assert.ok(x.cols*x.rows>=count);assert.equal(x.overflow,false);assert.ok(x.rowHeight>=48);
+ }
+ assert.equal(C.identityLayout(8,1259,496).cols,4);
+});
+test('Classements : quatre poules côte à côte en paysage, deux colonnes en portrait',()=>{
+ for(const [width,height,cols] of [[1315,689,4],[976,420,4],[720,760,2]]){const x=C.poolLayout(4,5,width,height);assert.equal(x.cols,cols);assert.equal(x.overflow,false);assert.ok(x.rowHeight>=24);}
+});
+test('Classement général : tous les rangs tiennent, y compris un grand effectif',()=>{
+ for(const count of [8,20,32,64]){const x=C.overallLayout(count,1315,689);assert.ok(x.cols*x.rows>=count);assert.equal(x.overflow,false);}
+});

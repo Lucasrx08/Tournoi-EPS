@@ -1,4 +1,4 @@
-# Tournoi EPS · version 2.19
+# Tournoi EPS · version 2.20
 
 Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
 
@@ -108,3 +108,14 @@ Après un tournoi de poules terminé, le premier de chaque poule monte d’un ni
 - Raquettes : résultats intermédiaires par poule ou terrain ; le classement général n’apparaît qu’à la fin. Points normaux, bonus et total sont séparés lorsque le bonus est activé.
 - Audio : annonces synthétisées localement et incluses dans le cache hors connexion. Aucun service de génération n’est appelé à l’utilisation. Les signaux doux utilisent aussi le lecteur média.
 - iPad installé : prévention du pincement et du double toucher sur l’interface ; le défilement à un doigt reste disponible.
+
+
+## Version 2.20 · 29 octobre 2026
+
+Le logo devient un monogramme sportif incliné, avec deux traits de progression de tableau. Les couleurs anthracite, citron et blanc sont conservées. Les icônes, le favicon et la signature de l’interface utilisent ce même dessin ; les URL d’icônes sont versionnées pour renouveler leur cache.
+
+L’identification affiche toutes les équipes ou tous les joueurs, jusqu’à 64 inscriptions, dans une grille ajustée à la largeur et à la hauteur disponibles. Les pages de quatre cartes sont supprimées. Les noms se modifient directement ; toucher la chasuble ouvre une palette commune, qui se ferme après le choix. Un logo reste importable pour chaque équipe collective. Les cartes deviennent plus compactes pour les grands effectifs ; sur les très petites surfaces, la grille conserve un défilement interne pour garder les commandes utilisables.
+
+Le classement en poules ouvre directement les poules côte à côte, sans grand tableau général ni podium au-dessus. Le choix du nombre de colonnes privilégie les grilles complètes : quatre poules sur quatre colonnes en paysage, deux colonnes lorsque la largeur l’exige. Chaque carte présente tous ses rangs, noms, matchs joués, victoires et points ; le bouton dans son en-tête donne les statistiques complètes. En raquettes, victoires, points marqués et bonus restent distincts ; le détail des points normaux est disponible dans les statistiques. Les résultats de poules restent séparés des phases finales. Le général est une grille de tous les rangs, sans pages de huit.
+
+Sur les terrains, les boutons − et +1 sont réunis sous le score ; dans les vues denses, leur bloc occupe une colonne propre. Les commandes mesurent 44 px de haut sur la vue classique et 40 px sur les douze tables. Les boutons bonus ont aussi leur emplacement. Toucher les grands chiffres conserve la saisie directe du résultat, et Corriger reste disponible après validation.

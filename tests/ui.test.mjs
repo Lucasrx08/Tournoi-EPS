@@ -57,8 +57,8 @@ test('Classement : les premières places apparaissent avec les seuls résultats 
  const r=runtime();open(r,fixture('basket',6,3,{endMode:'free',winPoints:7,drawPoints:2,lossPoints:0}));await r.action('rank');assert.ok(!r.html().includes('leader-card'));
  await r.action('courts');await r.action('start');const match=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match,side:'a',delta:'4'});
  await r.action('rank');assert.ok(!r.html().includes('leader-card'));await acceptAction(r,'finish-all');await r.action('rank');
- const rows=plain(r.run('E.standings(tourney())'));assert.equal(rows[0].points,7);assert.equal((r.html().match(/<article class="leader-card/g)??[]).length,3);
- assert.ok(r.html().includes('<b>7</b><small>points</small>'));assert.ok(r.html().includes(rows[0].name));assert.ok(r.html().includes('En tête du classement provisoire'));
+ const rows=plain(r.run('E.standings(tourney())'));assert.equal(rows[0].points,7);assert.equal((r.html().match(/class="standing-row/g)??[]).length,6);assert.ok(r.html().includes('standing-first'));
+ assert.ok(r.html().includes('<b>7</b><small>points</small>'));assert.ok(r.html().includes(rows[0].name));assert.ok(r.html().includes('Classement provisoire'));
 });
 for(const[sport,n,c]of[['basket',4,1],['basket',8,4],['handball',6,3],['badminton',18,9],['table',24,12],['basket',48,24]])test('Vue '+sport+' : '+c+' terrains et prochaines rotations',()=>{
  const r=runtime();open(r,fixture(sport,n,c));assert.equal((r.html().match(/<article class="court-card/g)??[]).length,c);
@@ -143,7 +143,7 @@ test('Ancien multisport : activités et export général conservés',()=>{
 
 test('Chasubles : noms par couleur, changement automatique et nom personnalisé conservé',async()=>{
  const r=runtime();await r.action('pick-activity',{id:'football'});r.run("draft.mode='existing';draft.step=3;render()");
- assert.deepEqual(plain(r.run('draft.teams.slice(0,4).map(x=>x.name)')),['Bleu clair','Bleu foncé','Vert clair','Vert foncé']);assert.ok(!r.html().includes('Équipe 1'));assert.ok(r.html().includes('bib-swatch'));
+ assert.deepEqual(plain(r.run('draft.teams.slice(0,4).map(x=>x.name)')),['Bleu clair','Bleu foncé','Vert clair','Vert foncé']);assert.ok(!r.html().includes('Équipe 1'));await r.action('identity-color',{index:'0'});assert.ok(r.node('modal').innerHTML.includes('bib-swatch'));
  await r.action('bib-color',{index:'0',color:C.BIBS[4].color});assert.match(r.run('draft.teams[0].name'),/^Orange/);assert.equal(r.run('new Set(draft.teams.map(x=>x.name)).size'),6);
  r.input({dataset:{teamName:'0'},value:'Les Lynx'});await r.action('bib-color',{index:'0',color:C.BIBS[2].color});assert.equal(r.run('draft.teams[0].name'),'Les Lynx');
  r.run('resizeTeams(64)');assert.equal(r.run('new Set(draft.teams.map(x=>x.name)).size'),64);
@@ -277,13 +277,12 @@ test('Correction de tableau : confirmation intégrée et formulaire préservé a
  await acceptAction(r,'save-match',{match:mid});assert.equal(r.run('tourney().rotations.length'),1);assert.equal(r.run('tourney().rotations[0].matches[0].scoreB'),3);assert.equal(r.node('modal').open,false);
 });
 
-test('Identités compactes : quatre cartes par page, saisies et réduction conservées',async()=>{
- const r=runtime();r.run("newDraft('handball');draft.mode='existing';resizeTeams(9);draft.step=3;render()");
- assert.equal((r.html().match(/<article class="identity-card/g)??[]).length,4);assert.ok(r.html().includes('1–4 / 9'));
- await r.action('team-page',{delta:'1'});assert.equal((r.html().match(/<article class="identity-card/g)??[]).length,4);assert.ok(r.html().includes('5–8 / 9'));
- await r.action('team-page',{delta:'1'});assert.equal((r.html().match(/<article class="identity-card/g)??[]).length,1);assert.ok(r.html().includes('9–9 / 9'));
- r.input({dataset:{teamName:'8'},value:'Les Lynx'});await r.action('team-page',{delta:'-1'});await r.action('team-page',{delta:'1'});assert.ok(r.html().includes('value="Les Lynx"'));
- r.run('resizeTeams(4);render()');assert.equal(r.run('draft.teamPage'),0);assert.equal((r.html().match(/<article class="identity-card/g)??[]).length,4);
+test('Identités : toutes les cartes visibles sans pagination et saisies conservées',async()=>{
+ const r=runtime();r.run("newDraft('handball');draft.mode='existing';resizeTeams(20);draft.step=3;render()");
+ assert.equal((r.html().match(/<article class="identity-card/g)??[]).length,20);assert.ok(!r.html().includes('data-action="team-page"'));
+ r.input({dataset:{teamName:'19'},value:'Les Lynx'});r.run('render()');assert.ok(r.html().includes('value="Les Lynx"'));
+ await r.action('identity-color',{index:'19'});assert.ok(r.node('modal').innerHTML.includes('Choisir la chasuble'));await r.action('bib-color',{index:'19',color:'#ef4055'});assert.equal(r.node('modal').open,false);assert.equal(r.run('draft.teams[19].name'),'Les Lynx');
+ r.run('resizeTeams(8);render()');assert.equal((r.html().match(/<article class="identity-card/g)??[]).length,8);
 });
 
 test('Temps en deux écrans : progression, retour et valeurs conservées',async()=>{
@@ -304,13 +303,11 @@ test('Saisie directe : score vide refusé, égalité décisive conservée',async
  r.node('edit-score-a').value='11';await r.action('save-match',{match:id,resultEntry:'quick'});assert.equal(r.run('E.current(tourney()).matches[0].tieBreak'),'golden');assert.match(r.node('toast').textContent,/point décisif/);
 });
 
-test('Classement : toutes les équipes accessibles par pages de huit',async()=>{
- const r=runtime();open(r,fixture('ultimate',18,8));await r.action('rank');
- const ranks=()=>[...r.html().matchAll(/class="rank-number">(\d+)</g)].map(x=>Number(x[1]));
- assert.deepEqual(ranks(),[1,2,3,4,5,6,7,8]);assert.match(r.html(),/1–8 \/ 18 équipes/);
- await r.action('ranking-page',{delta:'1'});assert.deepEqual(ranks(),[9,10,11,12,13,14,15,16]);
- await r.action('ranking-page',{delta:'1'});assert.deepEqual(ranks(),[17,18]);assert.match(r.html(),/17–18 \/ 18 équipes/);
- await r.action('ranking-page',{delta:'1'});assert.deepEqual(ranks(),[17,18]);await r.action('rank');assert.deepEqual(ranks(),[1,2,3,4,5,6,7,8]);
+test('Classement : tous les rangs visibles ensemble sans pages de huit',async()=>{
+ const r=runtime();open(r,fixture('ultimate',20,3));await r.action('rank');
+ const ranks=[...r.html().matchAll(/class="rank-number">(\d+)</g)].map(x=>Number(x[1]));
+ assert.deepEqual(ranks,Array.from({length:20},(_,i)=>i+1));assert.ok(!r.html().includes('data-action="ranking-page"'));assert.ok(r.html().includes('data-overall-ranking'));
+ await r.action('ranking-details');assert.ok(r.node('modal').innerHTML.includes('Défaites')||r.node('modal').innerHTML.includes('<th>D</th>'));
 });
 
 test('Multisport : parcours complet, activités visibles par terrain et exports',async()=>{
@@ -370,13 +367,13 @@ test('À la mêlée : parcours dédié, trois noms par côté et classement en p
  assert.equal(r.run('draftCfg().formula'),'melee');assert.equal(r.run('draftCfg().playersPerSide'),3);assert.equal(r.run('draftCfg().drawPoints'),2);
  r.run('resizeTeams(14);draftCfg().courtCount=2;draft.step=4;render()');assert.ok(r.html().includes('points personnels'));await r.action('create');
  assert.equal((r.html().match(/class="melee-player"/g)??[]).length,24);const id=r.run('E.current(tourney()).matches[0].id');await r.action('quick-result',{match:id});await submitMatch(r,id,4,2);
- await r.action('rank');assert.ok(r.html().includes('Points personnels'));assert.ok(r.html().includes('<b>3</b><small>points</small>'));assert.ok(!r.html().includes('Classement : victoires, points marqués, points bonus.'));
+ await r.action('rank');assert.ok(r.html().includes('Points personnels'));assert.ok(r.html().includes('victoire 3 · nul 2 · défaite 1'));assert.ok(r.html().includes('class="standing-total">3'));assert.ok(!r.html().includes('Classement : victoires, points marqués, points bonus.'));
 });
 
 test('Raquettes : aucun classement global provisoire et colonnes de points bonus distinctes',async()=>{
  const r=runtime();open(r,fixture('badminton',8,4,{scoreMode:'bonus',bonusPoints:3}));await r.action('rank');
  assert.ok(!r.html().includes('Classement provisoire'));assert.ok(!r.html().includes('leader-card'));assert.ok(r.html().includes('classement général sera disponible à la fin'));
- assert.ok(r.html().includes('Points normaux'));assert.ok(r.html().includes('Points bonus'));assert.ok(!r.html().includes('<th>Diff.</th>'));
+ assert.ok(r.html().includes('Bonus'));assert.ok(!r.html().includes('<th>Diff.</th>'));await r.action('ranking-details',{group:'0'});assert.ok(r.node('modal').innerHTML.includes('Points normaux'));assert.ok(r.node('modal').innerHTML.includes('Points bonus'));
 });
 
 test('Audio : annonces en fichiers média locaux et choix de sortie AirPlay',async()=>{
@@ -407,4 +404,20 @@ test('À la mêlée : proposition selon six joueurs actifs par terrain et modèl
 test('Une restriction audio ne bloque jamais le départ des matchs',async()=>{
  const r=runtime();open(r,fixture('handball',4,2));const player=r.node('announcements');Object.assign(player,{dataset:{},play:async()=>{throw Error('NotAllowedError')},pause(){}});
  await r.action('start');assert.ok(r.run('E.current(tourney()).matches.every(m=>m.status==="live")'));
+});
+
+test('Poules : quatre classements regroupent les vingt équipes, sans général dupliqué',async()=>{
+ const r=runtime();open(r,fixture('football',20,3,{formula:'pools',poolCount:4}));await r.action('rank');
+ assert.equal((r.html().match(/class="pool-board"/g)??[]).length,4);assert.equal((r.html().match(/class="rank-number"/g)??[]).length,20);
+ assert.ok(!r.html().includes('Classement provisoire'));assert.ok(!r.html().includes('leader-card'));assert.ok(!r.html().includes('data-action="ranking-page"'));
+ await r.action('ranking-details',{group:'2'});assert.ok(r.node('modal').innerHTML.includes('Poule C'));assert.ok(r.node('modal').innerHTML.includes('<th>D</th>'));
+ await r.action('ranking-mode',{id:'general'});assert.equal((r.html().match(/class="standing-row/g)??[]).length,20);
+});
+test('Grand effectif : 64 noms accessibles directement, sans pages intermédiaires',()=>{
+ const r=runtime();r.run("newDraft('handball');resizeTeams(64);draft.step=3;render()");assert.equal((r.html().match(/data-team-name=/g)??[]).length,64);assert.ok(!r.html().includes('data-action="team-page"'));
+});
+test('Points : chaque score possède son groupe +1 et − et la saisie directe est conservée',async()=>{
+ const r=runtime();open(r,fixture('volley',6,3,{endMode:'free'}));assert.equal((r.html().match(/class="score-controls"/g)??[]).length,6);assert.equal((r.html().match(/class="score-button"/g)??[]).length,6);
+ const id=r.run('E.current(tourney()).matches[0].id');await r.action('score',{match:id,side:'a',delta:'1'});await r.action('score',{match:id,side:'a',delta:'1'});await r.action('score',{match:id,side:'a',delta:'-1'});assert.equal(r.run('E.current(tourney()).matches[0].scoreA'),1);
+ await r.action('quick-result',{match:id});assert.ok(r.node('modal').innerHTML.includes('Valider et terminer'));
 });

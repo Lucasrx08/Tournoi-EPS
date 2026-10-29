@@ -142,3 +142,16 @@ Le parcours À la mêlée à 14 élèves / 2 terrains propose 7 rotations et un 
 Les MP3 intégrés, les icônes et toutes les ressources du cache hors connexion sont présents. Les fichiers audio utilisent un lecteur HTML persistant et le sélecteur AirPlay de Safari lorsqu’il est disponible. L’annonce synthétisée reste remplaçable par un fichier audio local de départ et de fin. Aucun appel à un service de génération n’est nécessaire dans l’application.
 
 Limites de vérification : absence d’iPad, d’iPhone et d’Apple TV physiques dans cet environnement. Le routage sonore AirPlay, le verrouillage effectif des gestes en web app iPad et la navigation tactile native demandent un essai sur ces appareils. Les scénarios de calcul et de mise en page adaptative sont couverts par les tests ; aucune validation Safari matérielle n’est revendiquée.
+
+
+## Version 2.20 · 29 octobre 2026
+
+201 tests passent. Les anciennes attentes de pagination ont été remplacées par les nouveaux contrats : 20 et 64 inscriptions sont rendues ensemble ; tous les rangs du général sont présents ; les quatre poules ne sont pas précédées d’un général dupliqué ; le détail conserve V/N/D, points marqués et différence. Les changements de chasuble ferment la palette et conservent les noms personnalisés. L’ajout de deux points puis le retrait d’un point donne bien un point, et les chiffres ouvrent encore la saisie du résultat.
+
+Vérifications dans Chrome en aperçu, sur le vrai parcours de création : 20 équipes de football, choix de couleur, quatre poules de cinq, saisie d’un score, classement par poule et général. Dans la fenêtre 1363 × 936, les 20 cartes d’identité tiennent en cinq colonnes sur quatre rangées ; les quatre poules sont côte à côte et leurs 20 lignes restent visibles. Le classement général montre les 20 rangs en deux colonnes, sans défilement. Les boutons − / +1 de la vue à trois terrains mesurent respectivement 44 × 44 et 64 × 44, sans chevauchement avec les chiffres.
+
+Vérifications complémentaires dans des cadres de test : à 1024 × 768, quatre poules restent sur quatre colonnes, et huit équipes occupent quatre colonnes sur deux rangées. À 390 × 844, les huit cartes restent accessibles sur une même grille sans dépassement horizontal. Pour douze tables à 1363 × 936, toutes les cartes tiennent dans la grille ; les boutons − et +1 mesurent 40 × 40 et ne chevauchent pas les scores. Le scénario avec bonus tient également, sur six colonnes et deux rangées, sans débordement des commandes. Les pages de test temporaires ont été retirées avant publication.
+
+Les profils de taille sont simulés dans Chrome ; ils ne constituent pas un essai sur Safari, iPad ou iPhone physiques. Les contrôles de calcul, les sauvegardes et les exports continuent de passer. Le moteur des tournois et le schéma de sauvegarde restent inchangés.
+
+Captures : `verification-220-equipes.jpg`, `verification-220-poules.jpg`, `verification-220-scores.jpg`.
