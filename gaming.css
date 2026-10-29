@@ -964,6 +964,34 @@ html:has(.identity-overview),body:has(.identity-overview),#app:has(.identity-ove
 .shell .courts-grid .melee-player { display:block; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
 .brand-credit { white-space:nowrap; font-size:10px; }
 
+/* Reserve three roster lines before sizing the score in individual rotations. */
+.shell .courts-grid .melee-court .score-team { grid-template-rows:var(--identity-height,64px) minmax(0,1fr) auto; }
+.shell .courts-grid:not(.dense) .melee-court .score-team { grid-template-columns:minmax(0,1fr); }
+.shell .courts-grid .melee-court .side-identity { width:100%; height:var(--identity-height,64px); min-height:0; max-height:var(--identity-height,64px); justify-content:center; padding:4px 8px; }
+.shell .courts-grid .melee-court .team-crest { display:none; }
+.shell .courts-grid .melee-court .team-name { width:100%; font-size:var(--name-size,14px); line-height:1.25; text-align:center; }
+.shell .courts-grid .melee-court .score-controls { flex-wrap:nowrap; padding-block:3px; }
+.shell .courts-grid .melee-court .court-foot { flex-wrap:wrap; min-height:28px; gap:4px; }
+.shell .courts-grid .melee-court .court-foot button { min-height:26px; white-space:nowrap; }
+.shell .courts-grid .melee-court .court-upcoming { min-height:126px; }
+.shell .courts-grid .melee-court .upcoming-side { min-width:0; align-self:stretch; }
+.shell .courts-grid .melee-court .upcoming-side strong { width:100%; min-width:0; font-size:clamp(12px,1.05vw,16px); line-height:1.25; }
+.shell .courts-grid .melee-court .referee-line { flex-wrap:nowrap; min-width:0; }
+.shell .courts-grid .melee-court .referee-line strong,.shell .courts-grid .melee-court .upcoming-ref { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.shell .courts-grid.dense .melee-court .score-row { grid-template-rows:repeat(2,minmax(var(--identity-height,55px),1fr)); min-height:114px; }
+.shell .courts-grid.dense .melee-court .score-team { grid-template-rows:minmax(var(--identity-height,55px),1fr); min-height:var(--identity-height,55px); }
+.shell .courts-grid.dense .melee-court .score-team .side-identity { height:var(--identity-height,55px); min-height:var(--identity-height,55px); max-height:var(--identity-height,55px); padding:4px; }
+.shell .courts-grid.dense .melee-court .team-name { text-align:left; }
+.shell .courts-grid.dense .melee-court .court-upcoming { min-height:106px; }
+.shell .courts-grid.dense .melee-court .upcoming-side strong { font-size:12px; }
+
+/* Explicit grid tracks avoid percentage-height flex collapse in the roster view. */
+.shell .setup-participants { display:grid; grid-template-rows:auto minmax(0,1fr); align-content:stretch; }
+.roster-header { display:flex; flex-direction:column; min-width:0; gap:8px; }
+.shell .roster-toolbar>.number-field { flex-direction:row; align-items:center; flex-wrap:nowrap; flex-shrink:0; }
+.shell .roster-toolbar>.number-field>span:first-child { max-width:none; white-space:nowrap; }
+.shell .setup-participants .identity-grid.identity-overview { display:grid; min-height:0; height:auto; grid-template-columns:repeat(var(--identity-cols,4),minmax(0,1fr)); grid-template-rows:repeat(var(--identity-rows,2),var(--identity-row-height,120px)); grid-auto-rows:var(--identity-row-height,120px); align-content:start; align-items:stretch; overflow:auto; gap:10px; padding:1px 2px; }
+
 @media(min-width:900px) {
  .shell.stage-wizard { height:100dvh; max-height:100dvh; min-height:0; display:grid; grid-template-rows:52px minmax(0,1fr) auto; }
  .stage-wizard .creation { display:grid; grid-template-rows:auto minmax(0,1fr); min-height:0; }
