@@ -1,3 +1,26 @@
+# Validation · version 2.21 · 29 octobre 2026
+
+208 tests automatisés passent. Les tests couvrent les quatre rubriques de préparation, les identités, la répartition automatique, les poules, les sauvegardes et les exports. Les attentes d’anciens écrans successifs ont été remplacées par les parcours regroupés, sans retirer les validations métier.
+
+Les exemples des formules sont confrontés au moteur : à huit participants, le championnat produit 28 rencontres et sept matchs par personne ; le tableau de toutes les places produit 12 rencontres et trois matchs par personne. Toutes les formules ont une fiche descriptive et un exemple en trois parties. Les changements de poule pour la séance suivante sont distingués des mouvements de terrain après chaque match.
+
+Le déplacement est testé au niveau du moteur et de l’interface : les terrains occupés, incompatibles ou indisponibles ne sont pas proposés ; une rencontre terminée ne peut pas être déplacée ; identifiants, adversaires, score, journal des points et chrono sont conservés. La saisie du score ne contient plus de changement de terrain.
+
+Vérifications visuelles dans Chrome :
+
+- Parcours réel de création de 36 joueurs de badminton sur 18 demi-terrains ; les 18 terrains tiennent en six colonnes et trois rangées à 1363 × 936, sans défilement interne. Aucun des noms courts testés ne déborde ni ne passe sur deux lignes.
+- Score final saisi directement (21–15), puis déplacement de la rencontre d’un autre terrain avec son score de 1–0 conservé ; le terrain de départ devient libre.
+- Paramètres regroupés à 1363 × 936 et dans un cadre 1024 × 768 : durée, comptage, départ et récapitulatif visibles sans défilement. Les 20 identités tiennent également à 1024 × 768.
+- Choix de la première rotation : huit cartes de terrain visibles dans la fenêtre de réglage au format 1024 × 768, avec son bouton de retour.
+- Au format 390 × 844, la navigation et les explications restent sans dépassement horizontal ; les longs détails défilent verticalement dans la fenêtre. Les noms longs restent accessibles dans les détails et les champs éditables.
+- Les roulettes de budget sont manipulées au clavier : un passage de 45 à 44 secondes de transition conserve bien 90 minutes de cours et 10 minutes d’installation. Un test vérifie que les événements de défilement lors de l’insertion d’une roulette ne modifient pas sa valeur.
+
+Les cadres reproduisent des dimensions de fenêtre ; ils ne constituent pas des essais sur iPad, iPhone ou Safari physiques. Les pages de contrôle temporaires sont retirées du dossier public avant publication. Le schéma de sauvegarde n’est pas modifié.
+
+Captures : `verification-221-parametres.jpg`, `verification-221-formules.jpg`, `verification-221-18-terrains.jpg`.
+
+---
+
 # Validation · version 2.18 · 13 octobre 2026
 
 164 tests automatisés passent : moteur, échanges, préparation, contrôles et parcours. Les tests d’interface exécutent le JavaScript en mode strict dans un DOM simulé ; ils ne vérifient pas la mise en page d’un navigateur réel.

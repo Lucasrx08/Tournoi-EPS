@@ -827,3 +827,215 @@ html:has(.identity-overview),body:has(.identity-overview),#app:has(.identity-ove
 }
 
 .shell .wizard-panel:has(.identity-overview) { display:grid; grid-template-rows:auto minmax(0,1fr) auto; }
+
+/* Four explicit preparation landmarks, with related settings kept together. */
+.setup-steps>button { display:flex; align-items:center; justify-content:center; gap:7px; padding:5px 10px; min-height:34px; border:0; box-shadow:none; background:transparent; font-size:14px; white-space:nowrap; }
+.setup-steps>button:disabled { opacity:.65; }
+.setup-steps>button.current { background:var(--ink); color:white; }
+.setup-steps b { display:grid; place-items:center; width:24px; height:24px; border:1px solid #929785; border-radius:50%; }
+.setup-steps .current b,.setup-steps .past b { background:var(--lime); color:var(--ink); border-color:var(--lime); }
+.setup-heading-line { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:5px 16px; }
+.setup-context { color:var(--muted); font-size:12px; }
+.setup-stage-2 .wizard-heading p { display:none; }
+.wizard-panel:has(.setup-participants),.wizard-panel:has(.setup-matches),.wizard-panel:has(.setup-formula) { display:grid; grid-template-rows:auto minmax(0,1fr) auto; }
+.setup-participants,.setup-matches,.setup-formula,.setup-terrains { min-height:0; min-width:0; }
+.shell .setup-participants { overflow:hidden; gap:8px; }
+.roster-toolbar { display:flex; align-items:center; flex-wrap:wrap; gap:10px 16px; flex-shrink:0; }
+.roster-method { display:flex; flex-wrap:wrap; gap:5px; }
+.roster-actions { display:flex; flex-wrap:wrap; gap:6px; margin-left:auto; }
+.roster-toolbar .number-field { display:flex; align-items:center; gap:8px; }
+.roster-toolbar .number-field>span:first-child { font-size:13px; max-width:95px; }
+.roster-toolbar .number-box { width:120px; height:40px; }
+.roster-toolbar .number-box>button { min-width:30px; padding:4px; font-size:18px; }
+.roster-toolbar .number-box>input { width:54px; padding:3px; font-size:25px; }
+.setup-participants .identity-summary { padding:3px 0; min-height:25px; font-size:12px; gap:8px; }
+.allocation-summary { display:flex; align-items:center; justify-content:space-between; gap:10px; background:#edf2dc; border-radius:6px; padding:7px 10px; font-size:13px; }
+.workspace-label { font-size:18px; }
+.setup-participants .proposal-grid { min-height:0; overflow:auto; }
+.setup-participants .proposal { min-height:180px; }
+.shell .setup-participants .identity-grid.identity-overview { flex:1; min-height:0; height:100%; }
+.formula-workspace { display:grid; grid-template-columns:minmax(0,1.65fr) minmax(270px,1fr); gap:16px; min-height:0; flex:1; }
+.formula-catalog { display:flex; flex-direction:column; min-width:0; min-height:0; gap:10px; }
+.formula-categories { display:flex; flex-wrap:wrap; gap:6px; flex-shrink:0; }
+.formula-categories>button { padding:7px 9px; min-height:32px; font-size:12px; }
+.formula-workspace .formula-grid { grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-rows:minmax(112px,1fr); gap:10px; min-height:0; }
+.formula-workspace .formula-choice { flex-direction:row; gap:10px; padding:12px; text-align:left; align-items:center; }
+.formula-workspace .formula-art { width:38px; height:38px; }
+.formula-workspace .formula-choice strong { font-size:16px; line-height:1.18; }
+.formula-workspace .formula-choice small { font-size:13px; line-height:1.3; margin-top:5px; }
+.formula-workspace .formula-help { min-height:27px; padding:4px; font-size:11px; }
+.selected-formula { display:flex; flex-direction:column; gap:10px; padding:16px; min-width:0; background:#f0f2e6; border:1px solid #b7bf9d; border-radius:8px; overflow:auto; }
+.selected-formula h2 { font-size:21px; line-height:1.15; }
+.selected-formula p { font-size:14px; line-height:1.4; }
+.selected-formula .number-field { margin-top:10px; }
+.selected-formula .number-box { max-width:160px; }
+.selected-formula .number-box input { font-size:28px; }
+.compact-pools { display:flex; flex-direction:column; gap:9px; border-top:1px solid #c6cbb7; padding-top:12px; }
+.compact-pools h3 { font-size:16px; }
+.compact-pools .pool-proposals { display:flex; flex-wrap:wrap; gap:5px; }
+.compact-pools .pool-proposals button { min-height:30px; font-size:12px; padding:5px 7px; }
+.formula-example-note { padding:10px; border-left:3px solid var(--ink); background:var(--white); }
+.match-preparation { display:grid; grid-template-columns:1.12fr 1fr; gap:12px; align-content:start; }
+.setup-card { display:flex; flex-direction:column; gap:10px; min-width:0; padding:14px; border:1px solid var(--line); border-radius:8px; background:var(--white); }
+.setup-card>header { display:flex; align-items:center; gap:8px; }
+.setup-card>header>b { display:grid; place-items:center; min-width:25px; height:25px; border-radius:6px; font-size:13px; background:var(--lime); }
+.setup-card h2 { font-size:19px; line-height:1.2; }
+.setup-card p { line-height:1.4; }
+.end-mode-options,.start-options { display:flex; gap:6px; }
+.end-mode-options>button,.start-options>button { flex:1; min-width:0; padding:8px; min-height:38px; }
+.end-mode-options .icon { width:18px; height:18px; }
+.start-options button { display:flex; flex-direction:column; align-items:flex-start; gap:4px; text-align:left; min-height:76px; }
+.start-options strong { font-size:15px; }
+.start-options span { font-size:12px; font-weight:400; color:var(--muted); }
+.match-time-grid { display:grid; grid-template-columns:minmax(145px,.85fr) minmax(0,1fr); align-items:center; gap:12px; }
+.match-time-grid .duration-picker { margin:0; min-width:0; padding:3px 8px; }
+.match-time-grid legend { font-size:13px; }
+.match-time-grid .wheel-unit { font-size:11px; }
+.course-budget { display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
+.course-budget strong { font-size:17px; }
+.course-budget>span { font-size:12px; line-height:1.35; color:var(--muted); }
+.course-budget>button { font-size:12px; padding:6px 8px; }
+.duration-suggestions { display:flex; flex-wrap:wrap; gap:6px; }
+.duration-suggestions>button { flex:1; font-size:12px; padding:7px 5px; min-height:32px; }
+.schedule-summary { font-size:12px; padding:7px 8px; background:#edf2dc; border-radius:5px; }
+.match-rules>.number-field { max-width:210px; }
+.match-rules>.number-field input { font-size:30px; }
+.setting-line { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; min-width:0; font-size:14px; padding-top:9px; border-top:1px solid var(--line); }
+.setting-line>span { display:flex; flex-wrap:wrap; align-items:center; gap:5px; }
+.setting-line>strong { font-size:15px; font-weight:600; }
+.setup-card .small-text { font-size:12px; }
+.match-recap .field>span { font-size:12px; }
+.match-recap input[type=text] { padding:7px 9px; font-size:15px; }
+.setup-recap { font-size:13px; line-height:1.5; }
+.modal-purpose { font-size:14px; line-height:1.45; margin:0 0 16px; color:var(--muted); }
+.course-time-wheels { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.course-time-wheels .duration-picker { min-width:0; margin:0; }
+.opening-editor { grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr)); }
+.opening-editor>p { grid-column:1/-1; }
+.opening-editor article { display:flex; flex-direction:column; align-items:stretch; gap:9px; }
+.opening-editor article>strong { border-bottom:1px solid var(--line); padding-bottom:5px; }
+.opening-editor article .field>span { font-size:12px; }
+.opening-editor select { width:100%; min-width:0; font-size:14px; padding:7px; }
+.match-result-context { margin:0 0 12px; font-size:15px; line-height:1.4; }
+.result-confirmation { font-size:13px; line-height:1.4; color:var(--muted); margin-top:14px; }
+.move-court-choices { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+.move-match-button { margin-left:auto; }
+.move-match-button .icon { width:16px; height:16px; }
+
+/* Formula explanations use a concrete, labelled three-stage example. */
+.formula-infographic { margin:0 0 16px; border:1px solid var(--ink); border-radius:8px; background:var(--ink); color:white; padding:16px; }
+.formula-infographic figcaption { color:var(--lime); font-size:13px; font-weight:650; margin-bottom:12px; }
+.guide-flow { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+.guide-stage { position:relative; min-width:0; padding:12px; border:1px solid #ffffff40; border-radius:6px; background:#ffffff09; }
+.guide-stage:not(:last-child):after { content:'→'; position:absolute; right:-18px; top:50%; color:var(--lime); font-size:20px; transform:translateY(-50%); }
+.guide-stage>b { display:grid; place-items:center; width:23px; height:23px; margin-bottom:9px; border-radius:50%; background:var(--lime); color:var(--ink); font-size:12px; }
+.guide-stage h3 { color:white; font-size:15px; line-height:1.3; }
+.guide-stage p { color:#edeee7; padding-top:8px; font-size:13px; line-height:1.5; }
+.guide-bracket .guide-stage p+p { margin-top:7px; border-top:1px dashed #ffffff50; }
+.formula-comparison { display:flex; flex-direction:column; gap:7px; padding:12px; margin-bottom:18px; background:#edf2dc; border-radius:6px; font-size:13px; line-height:1.4; }
+.formula-detail { grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.formula-detail h3 { font-size:15px; }
+.formula-detail p { font-size:14px; }
+
+/* Bound the terrain preview and keep player names on one consistent line. */
+.setup-terrains .terrain-setup { min-height:0; flex:1; }
+.setup-terrains .terrain-preview { min-height:0; max-height:100%; display:flex; flex-direction:column; gap:10px; padding:20px; overflow:hidden; }
+.terrain-preview .mini-courts { display:grid; grid-template-columns:repeat(var(--mini-cols),minmax(0,1fr)); grid-template-rows:repeat(var(--mini-rows),minmax(0,1fr)); min-height:0; flex:1; gap:10px; }
+.terrain-preview .mini-court { position:relative; min-height:30px; height:auto; aspect-ratio:auto; }
+.terrain-preview .mini-court svg { position:absolute; inset:4px; width:calc(100% - 8px); height:calc(100% - 8px); min-height:0; }
+.terrain-preview .mini-court b { width:26px; height:26px; font-size:20px; flex:none; }
+.preview-caption { flex-shrink:0; font-size:12px; }
+.shell .courts-grid .team-name,.shell .courts-grid .upcoming-side strong,.allocation-player strong { display:block; white-space:nowrap; overflow-wrap:normal; word-break:normal; text-overflow:ellipsis; overflow:hidden; -webkit-line-clamp:unset; min-width:0; }
+.shell .courts-grid.dense .score-team { grid-template-columns:minmax(0,1fr) 38px 84px; gap:3px; }
+.shell .courts-grid.dense .score-team .side-identity { min-width:0; width:100%; height:32px; padding:0 3px; }
+.shell .courts-grid.dense .team-name { font-size:var(--name-size,12px); line-height:1.2; text-align:left; }
+.shell .courts-grid.dense .score-team:has(.bonus-score) { grid-template-columns:minmax(0,1fr) 38px; }
+.shell .courts-grid.dense .score-team .score-controls { gap:3px; }
+.shell .courts-grid.dense .court-foot { flex-wrap:nowrap; gap:4px; min-height:22px; }
+.shell .courts-grid.dense .court-foot>span { white-space:nowrap; font-size:10px; flex-shrink:0; }
+.shell .courts-grid.dense .court-foot button { white-space:nowrap; font-size:11px; min-height:22px; padding:3px 4px; }
+.shell .courts-grid.dense .court-foot .move-match-button { min-width:50px; padding:3px 4px; }
+.shell .courts-grid.dense .court-now { min-height:0; padding:4px 6px; gap:2px; }
+.shell .courts-grid.dense .court-upcoming { min-height:58px; padding:5px 6px; gap:4px; }
+.shell .courts-grid.dense .upcoming-match { min-height:23px; }
+.shell .courts-grid.dense .upcoming-side { min-height:23px; }
+.shell .courts-grid.dense .upcoming-side strong { font-size:11px; }
+.shell .courts-grid .melee-court .team-name { white-space:normal; }
+.shell .courts-grid .melee-player { display:block; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
+.brand-credit { white-space:nowrap; font-size:10px; }
+
+@media(min-width:900px) {
+ .shell.stage-wizard { height:100dvh; max-height:100dvh; min-height:0; display:grid; grid-template-rows:52px minmax(0,1fr) auto; }
+ .stage-wizard .creation { display:grid; grid-template-rows:auto minmax(0,1fr); min-height:0; }
+ .stage-wizard .wizard-panel { display:grid; grid-template-rows:auto minmax(0,1fr) auto; min-height:0; padding:14px 18px 10px; gap:10px; }
+ .stage-wizard .wizard-content { min-height:0; overflow:auto; gap:10px; }
+ .stage-wizard .wizard-heading { padding-bottom:9px; }
+ .stage-wizard .wizard-heading h1 { font-size:32px; margin:5px 0; }
+ .stage-wizard .wizard-heading p { font-size:13px; }
+ .stage-wizard .wizard-footer { position:static; padding-top:8px; }
+ .stage-wizard .wizard-footer button { min-height:38px; padding-block:7px; }
+ .stage-wizard .setup-participants { overflow:hidden; }
+ .stage-wizard .setup-matches { display:block; padding-block:0; }
+ .stage-wizard .setup-terrains { overflow:hidden; }
+}
+@media(min-width:900px) and (max-height:800px) {
+ .match-preparation { gap:8px; }
+ .setup-card { padding:10px; gap:7px; }
+ .setup-card h2 { font-size:17px; }
+ .setup-card .setting-line { padding-top:7px; }
+ .start-options button { min-height:62px; }
+ .formula-workspace .formula-choice { padding:9px; gap:7px; }
+ .formula-workspace .formula-art { width:28px; height:28px; }
+ .selected-formula { padding:12px; gap:8px; }
+ .formula-workspace .formula-grid { grid-auto-rows:minmax(100px,1fr); gap:7px; }
+ .setup-stage-4 .wizard-heading p { display:none; }
+ .match-recap { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); align-content:start; align-items:center; }
+ .match-recap>header { grid-column:1/-1; }
+ .match-recap>.field { grid-column:1; }
+ .match-recap>.setup-recap { grid-column:2; font-size:12px; }
+ .match-recap>.small-text { display:none; }
+}
+@media(max-width:1099px) and (min-width:900px) {
+ .setup-nav { gap:12px; }
+ .setup-steps { gap:3px; }
+ .setup-steps>button { padding:5px 6px; font-size:12px; }
+ .formula-workspace { grid-template-columns:minmax(0,1.4fr) minmax(245px,1fr); gap:10px; }
+ .formula-workspace .formula-choice strong { font-size:14px; }
+ .formula-workspace .formula-choice small { font-size:12px; }
+ .formula-workspace .formula-art { display:none; }
+ .roster-actions { margin-left:0; }
+ .roster-toolbar { gap:7px; }
+}
+@media(max-width:899px) {
+ .setup-steps { width:100%; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; }
+ .setup-steps>button { flex-direction:column; gap:5px; padding:5px 3px; font-size:12px; }
+ .formula-workspace { grid-template-columns:1fr; }
+ .formula-workspace .formula-grid { grid-auto-rows:minmax(125px,auto); }
+ .selected-formula { overflow:visible; }
+ .match-preparation { grid-template-columns:1fr; }
+ .course-time-wheels { grid-template-columns:1fr; }
+ .roster-toolbar { align-items:flex-start; }
+ .roster-actions { margin-left:0; }
+ .formula-detail { grid-template-columns:1fr; gap:12px; }
+ .setup-terrains .terrain-preview { min-height:220px; height:260px; }
+ .shell.stage-wizard:has(.identity-overview) { display:flex; height:auto; max-height:none; min-height:100dvh; }
+ .shell .setup-participants .identity-grid.identity-overview { height:var(--identity-board-height,440px); min-height:300px; flex:none; }
+ .shell .wizard-panel:has(.identity-overview) { display:flex; }
+ .shell .setup-participants { overflow:visible; }
+}
+@media(max-width:580px) {
+ .guide-flow { grid-template-columns:1fr; gap:20px; }
+ .guide-stage:not(:last-child):after { content:'↓'; right:50%; top:auto; bottom:-24px; transform:none; }
+ .formula-workspace .formula-grid { grid-template-columns:1fr; }
+ .formula-workspace .formula-choice { min-height:100px; }
+ .match-time-grid { grid-template-columns:1fr; }
+ .course-budget { padding:6px 0; }
+ .brand-credit { font-size:8px; }
+ .roster-method { width:100%; }
+ .roster-method>button { flex:1; }
+ .setup-heading-line .setup-context { display:none; }
+}
+
+.setup-card>header>b .icon { width:16px; height:16px; }
+
+html:has(dialog[open]),body:has(dialog[open]) { overflow:hidden; }

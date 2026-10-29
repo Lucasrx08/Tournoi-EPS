@@ -1,10 +1,10 @@
-# Tournoi EPS · version 2.20
+# Tournoi EPS · version 2.21
 
 Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
 
 ## Préparer le tournoi
 
-Choisir l’activité, puis renseigner les terrains et le nombre de joueurs par côté. Trois repères accompagnent la préparation : Terrains, Participants et Rencontres. Les choix restent successifs, puis le dernier écran permet de nommer le tournoi et d’ouvrir directement les terrains. Les commandes de progression restent visibles sur ordinateur.
+Après le choix de l’activité, quatre rubriques accompagnent la préparation : Terrains, Équipes ou Joueurs, Formule, Matchs. L’effectif et les identités se règlent ensemble. Les poules se configurent à côté des formules ; les effectifs détaillés restent modifiables à la demande. Le dernier écran réunit la durée, les points du classement, le départ et le nom du tournoi. Les rubriques déjà parcourues sont directement accessibles et conservent les valeurs saisies.
 
 Pour les sports collectifs, les équipes sont identifiées par les couleurs de chasubles : Bleu clair, Bleu foncé, Vert clair, Vert foncé, Orange, Rouge, Jaune fluo, Jaune, Rose, Fuchsia et Blanc. Un nom personnalisé et un logo restent possibles. Deux méthodes : équipes déjà constituées, ou effectif total à répartir. Les propositions comparent les terrains utilisés, les équipes en attente, les remplaçants et l’arbitrage. Aucun nom individuel ni liste d’élèves n’est demandé pour ces équipes ; seule leur taille est conservée lorsque la répartition est calculée.
 
@@ -14,7 +14,7 @@ L’ordre des activités est : handball, badminton, ultimate, basket, volley, fu
 
 ## Régler les durées
 
-Les rencontres peuvent s’arrêter au chronomètre, à un objectif de score ou au signal. La formule, la fin et le départ sont choisis successivement par boutons.
+Les rencontres peuvent s’arrêter au chronomètre, à un objectif de score ou au signal. La fin, le comptage et le départ se règlent sur la même vue Matchs. Le temps total du cours, l’installation et les transitions sont accessibles avec « Modifier le temps du cours ».
 
 Les durées au chronomètre se règlent avec des roulettes : minutes et secondes pour les rencontres, l’installation / échauffement et les transitions ; heures, minutes et secondes pour le cours uniquement. Faire défiler, glisser, cliquer sur une valeur ou utiliser les flèches du clavier. Les secondes choisies sont conservées dans les calculs et les sauvegardes.
 
@@ -119,3 +119,15 @@ L’identification affiche toutes les équipes ou tous les joueurs, jusqu’à 6
 Le classement en poules ouvre directement les poules côte à côte, sans grand tableau général ni podium au-dessus. Le choix du nombre de colonnes privilégie les grilles complètes : quatre poules sur quatre colonnes en paysage, deux colonnes lorsque la largeur l’exige. Chaque carte présente tous ses rangs, noms, matchs joués, victoires et points ; le bouton dans son en-tête donne les statistiques complètes. En raquettes, victoires, points marqués et bonus restent distincts ; le détail des points normaux est disponible dans les statistiques. Les résultats de poules restent séparés des phases finales. Le général est une grille de tous les rangs, sans pages de huit.
 
 Sur les terrains, les boutons − et +1 sont réunis sous le score ; dans les vues denses, leur bloc occupe une colonne propre. Les commandes mesurent 44 px de haut sur la vue classique et 40 px sur les douze tables. Les boutons bonus ont aussi leur emplacement. Toucher les grands chiffres conserve la saisie directe du résultat, et Corriger reste disponible après validation.
+
+
+## Version 2.21 · 29 octobre 2026
+
+- Signature : « Créé par L. RIGAUX · Le Bon Sauveur » dans la marque et le pied de page.
+- Quatre rubriques explicites remplacent les sept étapes et les écrans supplémentaires de durée. Les chasubles et les noms sont sur la même vue que l’effectif. Le comptage, le chrono et les départs sont réunis.
+- Toutes les formules possèdent un exemple visuel et une explication du parcours, du classement et des limites. « Classement complet » devient « Tableau · toutes les places ». L’exemple de huit participants distingue les sept matchs d’un championnat des trois matchs du tableau de classement. Le nombre réel de matchs du championnat est affiché pour l’effectif saisi.
+- Un aperçu de 18 demi-terrains tient dans son panneau. Les noms des terrains et des prochaines rencontres restent sur une ligne ; les noms longs utilisent une ellipse et leur intitulé complet reste disponible dans le détail de la rencontre.
+- La saisie du résultat demande le score final rapporté par les joueurs ou l’arbitre. Le déplacement possède son bouton « Déplacer », séparé : seuls les terrains libres compatibles sont proposés, avec conservation du score et du chrono.
+- Les roulettes ignorent les déplacements de défilement provoqués par leur insertion dans une fenêtre. Une modification du budget du cours actualise les durées proposées. Les réglages avancés sont conservés après fermeture.
+
+Validation : 208 tests passent, complétés par des contrôles Chrome aux formats ordinateur, tablette paysage et téléphone. Les limites matérielles iPad, Safari et AirPlay restent celles décrites plus haut.
