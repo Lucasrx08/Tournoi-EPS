@@ -22,6 +22,15 @@ function runtime(snapshot,backup,legacySession={}){
 }
 function fixture(sport,n,c,config={}){const t=E.newTournament({sport,courtCount:c,format:E.SPORTS[sport].formats[0][0],...config},E.makeTeams(n));return {id:E.uid(),title:'Test EPS',tournaments:[t],selectedId:t.id,pinHash:null,pinSalt:'salt',studentScores:false,audio:{enabled:false,volume:.5,sound:'buzzer',start:false,alert30:false},createdAt:0}}
 function snapshot(e){return JSON.stringify({schema:1,events:[e],activeId:e.id,updatedAt:0,revision:0})}
+
+test('Préparation : bandeau séparé des identités et libellé du nombre d’équipes',async()=>{
+ const r=runtime();await r.action('pick-activity',{id:'handball'});await next(r);
+ assert.ok(r.html().includes('class="roster-header"'));assert.ok(r.html().includes('Nombre d’équipes'));assert.ok(!r.html().includes('Nombre de équipes'));
+ assert.ok(r.html().includes('</div><div class="identity-grid identity-overview"'));
+ assert.equal((r.html().match(/data-identity-index=/g)??[]).length,6);
+ await r.action('roster-mode',{id:'auto'});assert.ok(r.html().includes('Choisir une répartition'));assert.ok(r.html().includes('proposal-grid'));
+ await r.action('proposal',{id:r.run('proposals()[0].id')});assert.ok(r.html().includes('allocation-summary'));assert.ok(r.html().includes('data-identity-overview'));
+});
 function open(r,e){r.ctx.fixture=e;r.run("data.events=[normalizeEvent(fixture)];data.activeId=fixture.id;view='tournament';render()")}
 async function submitMatch(r,id,a,b){r.node('edit-score-a').value=String(a);r.node('edit-score-b').value=String(b);await r.action('save-match',{match:id,resultEntry:'quick'});}
 async function next(r){await r.action('wizard-next')}

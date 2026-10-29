@@ -78,6 +78,19 @@ test('Petite fenêtre : une hauteur minimale protège noms, scores et arbitrage'
 
 test('Multisport : la hauteur réserve la seconde ligne du titre du terrain',()=>{assert.equal(C.courtLayout(12,1325,500,true,false,true).minHeight,C.courtLayout(12,1325,500,true).minHeight+24);});
 
+test('À la mêlée : trois noms, un score et les commandes ont chacun leur espace',()=>{
+ for(const count of [1,3,8])for(const width of [976,1315,2000])for(const refs of [false,true]){
+  const g=C.courtLayout(count,width,520,refs,false,false,true),w=(width-10*(g.cols-1))/g.cols,h=Math.max(g.minHeight,(520-10*(g.rows-1))/g.rows),m=C.courtTypography(w,h,refs,false,count>=8,true);
+  assert.ok(m.identityHeight>=3*m.nameSize*1.25+8);
+  assert.ok(m.scoreSize<=m.scoreSpace);
+  assert.ok(g.minHeight>=(count>=8?300:380)+(refs?24:0));
+ }
+ const styles=new Map(),grid={children:[{},{},{}],clientWidth:976,clientHeight:520,style:{setProperty:(k,v)=>styles.set(k,String(v))}};
+ C.mountCourtLayout({querySelector:()=>grid},true,false,false,true);
+ const h=parseInt(styles.get('--court-height')),identity=parseInt(styles.get('--identity-height')),score=parseInt(styles.get('--score-size'));
+ assert.ok(h>=404);assert.ok(identity+score+50+8+28+22+126+32<=h);
+});
+
 test('Identités : huit et vingt équipes tiennent dans la fenêtre, sans pagination',()=>{
  for(const [count,width,height] of [[8,1259,496],[20,1259,496],[8,940,330],[20,940,330],[64,1259,496]]){
   const x=C.identityLayout(count,width,height);assert.ok(x.cols*x.rows>=count);assert.equal(x.overflow,false);assert.ok(x.rowHeight>=48);

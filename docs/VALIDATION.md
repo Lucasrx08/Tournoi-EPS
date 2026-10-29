@@ -1,3 +1,24 @@
+# Validation · version 2.22 · 29 octobre 2026
+
+Les correctifs portent sur les deux vues signalées : les cartes de rotation individuelle et la préparation des équipes. Le calcul de disposition reçoit explicitement le mode à la mêlée : trois lignes de noms sont réservées, puis le score est borné par la hauteur restante, indépendamment des commandes. La grille dense réserve également trois lignes par groupe. La préparation utilise deux lignes de grille explicites pour le bandeau et les cartes, sans hauteur en pourcentage dans une colonne flexible. Le libellé est « Nombre d’équipes » et reste sur une ligne.
+
+210 tests automatisés couvrent le moteur, les parcours et les contrôles. Les deux nouveaux tests vérifient la réservation des trois noms et du score avec ou sans arbitrage, ainsi que l’affichage des identités et propositions après le regroupement du bandeau.
+
+Contrôles dans Chrome :
+
+- Rotation individuelle : trois terrains et 18 joueurs à 1363 × 936 et dans un cadre 1024 × 768, avec noms longs. Les six zones de joueurs ne croisent ni les scores ni les commandes. La grille tient sans défilement vertical à 1024 × 768 (547 px de hauteur utile).
+- Projection à 1024 × 768 : les trois terrains tiennent dans les 699 px disponibles, sans chevauchement entre noms, scores et commandes.
+- Grille dense de huit terrains : noms sur trois lignes, hauteurs de 55 px sans débordement des listes. À 1024 px de large, un défilement interne conserve des commandes lisibles.
+- Vingt équipes à 1024 × 768 : cinq colonnes, quatre rangées, toutes visibles ; hauteur du tableau de 380 px, sans défilement interne. Le changement de méthode, le choix d’une proposition et la modification d’effectif conservent les cartes.
+- Fenêtre de 390 × 844 : la carte de rotation individuelle reste lisible, avec une lecture verticale sur téléphone.
+- Ajout de point depuis le bouton +1 sur le premier terrain, valeur affichée et état de match actualisés.
+
+Ces contrôles de formats sont effectués dans Chrome ; Safari et les appareils Apple physiques ne sont pas disponibles. Les fichiers de contrôle temporaires sont retirés avant publication. Aucun schéma de données ni règle de constitution des rencontres n’est modifié.
+
+Captures : `verification-222-rotation-individuelle.jpg` et `verification-222-equipes.jpg`.
+
+---
+
 # Validation · version 2.21 · 29 octobre 2026
 
 208 tests automatisés passent. Les tests couvrent les quatre rubriques de préparation, les identités, la répartition automatique, les poules, les sauvegardes et les exports. Les attentes d’anciens écrans successifs ont été remplacées par les parcours regroupés, sans retirer les validations métier.

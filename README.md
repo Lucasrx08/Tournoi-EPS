@@ -1,6 +1,8 @@
-# Tournoi EPS · version 2.21
+# Tournoi EPS · version 2.22
 
 Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
+
+La version 2.22 corrige la vue à la mêlée : trois lignes de joueurs sont réservées au-dessus des scores, les commandes restent séparées et la prochaine rotation conserve ses listes. La préparation des équipes utilise une grille à hauteur explicite et un bandeau compact.
 
 ## Préparer le tournoi
 
