@@ -35,10 +35,16 @@ export function durationWheel(label,field,seconds){
 export function mountWheels(root,onChange){
  for(const wheel of root.querySelectorAll('[data-wheel-field]')){
   const options=[...wheel.querySelectorAll('[data-wheel-value]')],row=options[0]?.getBoundingClientRect().height||32;
-  let selected=Number(wheel.dataset.wheelCurrent),timer;
-  const commit=value=>{value=Math.max(0,Math.min(options.length-1,value));wheel.scrollTop=value*row;if(value===selected)return;selected=value;onChange(wheel.dataset.wheelField,wheel.dataset.wheelUnit,value)};
-  wheel.scrollTop=selected*row;wheel.setAttribute('aria-activedescendant',options[selected].id);
-  wheel.addEventListener('scroll',()=>{clearTimeout(timer);timer=setTimeout(()=>{if(wheel.isConnected)commit(Math.round(wheel.scrollTop/row))},140)},{passive:true});
+  let selected=Number(wheel.dataset.wheelCurrent),timer,interacting=false;
+  const paint=()=>{wheel.dataset.wheelCurrent=String(selected);wheel.setAttribute('aria-activedescendant',options[selected].id);options.forEach((option,i)=>option.setAttribute?.('aria-selected',String(i===selected)));};
+  const commit=value=>{value=Math.max(0,Math.min(options.length-1,value));wheel.scrollTop=value*row;if(value===selected)return;selected=value;paint();onChange(wheel.dataset.wheelField,wheel.dataset.wheelUnit,value)};
+  if(wheel.style)wheel.style.scrollSnapType='none';
+  wheel.scrollTop=selected*row;paint();
+  const settle=()=>{if(!wheel.isConnected||interacting)return;wheel.scrollTop=selected*row;if(wheel.style)wheel.style.scrollSnapType='y mandatory';};
+  if(typeof requestAnimationFrame==='function')requestAnimationFrame(settle);else settle();
+  const arm=()=>{interacting=true;};
+  for(const type of ['wheel','pointerdown','touchstart'])wheel.addEventListener(type,arm,{passive:true});
+  wheel.addEventListener('scroll',()=>{if(!interacting)return;clearTimeout(timer);timer=setTimeout(()=>{if(wheel.isConnected)commit(Math.round(wheel.scrollTop/row))},140)},{passive:true});
   wheel.addEventListener('click',e=>{const option=e.target.closest('[data-wheel-value]');if(option)commit(Number(option.dataset.wheelValue))});
   wheel.addEventListener('keydown',e=>{let value;if(['ArrowDown','ArrowUp'].includes(e.key))value=selected+(e.key==='ArrowDown'?1:-1);else if(e.key==='PageDown'||e.key==='PageUp')value=selected+(e.key==='PageDown'?5:-5);else if(e.key==='Home')value=0;else if(e.key==='End')value=options.length-1;if(value!==undefined){e.preventDefault();const field=wheel.dataset.wheelField,unit=wheel.dataset.wheelUnit;commit(value);root.querySelector(`[data-wheel-field="${field}"][data-wheel-unit="${unit}"]`)?.focus()}});
  }
@@ -46,7 +52,7 @@ export function mountWheels(root,onChange){
 
 // Keep a readable minimum cell size; large sets scroll inside the board.
 export function courtLayout(count,width,height,referees=false,bonus=false,multisport=false){
- const dense=count>=8,gap=10,minWidth=dense?190:width<580?220:235,minHeight=dense?220+(referees?30:0)+(bonus?72:0):(referees?250:230)+(bonus?24:0);const safeHeight=minHeight+(multisport?24:0);
+ const dense=count>=8,gap=10,minWidth=dense?190:width<580?220:235,minHeight=dense?214+(referees?36:0)+(bonus?72:0):(referees?250:230)+(bonus?24:0);const safeHeight=minHeight+(multisport?24:0);
  const max=Math.max(1,Math.min(6,count,Math.floor((width+gap)/(minWidth+gap))));
  if(count<=3&&max>=count)return {cols:count,rows:1,minHeight:safeHeight};
  const options=Array.from({length:max},(_,i)=>{const cols=i+1,rows=Math.ceil(count/cols),w=(width-gap*(cols-1))/cols,h=(height-gap*(rows-1))/rows;return {cols,rows,fits:h>=safeHeight,cost:Math.abs(Math.log(Math.max(.1,w/h)/1.35))+(cols*rows-count)*.5}});
@@ -54,7 +60,7 @@ export function courtLayout(count,width,height,referees=false,bonus=false,multis
  return {cols:choice.cols,rows:choice.rows,minHeight:safeHeight};
 }
 export function courtTypography(width,height,referees=false,bonus=false,dense=false){
- if(dense){const scoreSpace=Math.max(32,(height-28-60-8-20-4-(referees?32:0)-(bonus?72:0))/2);return {scoreSize:Math.max(32,Math.min(36,Math.floor(width*.16),Math.floor(scoreSpace))),nameSize:13,identityHeight:32,scoreSpace}}
+ if(dense){const scoreSpace=Math.max(32,(height-28-60-8-20-4-(referees?32:0)-(bonus?72:0))/2);return {scoreSize:Math.max(32,Math.min(36,Math.floor(width*.15),Math.floor(scoreSpace))),nameSize:width<260?11:13,identityHeight:32,scoreSpace}}
  const nameSize=width>=360?18:16,identityHeight=nameSize===18?48:44;
  const scoreSpace=Math.max(32,height-32-84-8-20-4-identityHeight-44-(referees?18:0)-(bonus&&width<440?36:0));
  return {scoreSize:Math.max(32,Math.min(132,Math.floor(width*.22),Math.floor(scoreSpace))),nameSize,identityHeight,scoreSpace};
