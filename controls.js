@@ -46,7 +46,7 @@ export function mountWheels(root,onChange){
 
 // Keep a readable minimum cell size; large sets scroll inside the board.
 export function courtLayout(count,width,height,referees=false,bonus=false,multisport=false){
- const dense=count>=8,gap=10,minWidth=dense?190:width<580?220:235,minHeight=dense?220+(referees?30:0)+(bonus?48:0):(referees?250:230)+(bonus?24:0);const safeHeight=minHeight+(multisport?24:0);
+ const dense=count>=8,gap=10,minWidth=dense?190:width<580?220:235,minHeight=dense?220+(referees?30:0)+(bonus?72:0):(referees?250:230)+(bonus?24:0);const safeHeight=minHeight+(multisport?24:0);
  const max=Math.max(1,Math.min(6,count,Math.floor((width+gap)/(minWidth+gap))));
  if(count<=3&&max>=count)return {cols:count,rows:1,minHeight:safeHeight};
  const options=Array.from({length:max},(_,i)=>{const cols=i+1,rows=Math.ceil(count/cols),w=(width-gap*(cols-1))/cols,h=(height-gap*(rows-1))/rows;return {cols,rows,fits:h>=safeHeight,cost:Math.abs(Math.log(Math.max(.1,w/h)/1.35))+(cols*rows-count)*.5}});
@@ -54,9 +54,9 @@ export function courtLayout(count,width,height,referees=false,bonus=false,multis
  return {cols:choice.cols,rows:choice.rows,minHeight:safeHeight};
 }
 export function courtTypography(width,height,referees=false,bonus=false,dense=false){
- if(dense){const scoreSpace=Math.max(32,(height-28-60-8-20-4-(referees?32:0)-(bonus?48:0))/2);return {scoreSize:Math.max(32,Math.min(36,Math.floor(width*.16),Math.floor(scoreSpace))),nameSize:13,identityHeight:32,scoreSpace}}
+ if(dense){const scoreSpace=Math.max(32,(height-28-60-8-20-4-(referees?32:0)-(bonus?72:0))/2);return {scoreSize:Math.max(32,Math.min(36,Math.floor(width*.16),Math.floor(scoreSpace))),nameSize:13,identityHeight:32,scoreSpace}}
  const nameSize=width>=360?18:16,identityHeight=nameSize===18?48:44;
- const scoreSpace=Math.max(32,height-32-84-8-20-4-identityHeight-(referees?18:0)-(bonus?24:0));
+ const scoreSpace=Math.max(32,height-32-84-8-20-4-identityHeight-44-(referees?18:0)-(bonus&&width<440?36:0));
  return {scoreSize:Math.max(32,Math.min(132,Math.floor(width*.22),Math.floor(scoreSpace))),nameSize,identityHeight,scoreSpace};
 }
 let courtObserver;
@@ -74,4 +74,33 @@ export function mountCourtDrag(root,onMove){
   handle.addEventListener('pointerup',e=>{if(!start)return;const id=handle.closest('[data-court-player]').dataset.courtPlayer,target=zone?.dataset.dropCourt,moved=dragging;clear();if(moved){e.preventDefault();if(target)onMove(id,Number(target))}});
   handle.addEventListener('pointercancel',clear);handle.addEventListener('lostpointercapture',clear);
  }
+}
+
+// Overview layouts use the real space left by the surrounding page.
+export function identityLayout(count,width,height){
+ const gap=10,small=width<650,maxCols=Math.min(count,small?2:8,Math.max(1,Math.floor((width+gap)/(small?155:140))));
+ const options=Array.from({length:maxCols},(_,i)=>{const cols=i+1,rows=Math.ceil(count/cols),cellWidth=(width-gap*(cols-1))/cols,cellHeight=(height-gap*(rows-1)-2)/rows;return {cols,rows,cellWidth,cellHeight,cost:Math.abs(Math.log(Math.max(.1,cellWidth/cellHeight)/2.2))+(cols*rows-count)*.85};});
+ let fitting=options.filter(x=>x.cellWidth>=180&&x.cellHeight>=90);if(!fitting.length&&!small)fitting=options.filter(x=>x.cellWidth>=130&&x.cellHeight>=48);
+ const best=fitting.length?fitting.sort((a,b)=>a.cost-b.cost)[0]:options.at(-1),rowHeight=Math.max(small?68:48,Math.min(150,Math.floor(best.cellHeight)));
+ return {...best,rowHeight,density:rowHeight<88||best.cellWidth<180?'micro':'compact',overflow:rowHeight*best.rows+gap*(best.rows-1)+2>height};
+}
+export function overallLayout(count,width,height){
+ const gap=8,max=Math.min(4,count,Math.max(1,Math.floor((width+gap)/300))),options=Array.from({length:max},(_,i)=>{const cols=i+1,rows=Math.ceil(count/cols);return {cols,rows,rowHeight:(height-gap*(rows-1))/rows};});
+ const best=options.find(x=>x.rowHeight>=44)??options.at(-1),rowHeight=Math.max(width<650?40:28,Math.min(52,Math.floor(best.rowHeight)));
+ return {...best,rowHeight,overflow:rowHeight*best.rows+gap*(best.rows-1)>height};
+}
+export function poolLayout(count,longest,width,height){
+ const gap=10,max=Math.min(4,count,Math.max(1,Math.floor((width+gap)/220))),options=Array.from({length:max},(_,i)=>{const cols=i+1,rows=Math.ceil(count/cols),available=(height-gap*(rows-1))/rows;return {cols,rows,available,waste:cols*rows-count};});
+ const fitting=options.filter(x=>x.available>=76+longest*24),best=(fitting.length?fitting:options).sort((a,b)=>a.waste-b.waste||b.cols-a.cols)[0],rowHeight=Math.min(48,Math.max(24,Math.floor((best.available-76)/longest))),cardHeight=76+longest*rowHeight;
+ return {...best,rowHeight,cardHeight,fontSize:Math.max(11,Math.min(15,(width-gap*(best.cols-1))/best.cols/19)),overflow:cardHeight*best.rows+gap*(best.rows-1)>height};
+}
+let overviewObserver;
+export function mountOverviewLayouts(root){
+ overviewObserver?.disconnect();const boards=[...root.querySelectorAll('[data-identity-overview],[data-pool-boards],[data-overall-ranking]')];if(!boards.length)return;
+ const fit=()=>{for(const board of boards){const width=board.clientWidth,height=board.clientHeight;if(!width||!height)continue;
+  if(board.hasAttribute('data-identity-overview')){const x=identityLayout(board.children.length,width,height);board.style.setProperty('--identity-cols',x.cols);board.style.setProperty('--identity-rows',x.rows);board.style.setProperty('--identity-row-height',x.rowHeight+'px');board.dataset.density=x.density;}
+  else if(board.hasAttribute('data-overall-ranking')){const x=overallLayout(board.children.length,width,height);board.style.setProperty('--ranking-cols',x.cols);board.style.setProperty('--ranking-rows',x.rows);board.style.setProperty('--standing-height',x.rowHeight+'px');board.dataset.density=x.rowHeight<38?'micro':'compact';}
+  else{const longest=Math.max(1,...[...board.children].map(c=>c.querySelectorAll('tbody tr').length)),x=poolLayout(board.children.length,longest,width,height);board.style.setProperty('--pool-cols',x.cols);board.style.setProperty('--pool-row-height',x.rowHeight+'px');board.style.setProperty('--pool-card-height',x.cardHeight+'px');board.style.setProperty('--pool-font',x.fontSize+'px');}
+ }};
+ fit();if(typeof ResizeObserver!=='undefined'){overviewObserver=new ResizeObserver(fit);boards.forEach(b=>overviewObserver.observe(b));}
 }
