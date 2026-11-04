@@ -1,3 +1,4 @@
+import * as G from './pools.js';
 export const COLORS=['#315ae8','#e0556c','#258d69','#c09614','#8355bc','#d77428','#bc4e92','#218d9c','#485762','#8b704d','#606bbc','#669331'];
 export const SPORTS={
  basket:{name:'Basket-ball',icon:'basketball',formats:[['3x3','3 contre 3',3,'half',11],['5x5','5 contre 5',5,'basket',21],['custom','Personnalisé',3,'basket',11]]},
@@ -87,15 +88,14 @@ export function newTournament(config={},teams=makeTeams(8)){
  if(cfg.formula==='melee')scheduleMelee(t);
  else if(cfg.formula==='multisport')scheduleMultisport(t);
  else if(cfg.formula==='rr'){const rounds=roundRobin(roster);schedule(t,rounds.flat(),rounds)}
- else if(['pools','poolfinal','levels','poolladder','levelsladder'].includes(cfg.formula)){
+ else if(G.hasPools(cfg)){
   const count=cfg.poolCount;if(count>Math.floor(roster.length/2))throw Error('Chaque poule doit compter au moins deux participants.');
   const sizes=cfg.poolSizes??Array.from({length:count},(_,i)=>Math.floor(roster.length/count)+(i<roster.length%count?1:0));
   if(sizes.length!==count||sizes.some(x=>!Number.isInteger(x)||x<2)||sizes.reduce((a,b)=>a+b,0)!==roster.length)throw Error('Les effectifs des poules doivent correspondre au nombre de participants.');
   if(cfg.formula==='poolfinal'&&sizes.some(x=>x<cfg.qualifiers))throw Error('Le nombre de qualifiés dépasse l’effectif d’une poule.');
-  cfg.poolSizes=sizes.slice();const leveled=['levels','levelsladder'].includes(cfg.formula)||cfg.poolSeeding==='levels',ordered=t.teams.slice().sort((a,b)=>(a.seedRank??Infinity)-(b.seedRank??Infinity)||b.level-a.level),groups=sizes.map((size,i)=>({name:leveled?'Niveau '+(i+1)+' · Poule '+poolLabel(i):'Poule '+poolLabel(i),level:leveled||['poolladder','levelsladder'].includes(cfg.formula)?i+1:null,ids:[],size}));
+  cfg.poolSizes=sizes.slice();const leveled=['levels','levelsladder'].includes(cfg.formula)||cfg.poolSeeding==='levels',groups=sizes.map((size,i)=>({name:leveled?'Niveau '+(i+1)+' · Poule '+poolLabel(i):'Poule '+poolLabel(i),level:leveled||['poolladder','levelsladder'].includes(cfg.formula)?i+1:null,ids:[],size}));
   if(cfg.poolAssignments){if(!Array.isArray(cfg.poolAssignments)||cfg.poolAssignments.some(g=>!Array.isArray(g)))throw Error('Les poules prédéfinies ne correspondent pas aux participants.');const flat=cfg.poolAssignments.flat();if(cfg.poolAssignments.length!==count||cfg.poolAssignments.some((g,i)=>!Array.isArray(g)||g.length!==sizes[i])||flat.length!==roster.length||new Set(flat).size!==roster.length||flat.some(id=>!roster.includes(id)))throw Error('Les poules prédéfinies ne correspondent pas aux participants.');groups.forEach((g,i)=>g.ids=cfg.poolAssignments[i].slice());}
-  else if(leveled){let start=0;groups.forEach(g=>{g.ids=ordered.slice(start,start+g.size).map(x=>x.id);start+=g.size;});}
-  else{let remaining=ordered.map(x=>x.id),reverse=false;while(remaining.length){const targets=groups.slice();if(reverse)targets.reverse();for(const g of targets)if(remaining.length&&g.ids.length<g.size)g.ids.push(remaining.shift());reverse=!reverse;}}
+  else{const assignments=G.arrange(t.teams,sizes,leveled);groups.forEach((g,i)=>g.ids=assignments[i]);}
   t.engine.groups=groups;const pairs=groups.flatMap(g=>roundRobin(g.ids).flat().map(p=>({...p,group:g.name,phase:'Poules'})));schedule(t,pairs);
  }
  else if(['knockout','classification'].includes(cfg.formula)){t.engine.tracks=[{ids:roster,start:1}];generateBracket(t)}
@@ -122,14 +122,24 @@ export function standings(t,group=null){
   const score=t.config.formula==='melee'?b.points-a.points||(t.config.meleeDifference?(b.for-b.against)-(a.for-a.against):0):racket?b.wins-a.wins||b.for-a.for||(b.bonusPoints===null||a.bonusPoints===null?0:b.bonusPoints-a.bonusPoints):b.points-a.points||b.for-a.for||(b.for-b.against)-(a.for-a.against)||(head.get(b.id)??0)-(head.get(a.id)??0);
   return score||a.name.localeCompare(b.name,'fr');});entries.forEach((e,i)=>{e.rank=i+1;if(t.config.formula==='ladder'&&t.completed)e.poolLevel=Math.ceil(e.rank/2);});return entries;
 }
-export function freshTeams(t,fromRanking=false){const roster=fromRanking?standings(t).map(x=>team(t,x.id)):t.teams;return roster.map((x,i)=>({...structuredClone(x),id:uid(),sourceTeamId:x.id,active:true,seedRank:fromRanking?i+1:undefined,level:fromRanking?roster.length-i:x.level,members:structuredClone(x.members??[]),logo:['badminton','table'].includes(t.config.sport)?'':x.logo}));}
+export const racketPools=t=>['badminton','table'].includes(t.config.sport)&&G.hasPools(t.config)&&t.engine.groups.length>0;
+export function poolStandings(t,group){
+ const g=typeof group==='number'?t.engine.groups[group]:group;if(!g)return [];
+ const source={...t,completed:false,rotations:t.rotations.map(r=>({...r,matches:r.matches.filter(m=>m.phase==='Poules'||m.group===g.name)}))};
+ return standings(source,g.ids);
+}
+export function freshTeams(t,fromRanking=false){
+ const local=racketPools(t),poolRows=local?t.engine.groups.flatMap((g,i)=>poolStandings(t,g).map(row=>({...row,poolIndex:i,poolName:g.name}))):[],rows=new Map(poolRows.map(row=>[row.id,row]));
+ const roster=fromRanking?(local?poolRows:standings(t)).map(x=>team(t,x.id)):t.teams;
+ return roster.map((x,i)=>({...structuredClone(x),id:uid(),sourceTeamId:x.id,active:true,seedRank:fromRanking?i+1:undefined,level:fromRanking?roster.length-i:x.level,...(rows.has(x.id)?{seedPoolRank:rows.get(x.id).rank,seedPoolLevel:rows.get(x.id).poolIndex+1,seedPoolName:rows.get(x.id).poolName}:{}),members:structuredClone(x.members??[]),logo:['badminton','table'].includes(t.config.sport)?'':x.logo}));
+}
 export function restartTournament(t){const cfg=structuredClone(t.config);if(['pools','levels','poolfinal','poolladder','levelsladder'].includes(cfg.formula)&&!cfg.poolSizes&&t.engine.groups.length){cfg.poolCount=t.engine.groups.length;cfg.poolSizes=t.engine.groups.map(g=>g.ids.length);cfg.qualifiers=Math.min(cfg.qualifiers,...cfg.poolSizes);}const teams=freshTeams(t),ids=new Map(teams.map(x=>[x.sourceTeamId,x.id]));if(cfg.poolAssignments)cfg.poolAssignments=cfg.poolAssignments.map(g=>g.map(id=>ids.get(id)));if(cfg.openingPairs)cfg.openingPairs=cfg.openingPairs.map(p=>({...p,a:ids.get(p.a),b:ids.get(p.b)}));const copy=newTournament(cfg,teams);copy.sourceTournamentId=t.id;copy.courts.forEach((c,i)=>{c.name=t.courts[i].name;});return copy;}
 
 export function promotionPlan(t){
  if(!t.completed)throw Error('Terminez le tournoi avant de calculer les montées et descentes.');
  if(!t.engine.groups.length)throw Error('Ce tournoi ne contient pas de poules.');
  const groups=t.engine.groups.map(g=>({...structuredClone(g),ids:[]})),moves=[];
- t.engine.groups.forEach((g,i)=>{const rows=standings(t,g.ids);rows.forEach((row,j)=>{const target=j===0&&i>0?i-1:j===rows.length-1&&i<groups.length-1?i+1:i;groups[target].ids.push(row.id);moves.push({id:row.id,name:row.name,rank:j+1,from:i,to:target,movement:target<i?'up':target>i?'down':'stay'});});});
+ t.engine.groups.forEach((g,i)=>{const rows=poolStandings(t,g);rows.forEach((row,j)=>{const target=j===0&&i>0?i-1:j===rows.length-1&&i<groups.length-1?i+1:i;groups[target].ids.push(row.id);moves.push({id:row.id,name:row.name,rank:j+1,from:i,to:target,movement:target<i?'up':target>i?'down':'stay'});});});
  return {groups,moves};
 }
 function winner(m){if(m.reason==='both-absent'||m.status==='cancelled')return null;return m.scoreA>m.scoreB?m.a:m.scoreB>m.scoreA?m.b:null}
@@ -192,12 +202,19 @@ export function multisportStandings(event){const map=new Map();const count=event
 // Timer expiry opens score collection; it never invents a final result.
 export function awaitScore(t,m,now=Date.now()){if(done(m))return;m.pendingTieBreak=m.tieBreak;m.status='awaiting_score';m.reason='time';m.tieBreak=null;freeze(m,now);record(t,'await-score',m.id,now);}
 export function courtMatch(t,id){const matches=current(t).matches.filter(m=>m.courtId===id);return matches.find(m=>!done(m))??matches.at(-1);}
-export function nextAvailableMatch(t,courtId){
- if(hasTime(t)||t.completed)return null;const court=t.courts.find(c=>c.id===courtId);if(!court?.available||current(t).matches.some(m=>m.courtId===courtId&&!done(m)))return null;
+export const usesWaitingQueue=t=>t.config.sync==='independent'||!hasTime(t);
+export function waitingMatches(t){
+ if(!usesWaitingQueue(t)||t.completed)return [];
  const busy=new Set(current(t).matches.filter(m=>!done(m)).flatMap(m=>[...entrants(m),...(t.config.referees?(m.refereeIds??[m.refereeId]).filter(Boolean):[])]));
- for(const r of t.rotations.slice(t.roundIndex+1)){const candidates=r.matches.filter(m=>m.status==='scheduled'&&m.stage===current(t).stage&&entrants(m).every(id=>!busy.has(id)&&team(t,id)?.active)&&(!t.config.multisport||m.sport===court.sport));const m=candidates.find(m=>m.courtId===courtId)??candidates[0];if(m)return {match:m,rotation:r};}return null;
+ const courts=t.courts.filter(c=>c.available&&!current(t).matches.some(m=>m.courtId===c.id&&!done(m)));
+ return t.rotations.slice(t.roundIndex+1).flatMap(rotation=>rotation.matches.filter(m=>m.status==='scheduled'&&m.stage===current(t).stage&&entrants(m).every(id=>team(t,id)?.active)).map(match=>{const ready=entrants(match).every(id=>!busy.has(id));return {match,rotation,ready,courts:ready?courts.filter(c=>!t.config.multisport||c.sport===match.sport):[]};}));
 }
-export function pullNextMatch(t,courtId,now=Date.now()){const next=nextAvailableMatch(t,courtId);if(!next)throw Error('Aucune rencontre disponible : des participants jouent encore ou doivent rapporter leur score.');const m=next.match;next.rotation.matches.splice(next.rotation.matches.indexOf(m),1);m.originNumber??=next.rotation.number;m.courtId=courtId;current(t).matches.push(m);startMatch(t,m,now);record(t,'rolling-start',m.id,now);return m;}
+export function nextAvailableMatch(t,courtId){return waitingMatches(t).find(x=>x.courts.some(c=>c.id===courtId))??null;}
+export function pullWaitingMatch(t,matchId,courtId,now=Date.now()){
+ const next=waitingMatches(t).find(x=>x.match.id===matchId&&x.courts.some(c=>c.id===courtId));if(!next)throw Error('Cette rencontre ne peut pas démarrer : vérifiez le terrain libre, les participants et les scores encore à rapporter.');
+ const m=next.match;next.rotation.matches.splice(next.rotation.matches.indexOf(m),1);m.originNumber??=next.rotation.number;m.courtId=courtId;current(t).matches.push(m);startMatch(t,m,now);record(t,'rolling-start',m.id,now);return m;
+}
+export function pullNextMatch(t,courtId,now=Date.now()){const next=nextAvailableMatch(t,courtId);if(!next)throw Error('Aucune rencontre disponible : des participants jouent encore ou doivent rapporter leur score.');return pullWaitingMatch(t,next.match.id,courtId,now);}
 export function setOpeningRound(t,pairs){
  if(!['rr','pools','poolfinal'].includes(t.config.formula))throw Error('Le choix de la première rotation est disponible en championnat et en poules.');
  if(t.roundIndex||allMatches(t).some(m=>m.status!=='scheduled'||m.scoreA||m.scoreB))throw Error('La première rotation se choisit avant le début du tournoi.');
