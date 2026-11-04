@@ -1,8 +1,8 @@
-# Tournoi EPS · version 2.22
+# Tournoi EPS · version 2.23
 
 Application française pour organiser les rencontres en EPS, gérer les scores et anticiper les rotations sur une même vue des terrains.
 
-La version 2.22 corrige la vue à la mêlée : trois lignes de joueurs sont réservées au-dessus des scores, les commandes restent séparées et la prochaine rotation conserve ses listes. La préparation des équipes utilise une grille à hauteur explicite et un bandeau compact.
+La version 2.23 distingue les sports de raquettes et les sports collectifs. Elle ajoute les listes d’élèves conservées, la composition nominative des poules et une file commune de rencontres pour les départs décalés.
 
 ## Préparer le tournoi
 
@@ -13,6 +13,20 @@ Pour les sports collectifs, les équipes sont identifiées par les couleurs de c
 En badminton et tennis de table, les inscriptions sont des joueurs en simple ou des duos en double. Le bouton « Modèle élèves » télécharge un XLSX avec deux colonnes : **Nom et prénom** et **Numéro de terrain**. Remplir les noms sans les découper et, si souhaité, indiquer le terrain de départ. Un numéro supérieur aux terrains disponibles est refusé. Les anciens imports NOM / Prénom sont acceptés. Les duos importés sont constitués entre joueurs affectés au même terrain ; un effectif impair dans un groupe est signalé. Les partenaires tournants utilisent une liste de joueurs individuels et organisent de vrais doubles.
 
 L’ordre des activités est : handball, badminton, ultimate, basket, volley, futsal, tennis de table, rugby, football, activité personnalisée. Tennis et hockey restent lisibles dans les anciennes sauvegardes.
+
+## Élèves et poules en sports de raquettes
+
+« Mes listes » permet de conserver une classe sur cet appareil et de la réutiliser en badminton ou en tennis de table. L’import, la saisie manuelle et les duos sont acceptés ; la création du tournoi conserve aussi les élèves. Une liste reste disponible après suppression du tournoi et fait partie de la sauvegarde JSON. Une mise à jour conserve les élèves omis d’une séance. Les poules de la dernière séance sont accessibles depuis la liste.
+
+Dans les cinq formules de poules, « Ajuster les poules et les effectifs » affiche les participants par leur nom. Sélectionner un prénom, puis « Placer ici », ou le glisser vers une autre poule. Les effectifs suivent les déplacements. Le nombre de poules et leurs effectifs restent réglables. L’enregistrement vérifie que chacun figure une seule fois et que chaque poule compte au moins deux participants. Annuler conserve la préparation précédente.
+
+En badminton et tennis de table avec poules, les résultats affichent exclusivement le rang de chaque poule, même après la fin. La nouvelle séance peut conserver les poules, appliquer les montées/descentes ou modifier leur composition. Le premier monte, le dernier descend et les rangs intermédiaires restent ; aux extrémités, on reste dans le niveau existant. Ces mouvements utilisent uniquement les matchs de poule, y compris lorsque le tournoi comporte ensuite des phases finales. Les exports iDoceo, Excel, CSV et PDF gardent le nom et le rang de poule, sans classement général.
+
+## Rencontres avec départs décalés
+
+Pour les chronos indépendants et les matchs au score ou au signal, les prochaines oppositions sont réunies dans « Rencontres en attente ». Aucun terrain n’est annoncé à l’avance. Quand les joueurs et un terrain sont disponibles, choisir la rencontre puis le terrain libre ; s’il n’y en a qu’un, elle y démarre directement. Les participants d’un match dont le score final reste à rapporter sont encore occupés. Les matchs en cours sur les autres terrains continuent. Une pause des chronos indépendants peut être reprise sans démarrer les rencontres encore en attente.
+
+Les matchs chronométrés avec départ commun conservent leur annonce de prochaine rotation sous chaque terrain.
 
 ## Régler les durées
 
@@ -107,7 +121,7 @@ Après un tournoi de poules terminé, le premier de chaque poule monte d’un ni
 - Championnat, poules et poules puis finales : option de première rotation manuelle, sans perdre les autres oppositions. Les formules disposent d’une fiche Organisation / Progression / Classement.
 - Poules puis finales : tous les participants continuent pour les places de classement. Les perdants poursuivent aussi ; des rencontres complémentaires égalisent le nombre de matchs de la phase finale. Avec des effectifs impairs, cela peut ajouter des rotations ; les places déjà obtenues sont conservées pendant ces compléments.
 - Activité personnalisée → Rotation individuelle : formule « À la mêlée / Mexicain », en trois contre trois. Les modèles de 6, 7 et 8 élèves par terrain suivent la fiche fournie (5 / 7 / 7 rotations). Avec d’autres effectifs, le calcul équilibre le temps de jeu et limite les partenaires répétés. Les points sont personnels : victoire 3, nul 2, défaite 1 par défaut ; différence de buts facultative. Les élèves non engagés arbitrent si l’option est activée. L’export iDoceo distingue les points personnels, V/N/D, buts et différence.
-- Raquettes : résultats intermédiaires par poule ou terrain ; le classement général n’apparaît qu’à la fin. Points normaux, bonus et total sont séparés lorsque le bonus est activé.
+- Raquettes : classement par poule à toutes les étapes des formules de poules ; dans les autres formules, résultats intermédiaires par terrain et classement général à la fin. Points normaux, bonus et total sont séparés lorsque le bonus est activé.
 - Audio : annonces synthétisées localement et incluses dans le cache hors connexion. Aucun service de génération n’est appelé à l’utilisation. Les signaux doux utilisent aussi le lecteur média.
 - iPad installé : prévention du pincement et du double toucher sur l’interface ; le défilement à un doigt reste disponible.
 

@@ -9,6 +9,8 @@ import * as P from '../dist/planning.js';
 import * as C from '../dist/controls.js';
 import * as R from '../dist/rackets.js';
 import * as F from '../dist/formula-guide.js';
+import * as G from '../dist/pools.js';
+import * as L from '../dist/rosters.js';
 const source=readFileSync(new URL('../dist/app.js',import.meta.url),'utf8').replace(/^import .+;\n/gm,'');
 const plain=v=>JSON.parse(JSON.stringify(v));
 function runtime(snapshot,backup,legacySession={}){
@@ -16,7 +18,7 @@ function runtime(snapshot,backup,legacySession={}){
  if(snapshot)memory.set('EPS_TOURNOIS_V1',snapshot);if(backup)memory.set('EPS_TOURNOIS_V1_BACKUP',backup);
  function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',classList:{add(){},remove(){},toggle(){}},listeners:new Map(),addEventListener(type,cb){this.listeners.set(type,cb)},showModal(){this.open=true},close(){this.open=false},getBoundingClientRect(){return {left:0,right:1000,top:0,bottom:1000}}});return nodes.get(id)}
  const storage=map=>({getItem:key=>map.get(key)??null,setItem:(key,v)=>map.set(key,String(v)),removeItem:key=>map.delete(key)});
- const ctx={E,X,P,C,R,F,crypto:webcrypto,console,structuredClone,TextEncoder,Uint8Array,URL,URLSearchParams,Date,Blob,Map,Set,Number,JSON,Math,Promise,String,Array,RegExp,Error,atob,btoa,localStorage:storage(memory),sessionStorage:storage(session),location:{search:'',href:'https://example.test/',pathname:'/'},navigator:{},document:{getElementById:node,querySelector(){return null},addEventListener:(type,cb)=>listeners.set(type,cb),visibilityState:'visible',documentElement:{requestFullscreen:async()=>{}}},setTimeout:()=>0,clearTimeout(){},setInterval:()=>0,addEventListener(){},scrollTo(){},confirm:()=>true,window:{},audioContext:null,speechSynthesis:{getVoices:()=>[{lang:'fr-FR'}],cancel(){},speak:speech=>spoken.push(speech)},SpeechSynthesisUtterance:class{constructor(text){this.text=text}}};
+ const ctx={E,X,P,C,R,F,G,L,crypto:webcrypto,console,structuredClone,TextEncoder,Uint8Array,URL,URLSearchParams,Date,Blob,Map,Set,Number,JSON,Math,Promise,String,Array,RegExp,Error,atob,btoa,localStorage:storage(memory),sessionStorage:storage(session),location:{search:'',href:'https://example.test/',pathname:'/'},navigator:{},document:{getElementById:node,querySelector(){return null},addEventListener:(type,cb)=>listeners.set(type,cb),visibilityState:'visible',documentElement:{requestFullscreen:async()=>{}}},setTimeout:()=>0,clearTimeout(){},setInterval:()=>0,addEventListener(){},scrollTo(){},confirm:()=>true,window:{},audioContext:null,speechSynthesis:{getVoices:()=>[{lang:'fr-FR'}],cancel(){},speak:speech=>spoken.push(speech)},SpeechSynthesisUtterance:class{constructor(text){this.text=text}}};
  vm.createContext(ctx);vm.runInContext('"use strict";\n'+source,ctx);
  return {ctx,node,memory,spoken,listeners,run:s=>vm.runInContext(s,ctx),html:()=>node('app').innerHTML,action:(name,dataset={})=>ctx.action(name,{dataset}),change:target=>listeners.get('change')({target:{hasAttribute:()=>false,...target}}),input:target=>listeners.get('input')({target})};
 }
@@ -451,4 +453,50 @@ test('Score et déplacement sont deux actions distinctes, sans terrain occupé p
  await r.action('quick-result',{match:m.id});assert.ok(r.node('modal').innerHTML.includes('score final rapporté'));assert.ok(!r.node('modal').innerHTML.includes('moveCourt'));assert.ok(!r.node('modal').innerHTML.includes('Déplacer'));
  await r.action('close');await r.action('score',{match:m.id,side:'a',delta:'2'});await r.action('move-match',{match:m.id});const html=r.node('modal').innerHTML;assert.equal((html.match(/data-action="move-match-to"/g)??[]).length,1);assert.ok(html.includes('data-court="'+free+'"'));
  await r.action('move-match-to',{match:m.id,court:free});assert.equal(r.run('findMatch("'+m.id+'").courtId'),free);assert.equal(r.run('findMatch("'+m.id+'").scoreA'),2);assert.equal(r.node('modal').open,false);
+});
+
+test('Listes raquettes : sauvegarde autonome, reprise dans l’autre activité et conservation après suppression du tournoi',async()=>{
+ const r=runtime();await r.action('pick-activity',{id:'badminton'});await next(r);r.ctx.pupils=X.participantsFromRows([['Nom et prénom'],['Inès Martin'],['Léo Durand'],['Lou Roy'],['Adam Diallo']]);r.run('applyParticipants(pupils)');
+ await r.action('roster-save');r.node('roster-title').value='3e Gaudi';await r.action('roster-store');const list=r.run('data.rosters[0].id');assert.equal(r.run('data.rosters.length'),1);
+ const restored=runtime(r.memory.get('EPS_TOURNOIS_V1'));await restored.action('roster-load',{id:list,sport:'table'});assert.equal(restored.run('draftCfg().sport'),'table');assert.equal(restored.run('draft.count'),4);assert.equal(restored.run('draft.teams[0].name'),'Inès Martin');
+ await next(restored);await next(restored);await restored.action('create');assert.equal(restored.run('data.rosters.length'),1);assert.equal(restored.run('tourney().config.rosterId'),list);restored.run('data.events=[];save();render()');await restored.action('roster-library');assert.ok(restored.node('modal').innerHTML.includes('3e Gaudi'));
+});
+for(const formula of G.FORMULAS)test('Composition nominative enregistrée en '+formula,async()=>{
+ const r=runtime();r.run("newDraft('badminton');resizeTeams(8);draft.step=4;render()");await r.action('formula-choice',{id:formula});await r.action('pool-proposal',{id:'2'});const before=r.run('JSON.stringify(draftCfg().poolAssignments)');await r.action('pool-settings');
+ const id=r.run('poolEditor.assignments[0][0]');assert.ok(r.node('modal').innerHTML.includes('data-pool-player="'+id+'"'));await r.action('pool-select',{id});await r.action('pool-place',{id:'1'});assert.deepEqual(plain(r.run('poolEditor.sizes')),[3,5]);assert.equal(r.run('JSON.stringify(draftCfg().poolAssignments)'),before);
+ await r.action('pool-save');assert.deepEqual(plain(r.run('draftTournament().engine.groups.map(g=>g.ids.length)')),[3,5]);r.ctx.selected=id;assert.ok(r.run('draftTournament().engine.groups[1].ids.includes(selected)'));
+ await r.action('pool-settings');const second=r.run('poolEditor.assignments[0][0]');await r.action('pool-select',{id:second});await r.action('pool-place',{id:'1'});await r.action('close');assert.deepEqual(plain(r.run('draftCfg().poolSizes')),[3,5]);
+});
+for(const sport of ['badminton','table'])for(const formula of G.FORMULAS)test('Classement local uniquement : '+sport+' '+formula,async()=>{
+ const r=runtime(),e=fixture(sport,8,4,{formula,poolCount:2,poolSizes:[4,4],scoreMode:'bonus',bonusPoints:3});open(r,e);await r.action('rank');
+ for(const completed of [false,true]){r.ctx.complete=completed;r.run('tourney().completed=complete;rankingMode="general";render()');assert.ok(r.html().includes('Classements par poule'));assert.ok(!r.html().includes('data-overall-ranking'));assert.ok(!r.html().includes('data-id="general"'));assert.ok(!r.html().includes('sera disponible à la fin'));}
+ const sheet=r.run('sheets(tourney())[4]');assert.equal(sheet.name,'Classements par poule');assert.equal(sheet.rows[0][2],'Rang dans la poule');await r.action('ranking-details');assert.equal((r.node('modal').innerHTML.match(/class="pool-result-detail"/g)??[]).length,2);
+});
+test('Reprise par poule : conserver, promouvoir, puis ajuster les élèves sans modifier le tournoi source',async()=>{
+ const r=runtime(),e=fixture('table',9,3,{formula:'pools',poolCount:3,poolSizes:[3,3,3]});open(r,e);r.run("while(!tourney().completed){for(const m of E.current(tourney()).matches){m.scoreA=21;m.scoreB=10;E.finishMatch(tourney(),m,'manual',0,false)}E.advance(tourney())}save()");
+ const id=r.run('event().id'),source=r.run('JSON.stringify(tourney())'),expected=plain(r.run('E.promotionPlan(tourney()).groups.map(g=>g.ids.map(id=>E.team(tourney(),id).name))'));await r.action('session-options',{id});assert.ok(r.node('modal').innerHTML.includes('Montées / descentes par poule'));await r.action('promote-event',{id});
+ assert.deepEqual(plain(r.run('draftTournament().engine.groups.map(g=>g.ids.map(id=>E.team(draftTournament(),id).name))')),expected);await r.action('pool-settings');assert.ok(r.node('modal').innerHTML.includes('résultats de chaque poule uniquement')||r.node('modal').innerHTML.includes('Résultats de chaque poule uniquement'));await r.action('close');assert.equal(r.run('JSON.stringify(data.events[0].tournaments[0])'),source);
+});
+test('Départs décalés : la file remplace les annonces par terrain et démarre sur le terrain choisi',async()=>{
+ const r=runtime(),e=fixture('handball',20,8,{endMode:'free',sync:'independent'});open(r,e);await r.action('start');const target=r.run('tourney().courts[7].id');r.ctx.target=target;r.run("const match=E.courtMatch(tourney(),target);match.scoreA=5;match.scoreB=2;E.finishMatch(tourney(),match,'manual',0,false);render()");
+ assert.ok(r.html().includes('class="waiting-panel"'));assert.ok(!r.html().includes('data-next-court='));assert.ok(!r.html().includes('PROCHAINE ROTATION'));
+ const candidate=r.run('E.nextAvailableMatch(tourney(),target).match.id');await r.action('queue-start',{match:candidate,court:target});assert.equal(r.run('E.courtMatch(tourney(),target).id'),candidate);
+ const timed=runtime();open(timed,fixture('handball',6,3,{endMode:'time',sync:'common'}));assert.ok(timed.html().includes('PROCHAINE ROTATION'));assert.ok(!timed.html().includes('class="waiting-panel"'));
+});
+
+test('Sauvegarde : les listes seules sont restaurées, sans écraser les élèves déjà conservés',async()=>{
+ const r=runtime();r.ctx.lists=[{id:'classe-1',title:'3e Test',players:[{id:'a',fullName:'Alice'},{id:'b',fullName:'Benoît'}],updatedAt:1}];r.run('data.rosters=structuredClone(lists)');
+ r.ctx.backup={schema:1,events:[],activeId:null,rosters:[{id:'classe-1',title:'3e Test',players:[{id:'a',fullName:'Alice corrigée'},{id:'c',fullName:'Camille'}],updatedAt:2}]};await r.run('restoreFile({size:300,text:async()=>JSON.stringify(backup)})');assert.equal(r.run('data.rosters.length'),1);assert.equal(r.run('data.rosters[0].players.length'),3);assert.equal(r.run('data.rosters[0].players[0].fullName'),'Alice corrigée');
+});
+test('Liste conservée : accès direct aux poules de la dernière séance',async()=>{
+ const r=runtime();r.run("newDraft('table');draft.step=4;draftCfg().formula='pools';draftCfg().poolCount=2;draftCfg().poolSizes=[3,3]");await r.action('create');await r.action('home');await r.action('roster-library');assert.ok(r.node('modal').innerHTML.includes('Reprendre les poules'));assert.ok(!r.node('modal').innerHTML.includes('data-action="promote-event"'));
+});
+
+test('Départs indépendants : reprendre une pause ne démarre pas les terrains encore en attente',async()=>{
+ const r=runtime();open(r,fixture('table',8,3,{endMode:'time',sync:'independent'}));const ids=plain(r.run('E.current(tourney()).matches.map(m=>m.id)'));await r.action('start-match',{match:ids[0]});await r.action('pause');assert.ok(r.html().includes('data-action="resume-paused"'));assert.ok(r.html().includes('▶ Reprendre'));await r.action('resume-paused');
+ r.ctx.first=ids[0];assert.equal(r.run('findMatch(first).status'),'live');assert.equal(r.run('E.current(tourney()).matches.filter(m=>m.status==="scheduled").length'),2);
+});
+
+test('Effectif modifié après une reprise : anciennes promotions écartées, poules ajustables sans élève fantôme',async()=>{
+ const r=runtime(),e=fixture('table',9,3,{formula:'levelsladder',poolCount:3,poolSizes:[3,3,3]});open(r,e);r.run("while(!tourney().completed){for(const m of E.current(tourney()).matches){m.scoreA=21;m.scoreB=10;E.finishMatch(tourney(),m,'manual',0,false)}E.advance(tourney())}");await r.action('seed-event',{id:e.id});await r.change({dataset:{field:'teamCount'},value:'8'});assert.equal(r.run('draft.promotedPools'),undefined);await r.action('pool-settings');assert.equal((r.node('modal').innerHTML.match(/data-pool-player=/g)??[]).length,8);await r.action('pool-save');assert.equal(r.run('draftTournament().teams.length'),8);
 });

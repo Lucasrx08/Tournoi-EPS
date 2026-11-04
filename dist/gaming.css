@@ -768,6 +768,8 @@ html:has(.identity-overview),body:has(.identity-overview),#app:has(.identity-ove
 .pool-ranking th:nth-child(2) { width:auto; text-align:left; }
 .pool-ranking th:not(:nth-child(1)):not(:nth-child(2)) { width:30px; }
 .pool-ranking th:last-child { width:42px; }
+.pool-ranking[data-racket="true"] th:last-child { width:64px; }
+.pool-ranking[data-bonus="true"] th:nth-last-child(2) { width:44px; }
 .pool-ranking td { padding:3px; height:var(--pool-row-height,38px); text-align:center; border-bottom:1px solid #d8ddce; }
 .pool-ranking td:nth-child(2) { text-align:left; overflow:hidden; }
 .pool-ranking .team-chip { display:flex; gap:5px; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-weight:600; }
@@ -963,6 +965,82 @@ html:has(.identity-overview),body:has(.identity-overview),#app:has(.identity-ove
 .shell .courts-grid .melee-court .team-name { white-space:normal; }
 .shell .courts-grid .melee-player { display:block; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
 .brand-credit { white-space:nowrap; font-size:10px; }
+
+/* Named pupils and pool composition share the same visual vocabulary. */
+.roster-library { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:12px; }
+.saved-roster { display:flex; flex-direction:column; justify-content:space-between; gap:16px; padding:16px; border:1px solid var(--line); border-top:4px solid var(--lime); border-radius:8px; background:#f8f9f2; min-width:0; }
+.saved-roster h3 { font-size:20px; margin:0 0 4px; overflow-wrap:anywhere; }
+.saved-roster p,.saved-roster small { color:var(--muted); }
+.roster-list-actions { display:flex; flex-wrap:wrap; gap:6px; }
+.roster-last-results { border-top:1px solid var(--line); padding-top:10px; }
+.pool-composer { display:flex; flex-direction:column; gap:12px; min-width:0; }
+.pool-composer-tools,.pool-arrangement { display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; }
+.pool-composer-tools .number-field { flex-direction:row; align-items:center; gap:8px; font-size:13px; }
+.pool-composer-tools .number-box { height:38px; width:114px; }
+.pool-composer-tools .number-box button { min-width:28px; padding:4px; }
+.pool-composer-tools .number-box input { width:50px; font-size:23px; padding:3px; }
+.pool-arrangement button { min-height:32px; font-size:12px; padding:6px 9px; }
+.pool-composer-grid { display:grid; grid-template-columns:repeat(var(--compose-cols,3),minmax(0,1fr)); gap:10px; max-height:48dvh; overflow:auto; padding:2px; min-height:180px; }
+.compose-pool { display:flex; flex-direction:column; gap:8px; min-width:0; min-height:180px; padding:10px; border:1px solid #b5bba6; border-top:4px solid var(--ink); border-radius:8px; background:#f0f2e9; }
+.compose-pool.needs-players { border-color:#bb5b36; }
+.compose-pool>header { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.compose-pool h3 { font-size:16px; margin:0; line-height:1.2; }
+.compose-pool header span { font-size:11px; color:var(--muted); }
+.pool-capacity { width:48px; gap:2px; flex-shrink:0; }
+.pool-capacity input { width:48px; min-height:32px; padding:4px; font-size:15px; text-align:center; }
+.compose-pool .pool-place { width:100%; font-size:12px; min-height:30px; padding:5px; }
+.compose-players { display:flex; flex-direction:column; gap:5px; min-width:0; }
+.compose-player { display:flex; flex-direction:column; align-items:flex-start; width:100%; min-width:0; min-height:37px; padding:7px 9px; border-radius:5px; background:white; border:1px solid #bdc4b0; text-align:left; cursor:grab; }
+.compose-player strong { min-width:0; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:13px; }
+.compose-player small { max-width:100%; color:var(--muted); font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.compose-player.selected { background:var(--lime); border-color:var(--ink); box-shadow:0 0 0 1px var(--ink); }
+.pool-result-detail+.pool-result-detail { margin-top:18px; }
+
+/* Future matches wait together and have no displayed court until they start. */
+.rolling-workspace { display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:12px; flex:1; min-height:0; min-width:0; }
+.rolling-workspace>.courts-grid { height:100%; min-height:0; }
+.waiting-panel { position:relative; display:grid; grid-template-rows:auto minmax(0,1fr); grid-auto-rows:auto; align-content:start; gap:10px; min-width:0; min-height:0; padding:13px; border:1px solid #abb394; border-top:4px solid var(--ink); border-radius:10px; background:#fbfcf5; }
+.waiting-panel>header h2 { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; font-size:18px; line-height:1.15; margin:5px 0; }
+.waiting-panel>header h2 b { background:var(--lime); border-radius:20px; min-width:27px; padding:3px 6px; text-align:center; font-size:14px; }
+.waiting-panel>header p { font-size:11px; color:var(--muted); line-height:1.3; }
+.waiting-list { display:flex; flex-direction:column; align-items:stretch; gap:8px; overflow:auto; min-height:0; padding:1px; }
+.waiting-match { display:flex; flex-direction:column; gap:7px; padding:10px; border:1px solid #bdc5ae; border-left:4px solid #a9ae9d; border-radius:7px; background:#f0f2e9; min-width:0; }
+.waiting-match.players-ready { background:white; border-left-color:#8baf24; }
+.waiting-match>header { display:flex; flex-wrap:wrap; align-items:center; gap:4px; justify-content:space-between; font-size:10px; line-height:1.2; }
+.waiting-match>header span { color:var(--muted); }
+.waiting-match>header b { font-size:10px; }
+.waiting-opponents { display:grid; grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr); gap:5px; align-items:center; }
+.waiting-opponents strong { font-size:13px; line-height:1.2; min-width:0; overflow:hidden; text-overflow:ellipsis; display:block; white-space:nowrap; }
+.waiting-opponents>span { font-size:9px; color:var(--muted); text-align:center; }
+.waiting-match>button { min-height:30px; padding:6px 7px; font-size:11px; line-height:1.2; }
+.waiting-empty { color:var(--muted); font-size:13px; line-height:1.5; }
+.queue-choice-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+.queue-court-choices { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+dialog[open]:has(.pool-composer,.roster-library,.queue-choice-list,.queue-court-choices) { display:flex; flex-direction:column; max-height:calc(100dvh - 32px); overflow:hidden; }
+dialog:has(.pool-composer,.roster-library,.queue-choice-list,.queue-court-choices) :is(.modal-header,.modal-footer) { flex-shrink:0; }
+dialog:has(.pool-composer,.roster-library,.queue-choice-list,.queue-court-choices) .modal-content { min-height:0; flex:1; overflow:auto; }
+dialog .pool-composer-grid { max-height:none; min-height:0; overflow:visible; }
+.shell .courts-grid .waiting-court .empty-court button { position:relative; font-size:12px; white-space:normal; }
+@media(min-width:900px) and (max-width:1199px) {
+ .rolling-workspace { grid-template-columns:1fr; grid-template-rows:minmax(0,1fr) 160px; }
+ .waiting-panel { grid-template-columns:160px minmax(0,1fr); grid-template-rows:minmax(0,1fr); padding:9px; gap:8px; }
+ .waiting-list { flex-direction:row; overflow:auto; }
+ .waiting-list .waiting-match { flex:0 0 210px; padding:8px; }
+ .waiting-panel>button { display:none; }
+ .waiting-panel>button[data-action="queue-more"] { display:block; position:absolute; bottom:8px; left:9px; width:150px; min-height:28px; padding:4px; font-size:10px; }
+}
+@media(max-width:899px) {
+ .rolling-workspace { display:flex; flex-direction:column; flex:none; }
+ .waiting-panel { max-height:350px; order:-1; flex-shrink:0; }
+ .waiting-list { max-height:210px; }
+ .pool-composer-grid { grid-template-columns:repeat(2,minmax(0,1fr)); max-height:50dvh; }
+}
+@media(max-width:580px) {
+ .roster-library,.pool-composer-grid { grid-template-columns:1fr; }
+ .compose-pool { min-height:0; }
+ .pool-composer-tools { gap:8px; }
+ .pool-composer-tools .number-field { width:100%; justify-content:space-between; }
+}
 
 /* Reserve three roster lines before sizing the score in individual rotations. */
 .shell .courts-grid .melee-court .score-team { grid-template-rows:var(--identity-height,64px) minmax(0,1fr) auto; }

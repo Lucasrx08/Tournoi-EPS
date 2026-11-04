@@ -1,3 +1,24 @@
+# Validation · version 2.23 · 4 novembre 2026
+
+240 tests automatisés passent. Les nouveaux contrôles couvrent les cinq formules de poules en badminton, tennis de table et sports collectifs, la composition nominative, la validation des effectifs, les listes conservées et la reprise de séance. La réimportation d’une même liste ne double pas les élèves ; changer l’effectif abandonne les anciennes affectations incompatibles. Un cas oppose volontairement le classement général au classement local : la promotion conserve bien les rangs de chaque poule. Un autre termine des phases finales et vérifie qu’elles ne changent pas les résultats de poule utilisés pour la séance suivante. Les exports de raquettes en poules ne comportent plus de rang général.
+
+La file de rencontres est vérifiée avec huit terrains : un match initialement prévu ailleurs démarre sur le terrain 8 ; les identifiants, résultats précédents et matchs voisins sont conservés, sans participant engagé deux fois. Les matchs en attente de score occupent encore leur terrain et leurs joueurs. Les chronos indépendants sont compatibles avec l’enchaînement. Après une pause, seuls les matchs déjà commencés reprennent.
+
+Contrôles dans Chrome :
+
+- Une liste de douze noms fictifs est conservée depuis le badminton, retrouvée après rechargement et réutilisée en tennis de table.
+- Composition de trois poules : déplacement d’un élève, effectifs de 3 / 5 / 4, puis enregistrement et création du tournoi avec ces noms. La fenêtre de reprise présente le rang précédent dans chaque poule.
+- Création avec départs indépendants ; score final 21–16 saisi, puis démarrage d’une rencontre de la file sur la table libre. Les deux autres rencontres continuent avec leurs chronos distincts.
+- À 1363 × 936, la file est à côté des terrains. À 1024 × 768, elle occupe un encadré horizontal sous les tables : 547 px de hauteur utile, sans dépassement de la grille ni du panneau.
+- À 390 × 844, les accès aux listes restent dans le bandeau. La composition des poules utilise un seul défilement central ; la fermeture, l’annulation et la validation restent visibles. Aucun dépassement horizontal dans la fenêtre testée.
+- Le classement présente les trois poules sur la même vue, avec leurs rangs locaux et sans onglet général.
+
+Les formats sont simulés dans Chrome ; il ne s’agit pas d’essais sur Safari, iPad ou iPhone physiques. Les anciens tournois restent compatibles : le champ optionnel des listes est ajouté au schéma existant. Le fichier temporaire de contrôle des formats est retiré avant publication. Les nouveaux modules sont inclus dans le cache hors connexion.
+
+Captures : `verification-223-composition-poules.jpg`, `verification-223-file-attente.jpg`, `verification-223-classements-poules.jpg`.
+
+---
+
 # Validation · version 2.22 · 29 octobre 2026
 
 Les correctifs portent sur les deux vues signalées : les cartes de rotation individuelle et la préparation des équipes. Le calcul de disposition reçoit explicitement le mode à la mêlée : trois lignes de noms sont réservées, puis le score est borné par la hauteur restante, indépendamment des commandes. La grille dense réserve également trois lignes par groupe. La préparation utilise deux lignes de grille explicites pour le bandeau et les cartes, sans hauteur en pourcentage dans une colonne flexible. Le libellé est « Nombre d’équipes » et reste sur une ligne.
