@@ -1145,3 +1145,10 @@ dialog .pool-composer-grid { max-height:none; min-height:0; overflow:visible; }
 .setup-card>header>b .icon { width:16px; height:16px; }
 
 html:has(dialog[open]),body:has(dialog[open]) { overflow:hidden; }
+
+/* Free courts continuously preview distinct matches from the shared queue. */
+.shell .courts-grid .court-suggestion { flex-shrink:0; min-height:116px; gap:5px; padding:8px 10px; }
+.shell .court-suggestion .suggestion-start { width:100%; min-height:36px; font-size:clamp(11px,1vw,15px); }
+.shell .court-suggestion .suggestion-hint { font-size:10px; color:#59604d; line-height:1.2; }
+.shell .courts-grid.dense .court-suggestion { min-height:104px; padding:5px 6px; }
+.shell .courts-grid.dense .court-suggestion .suggestion-hint { display:none; }

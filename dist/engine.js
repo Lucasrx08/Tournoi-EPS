@@ -209,6 +209,16 @@ export function waitingMatches(t){
  const courts=t.courts.filter(c=>c.available&&!current(t).matches.some(m=>m.courtId===c.id&&!done(m)));
  return t.rotations.slice(t.roundIndex+1).flatMap(rotation=>rotation.matches.filter(m=>m.status==='scheduled'&&m.stage===current(t).stage&&entrants(m).every(id=>team(t,id)?.active)).map(match=>{const ready=entrants(match).every(id=>!busy.has(id));return {match,rotation,ready,courts:ready?courts.filter(c=>!t.config.multisport||c.sport===match.sport):[]};}));
 }
+// Suggestions are previews only: each free court gets distinct, available participants.
+export function courtSuggestions(t){
+ const waiting=waitingMatches(t),used=new Set(),result=new Map();
+ for(const court of t.courts){
+  const entry=waiting.find(x=>x.courts.some(c=>c.id===court.id)&&entrants(x.match).every(id=>!used.has(id)));
+  if(!entry)continue;
+  result.set(court.id,entry);entrants(entry.match).forEach(id=>used.add(id));
+ }
+ return result;
+}
 export function nextAvailableMatch(t,courtId){return waitingMatches(t).find(x=>x.courts.some(c=>c.id===courtId))??null;}
 export function pullWaitingMatch(t,matchId,courtId,now=Date.now()){
  const next=waitingMatches(t).find(x=>x.match.id===matchId&&x.courts.some(c=>c.id===courtId));if(!next)throw Error('Cette rencontre ne peut pas démarrer : vérifiez le terrain libre, les participants et les scores encore à rapporter.');

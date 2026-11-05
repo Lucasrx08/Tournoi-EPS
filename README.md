@@ -147,3 +147,7 @@ Sur les terrains, les boutons − et +1 sont réunis sous le score ; dans les vu
 - Les roulettes ignorent les déplacements de défilement provoqués par leur insertion dans une fenêtre. Une modification du budget du cours actualise les durées proposées. Les réglages avancés sont conservés après fermeture.
 
 Validation : 208 tests passent, complétés par des contrôles Chrome aux formats ordinateur, tablette paysage et téléphone. Les limites matérielles iPad, Safari et AirPlay restent celles décrites plus haut.
+
+### Version 2.24 — enchaîner depuis chaque terrain libre
+
+En départs décalés, une proposition de prochain match apparaît sous chaque terrain libéré, avec un démarrage direct. Les propositions utilisent des participants distincts, disponibles après validation de leurs scores ; elles sont recalculées à chaque départ. La file commune reste accessible pour choisir une autre rencontre.

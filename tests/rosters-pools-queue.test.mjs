@@ -62,3 +62,19 @@ test('Réimporter la même classe conserve les identités des élèves sans doub
  const imported=R.importedTeams([{id:'new-a',fullName:'Alice Martin'},{id:'new-b',fullName:'Benoît Roy'}]),next=L.saveList(data,imported,'Classe',list.id);
  assert.equal(next.players.length,2);assert.deepEqual(next.players.map(p=>p.id),list.players.map(p=>p.id));assert.deepEqual(imported.map(t=>t.members[0].studentId),list.players.map(p=>p.id));
 });
+
+test('Propositions par terrain : distinctes, renouvelées après un départ et sans modifier le calendrier',()=>{
+ const t=E.newTournament({sport:'badminton',formula:'pools',poolCount:2,courtCount:3,endMode:'score',sync:'independent'},E.makeTeams(16));
+ E.startAll(t,1000);for(const m of E.current(t).matches)finish(t,m);
+ const before=JSON.stringify(t),suggestions=E.courtSuggestions(t);assert.equal(suggestions.size,3);assert.equal(JSON.stringify(t),before);
+ const pupils=[...suggestions.values()].flatMap(x=>E.entrants(x.match));assert.equal(new Set(pupils).size,pupils.length);
+ const [court,entry]=suggestions.entries().next().value,started=E.pullWaitingMatch(t,entry.match.id,court,2000);
+ const refreshed=E.courtSuggestions(t);assert.equal(refreshed.has(court),false);assert.equal(refreshed.size,2);assert.ok([...refreshed.values()].every(x=>!E.entrants(x.match).some(id=>E.entrants(started).includes(id))));
+ finish(t,started);assert.ok(E.courtSuggestions(t).has(court));
+});
+test('Propositions : attendre le score final et conserver les départs communs',()=>{
+ const t=E.newTournament({sport:'table',courtCount:2,endMode:'time',sync:'independent'},E.makeTeams(8));E.startAll(t,1000);
+ const m=E.current(t).matches[0];E.awaitScore(t,m,2000);assert.equal(E.courtSuggestions(t).has(m.courtId),false);
+ finish(t,m);assert.equal(E.courtSuggestions(t).has(m.courtId),true);
+ assert.equal(E.courtSuggestions(E.newTournament({endMode:'time',sync:'common'},E.makeTeams(8))).size,0);
+});

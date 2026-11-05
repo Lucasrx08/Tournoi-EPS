@@ -220,3 +220,7 @@ Vérifications complémentaires dans des cadres de test : à 1024 × 768, quatre
 Les profils de taille sont simulés dans Chrome ; ils ne constituent pas un essai sur Safari, iPad ou iPhone physiques. Les contrôles de calcul, les sauvegardes et les exports continuent de passer. Le moteur des tournois et le schéma de sauvegarde restent inchangés.
 
 Captures : `verification-220-equipes.jpg`, `verification-220-poules.jpg`, `verification-220-scores.jpg`.
+
+## 2.24 — propositions sur les terrains libres (5 novembre 2026)
+
+242 tests réussis. Vérification dans Chrome : badminton, 12 joueurs, 3 terrains, poules, départs indépendants au score. Après enregistrement de 11–6, une proposition apparaît sur le terrain 1 ; son démarrage retire la rencontre de la file (15 → 14), conserve les deux autres terrains et renouvelle les matchs disponibles. Après 11–8, une autre proposition apparaît. Les tests vérifient les propositions distinctes sur trois terrains libres, la disponibilité des joueurs, l’attente du score final et la conservation des départs communs. Pas de test sur appareil iPad physique.

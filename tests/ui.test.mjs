@@ -477,10 +477,11 @@ test('Reprise par poule : conserver, promouvoir, puis ajuster les élèves sans 
  const id=r.run('event().id'),source=r.run('JSON.stringify(tourney())'),expected=plain(r.run('E.promotionPlan(tourney()).groups.map(g=>g.ids.map(id=>E.team(tourney(),id).name))'));await r.action('session-options',{id});assert.ok(r.node('modal').innerHTML.includes('Montées / descentes par poule'));await r.action('promote-event',{id});
  assert.deepEqual(plain(r.run('draftTournament().engine.groups.map(g=>g.ids.map(id=>E.team(draftTournament(),id).name))')),expected);await r.action('pool-settings');assert.ok(r.node('modal').innerHTML.includes('résultats de chaque poule uniquement')||r.node('modal').innerHTML.includes('Résultats de chaque poule uniquement'));await r.action('close');assert.equal(r.run('JSON.stringify(data.events[0].tournaments[0])'),source);
 });
-test('Départs décalés : la file remplace les annonces par terrain et démarre sur le terrain choisi',async()=>{
+test('Départs décalés : file commune et proposition directe sur le terrain libéré',async()=>{
  const r=runtime(),e=fixture('handball',20,8,{endMode:'free',sync:'independent'});open(r,e);await r.action('start');const target=r.run('tourney().courts[7].id');r.ctx.target=target;r.run("const match=E.courtMatch(tourney(),target);match.scoreA=5;match.scoreB=2;E.finishMatch(tourney(),match,'manual',0,false);render()");
  assert.ok(r.html().includes('class="waiting-panel"'));assert.ok(!r.html().includes('data-next-court='));assert.ok(!r.html().includes('PROCHAINE ROTATION'));
- const candidate=r.run('E.nextAvailableMatch(tourney(),target).match.id');await r.action('queue-start',{match:candidate,court:target});assert.equal(r.run('E.courtMatch(tourney(),target).id'),candidate);
+ assert.ok(r.html().includes('data-court-suggestion="'+target+'"'));assert.ok(r.html().includes('▶ Démarrer ce match'));
+ const candidate=r.run('E.courtSuggestions(tourney()).get(target).match.id');await r.action('queue-start',{match:candidate,court:target});assert.equal(r.run('E.courtMatch(tourney(),target).id'),candidate);assert.ok(!r.html().includes('data-court-suggestion="'+target+'"'));
  const timed=runtime();open(timed,fixture('handball',6,3,{endMode:'time',sync:'common'}));assert.ok(timed.html().includes('PROCHAINE ROTATION'));assert.ok(!timed.html().includes('class="waiting-panel"'));
 });
 
