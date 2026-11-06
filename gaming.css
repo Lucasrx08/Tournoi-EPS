@@ -1162,3 +1162,24 @@ html:has(dialog[open]),body:has(dialog[open]) { overflow:hidden; }
 .compose-entry:focus-within { outline:2px solid #91ad2a; outline-offset:1px; }
 .pool-composer .pool-place { min-height:44px; touch-action:manipulation; }
 @media (pointer:coarse) { .compose-player { -webkit-user-drag:none; user-select:none; -webkit-user-select:none; } }
+
+/* Safari requires a definite dialog height: auto-height + flex:1 can collapse
+   the content to zero. Use three grid tracks, independent of :has support. */
+#modal.pool-editor-dialog[open] {
+ position:fixed; inset:16px; margin:auto; box-sizing:border-box;
+ width:min(1060px,calc(100vw - 32px));
+ height:calc(100vh - 32px); height:calc(100dvh - 32px);
+ max-height:calc(100vh - 32px); max-height:calc(100dvh - 32px);
+ display:grid; grid-template-rows:auto minmax(0,1fr) auto; overflow:hidden;
+}
+#modal.pool-editor-dialog>.modal-header { margin-bottom:12px; min-width:0; }
+#modal.pool-editor-dialog>.modal-content {
+ display:block; min-height:0; min-width:0; height:auto; overflow-y:auto;
+ overflow-x:hidden; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
+}
+#modal.pool-editor-dialog>.modal-footer { margin-top:12px; min-width:0; }
+@media(max-height:550px) {
+ #modal.pool-editor-dialog[open] { inset:8px; height:calc(100vh - 16px); height:calc(100dvh - 16px); max-height:calc(100vh - 16px); max-height:calc(100dvh - 16px); padding:10px; }
+ #modal.pool-editor-dialog>.modal-header { margin-bottom:6px; padding-bottom:6px; }
+ #modal.pool-editor-dialog>.modal-footer { margin-top:6px; }
+}
