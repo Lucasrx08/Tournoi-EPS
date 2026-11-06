@@ -1204,3 +1204,18 @@ html:has(dialog[open]),body:has(dialog[open]) { overflow:hidden; }
  .shell.projection-layout .clock-bar { min-height:52px; }
  .shell.projection-layout .courts-grid:not(.dense) .court-upcoming { min-height:90px; padding:6px 8px; }
 }
+
+/* Fullscreen: vertical collective pitches, prominent timer and next opponents. */
+.shell.projection-layout .clock-bar { min-height:100px; }
+.shell.projection-layout .clock-value { font-size:clamp(64px,7.5vw,120px); }
+.shell.projection-layout .courts-grid:not(.dense) .court-card:is([data-sport=handball],[data-sport=volley],[data-sport=ultimate]) .court-floor svg { width:94cqh; height:94cqw; max-width:none; max-height:none; transform:translate(-50%,-50%) rotate(90deg); }
+.shell.projection-layout .courts-grid:not(.dense) .court-upcoming { min-height:clamp(150px,25vh,240px); padding:12px 16px; gap:10px; }
+.shell.projection-layout .courts-grid:not(.dense) .upcoming-heading { font-size:clamp(18px,1.8vw,28px); }
+.shell.projection-layout .courts-grid:not(.dense) .upcoming-side { min-height:52px; padding:8px; }
+.shell.projection-layout .courts-grid:not(.dense) .upcoming-side strong { font-size:clamp(24px,2.8vw,44px); line-height:1.15; }
+.shell.projection-layout .courts-grid:not(.dense) .upcoming-ref { font-size:clamp(17px,1.7vw,26px); }
+@media(max-height:650px) {
+ .shell.projection-layout .clock-bar { min-height:76px; }
+ .shell.projection-layout .clock-value { font-size:64px; }
+ .shell.projection-layout .courts-grid:not(.dense) .court-upcoming { min-height:130px; padding:8px 10px; gap:6px; }
+}
