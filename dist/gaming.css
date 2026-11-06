@@ -1152,3 +1152,13 @@ html:has(dialog[open]),body:has(dialog[open]) { overflow:hidden; }
 .shell .court-suggestion .suggestion-hint { font-size:10px; color:#59604d; line-height:1.2; }
 .shell .courts-grid.dense .court-suggestion { min-height:104px; padding:5px 6px; }
 .shell .courts-grid.dense .court-suggestion .suggestion-hint { display:none; }
+
+/* Native pool destinations work with iPad touch, without dragging. */
+.compose-entry { display:grid; grid-template-columns:minmax(0,1fr) 110px; gap:4px; padding:5px; border:1px solid #bdc4b0; border-radius:7px; background:white; }
+.compose-entry .compose-player { min-height:44px; border:0; cursor:pointer; touch-action:manipulation; }
+.compose-destination>span { display:none; }
+.compose-destination { display:flex; align-items:center; gap:8px; min-width:0; font-size:12px; }
+.compose-destination select { flex:1; min-width:0; min-height:44px; padding:8px; font-size:16px; color:var(--ink); background:var(--paper); border:1px solid #a4ac95; border-radius:5px; touch-action:manipulation; }
+.compose-entry:focus-within { outline:2px solid #91ad2a; outline-offset:1px; }
+.pool-composer .pool-place { min-height:44px; touch-action:manipulation; }
+@media (pointer:coarse) { .compose-player { -webkit-user-drag:none; user-select:none; -webkit-user-select:none; } }

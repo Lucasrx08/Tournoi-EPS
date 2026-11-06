@@ -151,3 +151,7 @@ Validation : 208 tests passent, complétés par des contrôles Chrome aux format
 ### Version 2.24 — enchaîner depuis chaque terrain libre
 
 En départs décalés, une proposition de prochain match apparaît sous chaque terrain libéré, avec un démarrage direct. Les propositions utilisent des participants distincts, disponibles après validation de leurs scores ; elles sont recalculées à chaque départ. La file commune reste accessible pour choisir une autre rencontre.
+
+### Version 2.25 — composition des poules au toucher
+
+Chaque joueur ou équipe possède un choix de poule direct, utilisable sur tablette sans glisser-déposer. Les effectifs suivent les changements, le défilement est conservé, et les modifications sont appliquées uniquement avec « Enregistrer les poules ». Les boutons de participants ne sont déplaçables qu’avec un pointeur fin.

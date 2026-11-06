@@ -224,3 +224,7 @@ Captures : `verification-220-equipes.jpg`, `verification-220-poules.jpg`, `verif
 ## 2.24 — propositions sur les terrains libres (5 novembre 2026)
 
 242 tests réussis. Vérification dans Chrome : badminton, 12 joueurs, 3 terrains, poules, départs indépendants au score. Après enregistrement de 11–6, une proposition apparaît sur le terrain 1 ; son démarrage retire la rencontre de la file (15 → 14), conserve les deux autres terrains et renouvelle les matchs disponibles. Après 11–8, une autre proposition apparaît. Les tests vérifient les propositions distinctes sur trois terrains libres, la disponibilité des joueurs, l’attente du score final et la conservation des départs communs. Pas de test sur appareil iPad physique.
+
+## 2.25 — composition des poules sur tablette (6 novembre 2026)
+
+263 tests réussis. Ajout de tests des destinations natives pour badminton, tennis de table, handball et football, dans les cinq formules avec poules : ouverture, déplacement, recalcul des effectifs, sauvegarde, réouverture et annulation. Vérification du glisser-déposer activé au pointeur fin uniquement. Dans Chrome : parcours réel handball, passage 3/3 → 2/4 et sauvegarde ; parcours badminton en cadre 1024 × 768, changement direct de poule, sauvegarde et contrôle de lisibilité. Pas de test Safari sur iPad physique ; le mécanisme repose sur un contrôle select natif, indépendant du glisser-déposer tactile.

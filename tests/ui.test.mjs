@@ -501,3 +501,17 @@ test('Départs indépendants : reprendre une pause ne démarre pas les terrains 
 test('Effectif modifié après une reprise : anciennes promotions écartées, poules ajustables sans élève fantôme',async()=>{
  const r=runtime(),e=fixture('table',9,3,{formula:'levelsladder',poolCount:3,poolSizes:[3,3,3]});open(r,e);r.run("while(!tourney().completed){for(const m of E.current(tourney()).matches){m.scoreA=21;m.scoreB=10;E.finishMatch(tourney(),m,'manual',0,false)}E.advance(tourney())}");await r.action('seed-event',{id:e.id});await r.change({dataset:{field:'teamCount'},value:'8'});assert.equal(r.run('draft.promotedPools'),undefined);await r.action('pool-settings');assert.equal((r.node('modal').innerHTML.match(/data-pool-player=/g)??[]).length,8);await r.action('pool-save');assert.equal(r.run('draftTournament().teams.length'),8);
 });
+
+for(const sport of ['badminton','table','handball','football'])for(const formula of G.FORMULAS)test(`Composition tactile : ${sport} / ${formula}, destination directe et sauvegarde`,async()=>{
+ const r=runtime();r.ctx.matchMedia=()=>({matches:false});r.run(`newDraft('${sport}');resizeTeams(8);draft.step=4;render()`);
+ await r.action('formula-choice',{id:formula});await r.action('pool-proposal',{id:'2'});await r.action('pool-settings');
+ const id=r.run('poolEditor.assignments[0][0]');assert.ok(r.node('modal').open);assert.equal((r.node('modal').innerHTML.match(/data-pool-destination=/g)??[]).length,8);
+ assert.ok(!r.node('modal').innerHTML.includes('draggable="true"'));assert.ok(r.node('modal').innerHTML.includes('aria-label="Poule de '));
+ await r.change({dataset:{poolDestination:id},value:'1'});assert.deepEqual(plain(r.run('poolEditor.sizes')),[3,5]);assert.equal(r.run('poolEditor.source'),'manual');
+ await r.action('pool-save');r.ctx.movedId=id;assert.ok(r.run('draftTournament().engine.groups[1].ids.includes(movedId)'));
+ await r.action('pool-settings');assert.deepEqual(plain(r.run('poolEditor.sizes')),[3,5]);await r.change({dataset:{poolDestination:id},value:'0'});await r.action('close');
+ assert.deepEqual(plain(r.run('draftCfg().poolSizes')),[3,5]);
+});
+test('Composition au pointeur : le glisser-déposer reste disponible avec une souris',async()=>{
+ const r=runtime();r.ctx.matchMedia=()=>({matches:true});r.run("newDraft('handball');resizeTeams(8);draft.step=4;draftCfg().formula='pools';render()");await r.action('pool-settings');assert.ok(r.node('modal').innerHTML.includes('draggable="true"'));
+});
