@@ -232,3 +232,7 @@ Captures : `verification-220-equipes.jpg`, `verification-220-poules.jpg`, `verif
 ## 2.26 — zone centrale du dialogue (6 novembre 2026)
 
 La capture fournie sur iPad montre le titre et les boutons, avec une zone centrale vide. Le dialogue précédent combinait hauteur automatique et contenu flex:1 sous une hauteur maximale ; remplacement par une hauteur définie et trois lignes de grille via une classe explicite, sans dépendance à :has. 264 tests réussis, dont maintien de la classe après déplacement et retrait lors de l’ouverture d’un autre dialogue. Vérification Chrome dans un cadre 1024 × 768 : dialogue 736 px, contenu visible 566 px, pied de fenêtre à 729 px ; déplacement et sauvegarde de 3/3 vers 2/4. Les tests n’émulent pas Safari : validation finale sur l’iPad utilisateur encore nécessaire.
+
+## 2.27 — projection (6 novembre 2026)
+
+264 tests réussis. Correction ciblée sur la photo télévision fournie : suppression de la rotation automatique des tracés, hiérarchie renforcée du chrono, des identités et des prochaines rencontres. La modification porte sur le plein écran uniquement, avec variante pour faible hauteur. Vérification sur télévision physique et AirPlay non disponible dans cet environnement.
