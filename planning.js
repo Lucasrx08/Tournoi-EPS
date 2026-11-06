@@ -116,5 +116,14 @@ export function idoceoSheet(t){
  const header=pooled?['Nom et prénom','Nom','Prénom','Classe','Poule','Niveau de poule','Rang dans la poule','Victoires','Points normaux','Points bonus']:melee?['Nom et prénom','Nom','Prénom','Classe','Classement général','Groupe','Victoires','Matchs nuls','Défaites','Points personnels','Buts marqués','Différence de buts']:individual?['Nom et prénom','Nom','Prénom','Classe','Classement général','Niveau de poule','Victoires','Points normaux','Points bonus']:['Équipe','Classement général','Victoires','Matchs nuls','Défaites'];
  const source=pooled?t.engine.groups.flatMap((g,i)=>E.poolStandings(t,g).map(x=>({...x,poolName:g.name,poolNumber:i+1}))):E.standings(t),rows=[header];
  for(const s of source){const x=E.team(t,s.id);if(individual){const named=(x.members??[]).filter(p=>!p.placeholder),players=named.length?named:[{fullName:x.name}];if(x.nameEdited&&players.length===1)players[0]={fullName:x.name,className:players[0].className};for(const p of players)rows.push([R.playerName(p),p.last??'',p.first??'',p.className??'',...(pooled?[s.poolName,s.poolNumber,s.rank,s.wins,s.normalPoints??'',s.bonusPoints??'']:melee?[s.rank,t.engine.groups.find(g=>g.ids.includes(s.id))?.name??'',s.wins,s.draws,s.losses,s.points,s.for,s.for-s.against]:[s.rank,s.poolLevel??'',s.wins,s.normalPoints??'',s.bonusPoints??''])]);}else rows.push([s.name,s.rank,s.wins,s.draws,s.losses]);}
- return {name:'iDoceo',rows};
+ const statsHeader=['Matchs joués','Points marqués','Points encaissés','Différence de points','Points de classement'];
+ if(!individual){statsHeader[1]='Buts / points marqués';statsHeader[2]='Buts / points encaissés';}
+ // Append statistics without shifting existing iDoceo identity, pool and bonus columns.
+ rows[0].push(...statsHeader,...(individual?['Matchs nuls','Défaites']:['Poule','Rang dans la poule']));
+ let at=1;
+ for(const s of source){const x=E.team(t,s.id),count=individual?Math.max(1,(x.members??[]).filter(p=>!p.placeholder).length):1;
+  const group=t.engine.groups.find(g=>g.ids.includes(s.id)),local=group?E.poolStandings(t,group).find(r=>r.id===s.id):null;
+  for(let i=0;i<count;i++)rows[at++].push(s.played,s.for,s.against,s.for-s.against,s.points,...(individual?[s.draws,s.losses]:[group?.name??'',local?.rank??'']));
+ }
+ return {name:'iDoceo',rows,widths:rows[0].map((_,i)=>i===0?32:22)};
 }
