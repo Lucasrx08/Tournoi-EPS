@@ -163,3 +163,7 @@ La fenêtre de poules utilise une hauteur explicite et trois zones en grille : t
 ### Version 2.27 — proportions de la projection
 
 Tracés conservés à l’horizontale en plein écran, noms et chronomètre agrandis, prochaine rotation et arbitrage plus lisibles à distance. La grille conserve tous les terrains.
+
+### Version 2.28 — priorité au chrono et aux prochaines rotations
+
+En plein écran : handball, volley et ultimate verticaux ; chrono renforcé ; prochaine rotation portée à environ un quart de la hauteur, adversaires agrandis. Correction de l’interprétation de la version 2.27.

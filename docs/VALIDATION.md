@@ -236,3 +236,7 @@ La capture fournie sur iPad montre le titre et les boutons, avec une zone centra
 ## 2.27 — projection (6 novembre 2026)
 
 264 tests réussis. Correction ciblée sur la photo télévision fournie : suppression de la rotation automatique des tracés, hiérarchie renforcée du chrono, des identités et des prochaines rencontres. La modification porte sur le plein écran uniquement, avec variante pour faible hauteur. Vérification sur télévision physique et AirPlay non disponible dans cet environnement.
+
+## 2.28 — plein écran (6 novembre 2026)
+
+264 tests réussis. Orientation verticale ciblée par attribut data-sport pour handball, volley et ultimate en plein écran. Chrono jusqu’à 120 px, prochaine rotation 150–240 px et noms 24–44 px, avec ajustement pour faible hauteur. La taille des scores tient compte de l’espace disponible. Pas de validation physique sur télévision/AirPlay.
