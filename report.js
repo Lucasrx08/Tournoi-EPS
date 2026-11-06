@@ -7,7 +7,7 @@ export function reportSections(event){
  for(const t of event.tournaments){
   const individual=racket(t),bonus=individual&&t.config.scoreMode==='bonus',local=E.racketPools(t),stats=E.standings(t),sport=E.SPORTS[t.config.sport].name;
   const groups=local?t.engine.groups.map(g=>({name:g.name,rows:E.poolStandings(t,g)})):[{name:'Classement général',rows:stats}];
-  const columns=individual?['Rang','Joueur','Joués','V','N','D','Marqués']:['Rang','Équipe','Joués','V','N','D','Points'];
+  const columns=individual?['Rang',t.config.playersPerSide===2||t.config.format==='double'?'Duo':'Joueur','Joués','V','N','D','Marqués']:['Rang',t.config.formula==='melee'?'Joueur':'Équipe','Joués','V','N','D','Points'];
   summaries.push({kind:'ranking',title:local?'Classements par poule':'Classement général',subtitle:sport+' · '+(t.completed?'Résultats définitifs':'Résultats à la date de l’export'),note:individual?'V : victoires · N : nuls · D : défaites. Marqués : total des points au score.':'V : victoires · N : nuls · D : défaites. Points : points de classement.',columns,widths:[35,258,42,32,32,32,92],groups:groups.map(g=>({name:g.name,rows:g.rows.map(x=>({cells:[x.rank,x.name,x.played,x.wins,x.draws,x.losses,individual?x.for:x.points],color:x.color}))}))});
   for(const x of t.teams){
    const stat=stats.find(s=>s.id===x.id),pool=t.engine.groups.find(g=>g.ids.includes(x.id)),localRank=pool?E.poolStandings(t,pool).find(s=>s.id===x.id)?.rank:null;
