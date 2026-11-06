@@ -12,6 +12,7 @@ import * as F from '../dist/formula-guide.js';
 import * as G from '../dist/pools.js';
 import * as L from '../dist/rosters.js';
 import * as Q from '../dist/report.js';
+import * as S from '../dist/storage.js';
 const source=readFileSync(new URL('../dist/app.js',import.meta.url),'utf8').replace(/^import .+;\n/gm,'');
 const plain=v=>JSON.parse(JSON.stringify(v));
 function runtime(snapshot,backup,legacySession={}){
@@ -19,7 +20,7 @@ function runtime(snapshot,backup,legacySession={}){
  if(snapshot)memory.set('EPS_TOURNOIS_V1',snapshot);if(backup)memory.set('EPS_TOURNOIS_V1_BACKUP',backup);
  function node(id){if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',classList:{add(){},remove(){},toggle(){}},listeners:new Map(),addEventListener(type,cb){this.listeners.set(type,cb)},showModal(){this.open=true},close(){this.open=false},getBoundingClientRect(){return {left:0,right:1000,top:0,bottom:1000}}});return nodes.get(id)}
  const storage=map=>({getItem:key=>map.get(key)??null,setItem:(key,v)=>map.set(key,String(v)),removeItem:key=>map.delete(key)});
- const ctx={E,X,P,C,R,F,G,L,Q,crypto:webcrypto,console,structuredClone,TextEncoder,Uint8Array,URL,URLSearchParams,Date,Blob,Map,Set,Number,JSON,Math,Promise,String,Array,RegExp,Error,atob,btoa,localStorage:storage(memory),sessionStorage:storage(session),location:{search:'',href:'https://example.test/',pathname:'/'},navigator:{},document:{getElementById:node,querySelector(){return null},addEventListener:(type,cb)=>listeners.set(type,cb),visibilityState:'visible',documentElement:{requestFullscreen:async()=>{}}},setTimeout:()=>0,clearTimeout(){},setInterval:()=>0,addEventListener(){},scrollTo(){},confirm:()=>true,window:{},audioContext:null,speechSynthesis:{getVoices:()=>[{lang:'fr-FR'}],cancel(){},speak:speech=>spoken.push(speech)},SpeechSynthesisUtterance:class{constructor(text){this.text=text}}};
+ const ctx={E,X,P,C,R,F,G,L,Q,S,crypto:webcrypto,console,structuredClone,TextEncoder,Uint8Array,URL,URLSearchParams,Date,Blob,Map,Set,Number,JSON,Math,Promise,String,Array,RegExp,Error,atob,btoa,localStorage:storage(memory),sessionStorage:storage(session),location:{search:'',href:'https://example.test/',pathname:'/'},navigator:{},document:{getElementById:node,querySelector(){return null},addEventListener:(type,cb)=>listeners.set(type,cb),visibilityState:'visible',documentElement:{requestFullscreen:async()=>{}}},setTimeout:()=>0,clearTimeout(){},setInterval:()=>0,addEventListener(){},scrollTo(){},confirm:()=>true,window:{},audioContext:null,speechSynthesis:{getVoices:()=>[{lang:'fr-FR'}],cancel(){},speak:speech=>spoken.push(speech)},SpeechSynthesisUtterance:class{constructor(text){this.text=text}}};
  vm.createContext(ctx);vm.runInContext('"use strict";\n'+source,ctx);
  return {ctx,node,memory,spoken,listeners,run:s=>vm.runInContext(s,ctx),html:()=>node('app').innerHTML,action:(name,dataset={})=>ctx.action(name,{dataset}),change:target=>listeners.get('change')({target:{hasAttribute:()=>false,...target}}),input:target=>listeners.get('input')({target})};
 }
@@ -538,4 +539,13 @@ test('Dernière rotation : fin du tournoi ouvre le classement sans quitter la pr
 });
 test('Fin de poules : proposer la phase finale au lieu de terminer prématurément',()=>{
  const r=runtime();open(r,fixture('handball',8,4,{formula:'poolfinal',poolCount:2}));r.run("while(tourney().roundIndex<tourney().rotations.length-1){for(const m of E.current(tourney()).matches){m.scoreA=3;m.scoreB=1;E.finishMatch(tourney(),m,'manual',0,false)}E.advance(tourney())}for(const m of E.current(tourney()).matches){m.scoreA=3;m.scoreB=1;E.finishMatch(tourney(),m,'manual',0,false)}render()");assert.ok(r.html().includes('Rotation suivante'));assert.ok(!r.html().includes('Fin du tournoi'));
+});
+
+test('Glisser tactile : la destination au relâchement prime sur le dernier mouvement',async()=>{
+ const r=runtime();r.run("newDraft('handball');draft.step=4;draftCfg().formula='pools';poolSettings()");const id=r.run('poolEditor.assignments[0][0]'),classes={add(){},remove(){}};
+ const ghost={removeAttribute(){},setAttribute(){},classList:classes,style:{},remove(){}},card={dataset:{transfer:'pool',transferId:id},classList:classes,setPointerCapture(){},cloneNode:()=>ghost};
+ const zones=[0,1].map(i=>({dataset:{dropPool:String(i)},classList:classes,closest(){return this}}));let zone=zones[0];r.ctx.document.elementFromPoint=()=>zone;r.node('modal').appendChild=()=>{};
+ r.listeners.get('pointerdown')({target:{closest:()=>card},pointerId:3,pointerType:'touch',button:0,clientX:10,clientY:10,isPrimary:true});
+ r.listeners.get('pointermove')({pointerId:3,clientX:30,clientY:30,preventDefault(){}});zone=zones[1];r.listeners.get('pointerup')({pointerId:3,clientX:200,clientY:30});
+ assert.deepEqual(plain(r.run('poolEditor.sizes')),[2,4]);r.ctx.dragged=id;assert.ok(r.run('poolEditor.assignments[1].includes(dragged)'));
 });

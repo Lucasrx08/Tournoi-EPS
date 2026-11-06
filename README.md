@@ -179,3 +179,9 @@ Les cinq formules de poules proposent aller simple ou aller-retour. La phase de 
 ### Version 2.31 — dossier PDF de résultats
 
 Le PDF présente d’abord les classements, puis une fiche par participant : bilan V/N/D, adversaire, score, résultat et points de chaque match validé. Les poules de raquettes conservent leurs classements locaux. Les points normaux et bonus sont séparés ; une ventilation inconnue est signalée. Mise en page A4 portrait, police embarquée, noms et tableaux sans troncature, pages de suite et en-têtes répétés. Exemple fictif : docs/exemple-export-resultats.pdf.
+
+### Version 2.32 — sauvegardes fusionnées et déplacements renforcés
+
+Les copies locales sont fusionnées par identifiant de tournoi ; une copie incomplète ne remplace plus la collection entière. Les dates de modification et les suppressions explicites sont conservées, y compris lors d’une restauration IndexedDB ou d’un échange entre onglets. L’application demande le stockage persistant lorsque le navigateur le permet. Aucun tournoi n’expire automatiquement. L’effacement des données du navigateur ou de l’application reste une limite du stockage local ; exporter une sauvegarde JSON protège contre cette perte.
+
+Le déplacement démarre après 4 pixels, vérifie la destination au relâchement, arrête proprement un geste annulé et défile continuellement près du bord. L’accueil précise que seuls les trois derniers tournois sont montrés et donne accès à la collection complète.

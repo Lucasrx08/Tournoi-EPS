@@ -252,3 +252,7 @@ La capture fournie sur iPad montre le titre et les boutons, avec une zone centra
 ## 2.31 — PDF résultats (6 novembre 2026)
 
 282 tests réussis. Nouveau générateur hors connexion report.js, police DejaVu sous licence embarquée dans report-font.js. Vérification des points de classement et résultats depuis les deux adversaires, exclusivité des matchs validés, conservation du classement local raquettes, bonus inconnus non inventés, pagination sur 90 matchs et absence de mutation du tournoi. Exemple fictif de 8 équipes produit puis rendu avec pdftoppm : pages 1 (classement) et 2 (fiche) inspectées, sans chevauchement. Les fichiers Excel/CSV/iDoceo et sauvegardes utilisent leurs générateurs précédents.
+
+## 2.32 — conservation locale et gestes (6 novembre 2026)
+
+286 tests réussis (exécution séquentielle). Tests de fusion d’une collection incomplète, restauration d’anciennes sauvegardes, maintien du tournoi actif, suppression explicite et annulation sans résurrection depuis une ancienne copie. Tests UI tactiles simulés : la cible au pointerup remplace la cible du dernier pointermove ; effectifs et identifiants conservés. Demande navigator.storage.persist quand disponible, copies localStorage/IndexedDB maintenues. Pas de garantie contre l’effacement extérieur des données Safari, une désinstallation ou une réinitialisation de tablette. Pas de test physique sur iPad.
