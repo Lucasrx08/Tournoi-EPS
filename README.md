@@ -175,3 +175,7 @@ Les répartitions en poules, terrains, groupes et adversaires de première rotat
 ### Version 2.30 — poules aller-retour et fin de tournoi
 
 Les cinq formules de poules proposent aller simple ou aller-retour. La phase de poules double les oppositions en inversant les adversaires ; les phases finales restent inchangées. Programme et estimation de durée utilisent toutes les rencontres. À la dernière rotation, « Fin du tournoi » ouvre le classement sans quitter le plein écran ; les phases à générer restent accessibles avec « Rotation suivante ».
+
+### Version 2.31 — dossier PDF de résultats
+
+Le PDF présente d’abord les classements, puis une fiche par participant : bilan V/N/D, adversaire, score, résultat et points de chaque match validé. Les poules de raquettes conservent leurs classements locaux. Les points normaux et bonus sont séparés ; une ventilation inconnue est signalée. Mise en page A4 portrait, police embarquée, noms et tableaux sans troncature, pages de suite et en-têtes répétés. Exemple fictif : docs/exemple-export-resultats.pdf.

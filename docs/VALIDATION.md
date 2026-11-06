@@ -248,3 +248,7 @@ La capture fournie sur iPad montre le titre et les boutons, avec une zone centra
 ## 2.30 — aller-retour et dernière rotation (6 novembre 2026)
 
 279 tests réussis. Pour les cinq formules de poules, en badminton et handball : exactement deux rencontres inversées par paire, aucun adversaire hors poule, conservation lors d’une copie. Poules puis finales : les retours sont joués avant la phase finale et le nombre de matchs de phase finale est inchangé. Tests UI : choix réversible, programme doublé, bouton de fin à la dernière rotation, classement affiché avec projection conservée et phase finale non terminée prématurément. Pas de validation sur télévision physique.
+
+## 2.31 — PDF résultats (6 novembre 2026)
+
+282 tests réussis. Nouveau générateur hors connexion report.js, police DejaVu sous licence embarquée dans report-font.js. Vérification des points de classement et résultats depuis les deux adversaires, exclusivité des matchs validés, conservation du classement local raquettes, bonus inconnus non inventés, pagination sur 90 matchs et absence de mutation du tournoi. Exemple fictif de 8 équipes produit puis rendu avec pdftoppm : pages 1 (classement) et 2 (fiche) inspectées, sans chevauchement. Les fichiers Excel/CSV/iDoceo et sauvegardes utilisent leurs générateurs précédents.
