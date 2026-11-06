@@ -155,3 +155,7 @@ En départs décalés, une proposition de prochain match apparaît sous chaque t
 ### Version 2.25 — composition des poules au toucher
 
 Chaque joueur ou équipe possède un choix de poule direct, utilisable sur tablette sans glisser-déposer. Les effectifs suivent les changements, le défilement est conservé, et les modifications sont appliquées uniquement avec « Enregistrer les poules ». Les boutons de participants ne sont déplaçables qu’avec un pointeur fin.
+
+### Version 2.26 — fenêtre de composition visible sur tablette
+
+La fenêtre de poules utilise une hauteur explicite et trois zones en grille : titre, contenu défilant, validation. Elle ne dépend plus du calcul flex à hauteur automatique susceptible de masquer le contenu dans Safari.

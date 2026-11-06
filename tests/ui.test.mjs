@@ -515,3 +515,9 @@ for(const sport of ['badminton','table','handball','football'])for(const formula
 test('Composition au pointeur : le glisser-déposer reste disponible avec une souris',async()=>{
  const r=runtime();r.ctx.matchMedia=()=>({matches:true});r.run("newDraft('handball');resizeTeams(8);draft.step=4;draftCfg().formula='pools';render()");await r.action('pool-settings');assert.ok(r.node('modal').innerHTML.includes('draggable="true"'));
 });
+
+test('Fenêtre de poules : mise en page dédiée conservée après un déplacement et retirée des autres fenêtres',async()=>{
+ const r=runtime(),layouts=[];r.node('modal').classList.toggle=(name,on)=>layouts.push([name,on]);r.run("newDraft('handball');draft.step=4;draftCfg().formula='pools';render()");await r.action('pool-settings');assert.deepEqual(layouts.at(-1),['pool-editor-dialog',true]);
+ const id=r.run('poolEditor.assignments[0][0]');await r.change({dataset:{poolDestination:id},value:'1'});assert.deepEqual(layouts.at(-1),['pool-editor-dialog',true]);
+ await r.action('close');await r.action('formula-help',{id:'pools'});assert.deepEqual(layouts.at(-1),['pool-editor-dialog',false]);
+});

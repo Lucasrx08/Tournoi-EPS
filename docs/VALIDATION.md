@@ -228,3 +228,7 @@ Captures : `verification-220-equipes.jpg`, `verification-220-poules.jpg`, `verif
 ## 2.25 — composition des poules sur tablette (6 novembre 2026)
 
 263 tests réussis. Ajout de tests des destinations natives pour badminton, tennis de table, handball et football, dans les cinq formules avec poules : ouverture, déplacement, recalcul des effectifs, sauvegarde, réouverture et annulation. Vérification du glisser-déposer activé au pointeur fin uniquement. Dans Chrome : parcours réel handball, passage 3/3 → 2/4 et sauvegarde ; parcours badminton en cadre 1024 × 768, changement direct de poule, sauvegarde et contrôle de lisibilité. Pas de test Safari sur iPad physique ; le mécanisme repose sur un contrôle select natif, indépendant du glisser-déposer tactile.
+
+## 2.26 — zone centrale du dialogue (6 novembre 2026)
+
+La capture fournie sur iPad montre le titre et les boutons, avec une zone centrale vide. Le dialogue précédent combinait hauteur automatique et contenu flex:1 sous une hauteur maximale ; remplacement par une hauteur définie et trois lignes de grille via une classe explicite, sans dépendance à :has. 264 tests réussis, dont maintien de la classe après déplacement et retrait lors de l’ouverture d’un autre dialogue. Vérification Chrome dans un cadre 1024 × 768 : dialogue 736 px, contenu visible 566 px, pied de fenêtre à 729 px ; déplacement et sauvegarde de 3/3 vers 2/4. Les tests n’émulent pas Safari : validation finale sur l’iPad utilisateur encore nécessaire.

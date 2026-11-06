@@ -46,7 +46,7 @@ function save(){data.updatedAt=Date.now();data.revision=(data.revision??0)+1;con
 function sync(v){if(validData(v)&&v.updatedAt>=data.updatedAt){data=v;data.events.forEach(normalizeEvent);render()}}
 channel&&(channel.onmessage=e=>{if(e.data?.type==='snapshot')sync(e.data.data)});addEventListener('storage',e=>{if(e.key===KEY&&e.newValue)try{sync(JSON.parse(e.newValue))}catch{}});
 function toast(message,persistent=false){clearTimeout(toastTimer);toastNode.textContent=message;toastNode.classList.add('show');if(!persistent)toastTimer=setTimeout(()=>toastNode.classList.remove('show'),4200)}
-function dialog(title,content,footer=''){activeSetupModal=null;modal.innerHTML=`<div class="modal-header"><h2>${esc(title)}</h2>${btn(icon('close'),'close','icon-only','aria-label="Fermer"')}</div><div class="modal-content">${content}</div>${footer?`<div class="modal-footer">${footer}</div>`:''}`;if(!modal.open)modal.showModal()}
+function dialog(title,content,footer='',layout=''){activeSetupModal=null;modal.classList.toggle('pool-editor-dialog',layout==='pools');modal.innerHTML=`<div class="modal-header"><h2>${esc(title)}</h2>${btn(icon('close'),'close','icon-only','aria-label="Fermer"')}</div><div class="modal-content">${content}</div>${footer?`<div class="modal-footer">${footer}</div>`:''}`;if(!modal.open)modal.showModal()}
 let confirmationResolve=null;
 function confirmDialog(message,title='Confirmer',accept='Confirmer'){
  if(confirmationResolve)return Promise.resolve(false);
@@ -113,7 +113,7 @@ function poolSettings(){
  if(!poolEditor){const count=P.integer(c.poolCount,1,Math.floor(draft.count/2)),sizes=c.poolSizes?.length===count&&c.poolSizes.reduce((a,b)=>a+b,0)===draft.count?c.poolSizes.slice():P.poolSizes(draft.count,count),seeding=['levels','levelsladder'].includes(c.formula)?'levels':c.poolSeeding??'balanced';
   poolEditor={count,sizes,assignments:structuredClone(c.poolAssignments??(draft.usePromotedPools?draft.promotedPools:null)??G.arrange(draft.teams,sizes,seeding==='levels')),qualifiers:c.qualifiers,seeding,selected:null,source:draft.usePromotedPools?'promotion':c.poolAssignments?'manual':'auto'};}
  const scrollTop=modal.querySelector?.('.modal-content')?.scrollTop??0;
- dialog('Composer les poules',poolSetup(c)+'<div id="pool-error" class="error-inline" role="alert"></div>',btn('Annuler','close','ghost')+btn('Enregistrer les poules','pool-save','primary'));activeSetupModal='pools';const content=modal.querySelector?.('.modal-content');if(content)content.scrollTop=scrollTop;
+ dialog('Composer les poules',poolSetup(c)+'<div id="pool-error" class="error-inline" role="alert"></div>',btn('Annuler','close','ghost')+btn('Enregistrer les poules','pool-save','primary'),'pools');activeSetupModal='pools';const content=modal.querySelector?.('.modal-content');if(content)content.scrollTop=scrollTop;
 }
 function editPoolStructure(count,seeding=poolEditor.seeding){
  const e=poolEditor;e.count=P.integer(count,1,Math.floor(draft.count/2));e.sizes=P.poolSizes(draft.count,e.count);e.seeding=seeding;e.assignments=G.arrange(draft.teams,e.sizes,seeding==='levels');e.selected=null;e.source='auto';
