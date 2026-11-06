@@ -74,6 +74,7 @@ export function newTournament(config={},teams=makeTeams(8)){
  if(cfg.formula==='melee'){cfg.playersPerSide=3;cfg.drawPoints=config.drawPoints??2;cfg.lossPoints=config.lossPoints??1;const perCourt=Math.ceil(teams.length/Math.max(1,Math.min(cfg.courtCount,Math.floor(teams.length/6))));cfg.roundCount=config.roundCount??(perCourt===6?5:7);}
  if(!SPORTS[cfg.sport]||!FORMULAS[cfg.formula]||!['time','score','hybrid','free'].includes(cfg.endMode))throw Error('Sport, formule ou règle de fin invalide.');
  if(!Number.isFinite(cfg.duration)||cfg.duration<15||cfg.duration>7200||!Number.isInteger(cfg.target)||cfg.target<1||cfg.target>999)throw Error('La durée et le score cible doivent être positifs.');
+ if(cfg.poolLegs!==undefined&&![1,2].includes(cfg.poolLegs))throw Error('Choisissez aller simple ou aller-retour.');
  if(!Number.isInteger(cfg.roundCount)||cfg.roundCount<1||cfg.roundCount>50||!Number.isInteger(cfg.poolCount)||cfg.poolCount<1||cfg.poolCount>32||!Number.isInteger(cfg.qualifiers)||cfg.qualifiers<1||cfg.qualifiers>4)throw Error('Nombre de rondes, poules ou qualifiés invalide.');
  if(!Number.isFinite(cfg.overtime)||cfg.overtime<10||cfg.overtime>3600||!Number.isFinite(cfg.breakSeconds)||cfg.breakSeconds<0||cfg.breakSeconds>600)throw Error('Durée de récupération ou de prolongation invalide.');
  if([cfg.winPoints,cfg.drawPoints,cfg.lossPoints,cfg.availableMinutes].some(x=>!Number.isFinite(x)||x<0))throw Error('Les points et la durée disponible doivent être positifs ou nuls.');
@@ -96,7 +97,7 @@ export function newTournament(config={},teams=makeTeams(8)){
   cfg.poolSizes=sizes.slice();const leveled=['levels','levelsladder'].includes(cfg.formula)||cfg.poolSeeding==='levels',groups=sizes.map((size,i)=>({name:leveled?'Niveau '+(i+1)+' · Poule '+poolLabel(i):'Poule '+poolLabel(i),level:leveled||['poolladder','levelsladder'].includes(cfg.formula)?i+1:null,ids:[],size}));
   if(cfg.poolAssignments){if(!Array.isArray(cfg.poolAssignments)||cfg.poolAssignments.some(g=>!Array.isArray(g)))throw Error('Les poules prédéfinies ne correspondent pas aux participants.');const flat=cfg.poolAssignments.flat();if(cfg.poolAssignments.length!==count||cfg.poolAssignments.some((g,i)=>!Array.isArray(g)||g.length!==sizes[i])||flat.length!==roster.length||new Set(flat).size!==roster.length||flat.some(id=>!roster.includes(id)))throw Error('Les poules prédéfinies ne correspondent pas aux participants.');groups.forEach((g,i)=>g.ids=cfg.poolAssignments[i].slice());}
   else{const assignments=G.arrange(t.teams,sizes,leveled);groups.forEach((g,i)=>g.ids=assignments[i]);}
-  t.engine.groups=groups;const pairs=groups.flatMap(g=>roundRobin(g.ids).flat().map(p=>({...p,group:g.name,phase:'Poules'})));schedule(t,pairs);
+  t.engine.groups=groups;const pairs=groups.flatMap(g=>roundRobin(g.ids).flat().map(p=>({...p,group:g.name,phase:'Poules'})));schedule(t,pairs);if(cfg.poolLegs===2)schedule(t,pairs.map(p=>({...p,a:p.b,b:p.a})));
  }
  else if(['knockout','classification'].includes(cfg.formula)){t.engine.tracks=[{ids:roster,start:1}];generateBracket(t)}
  else if(cfg.formula==='custom'){if(!cfg.customPairs?.length)throw Error('Ajoutez les rencontres personnalisées.');const pairs=cfg.customPairs.map(p=>({a:roster[p[0]],b:roster[p[1]]}));if(pairs.some(p=>!p.a||!p.b||p.a===p.b))throw Error('Une rencontre personnalisée est invalide.');schedule(t,pairs)}

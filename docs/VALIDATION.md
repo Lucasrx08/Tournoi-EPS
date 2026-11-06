@@ -244,3 +244,7 @@ La capture fournie sur iPad montre le titre et les boutons, avec une zone centra
 ## 2.29 — déplacement direct (6 novembre 2026)
 
 265 tests réussis. Suppression des listes de destination des poules, groupes et première rotation. Moteur Pointer Events partagé : capture du pointeur, seuil de mouvement, carte fantôme sans interaction, surlignage du dépôt, annulation hors destination, défilement au bord du panneau. Les premières oppositions échangent leurs places pour préserver l’unicité des participants. Vérification navigateur Chrome : vrai geste de souris entre poules, Bleu clair passe de A à B, effectifs 3/3 → 2/4. Pas de test sur iPad physique ; le moteur utilise le même chemin Pointer Events pour toucher, stylet et souris. Les règles de disponibilité et de poules restent validées par les opérations existantes.
+
+## 2.30 — aller-retour et dernière rotation (6 novembre 2026)
+
+279 tests réussis. Pour les cinq formules de poules, en badminton et handball : exactement deux rencontres inversées par paire, aucun adversaire hors poule, conservation lors d’une copie. Poules puis finales : les retours sont joués avant la phase finale et le nombre de matchs de phase finale est inchangé. Tests UI : choix réversible, programme doublé, bouton de fin à la dernière rotation, classement affiché avec projection conservée et phase finale non terminée prématurément. Pas de validation sur télévision physique.

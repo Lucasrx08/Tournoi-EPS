@@ -78,3 +78,16 @@ test('Propositions : attendre le score final et conserver les départs communs',
  finish(t,m);assert.equal(E.courtSuggestions(t).has(m.courtId),true);
  assert.equal(E.courtSuggestions(E.newTournament({endMode:'time',sync:'common'},E.makeTeams(8))).size,0);
 });
+
+for(const formula of G.FORMULAS)for(const sport of ['handball','badminton'])test(`Aller-retour ${formula} / ${sport} : deux matchs inversés par adversaire dans sa poule`,()=>{
+ const teams=E.makeTeams(8),cfg={sport,formula,poolCount:2,poolSizes:[4,4],courtCount:2},single=E.newTournament(cfg,teams),t=E.newTournament({...cfg,poolLegs:2},teams);
+ assert.equal(E.allMatches(t).length,2*E.allMatches(single).length);
+ for(const g of t.engine.groups)for(let i=0;i<g.ids.length;i++)for(let j=i+1;j<g.ids.length;j++){
+ const a=g.ids[i],b=g.ids[j],matches=E.allMatches(t).filter(m=>E.entrants(m).includes(a)&&E.entrants(m).includes(b));assert.equal(matches.length,2);assert.deepEqual(matches[0].a,matches[1].b);assert.deepEqual(matches[0].b,matches[1].a);
+ }
+ assert.equal(E.restartTournament(t).config.poolLegs,2);
+});
+test('Aller-retour : les phases finales restent identiques et attendent tous les retours',()=>{
+ const play=legs=>{const t=E.newTournament({sport:'handball',formula:'poolfinal',poolCount:2,courtCount:4,poolLegs:legs},E.makeTeams(8));let guard=0;while(!t.completed){assert.ok(guard++<100);for(const m of E.current(t).matches)finish(t,m,3,1);E.advance(t);}return t;};
+ const a=play(1),b=play(2);assert.equal(E.allMatches(b).filter(m=>m.phase==='Poules').length,24);assert.equal(E.allMatches(a).filter(m=>m.phase!=='Poules').length,E.allMatches(b).filter(m=>m.phase!=='Poules').length);
+});

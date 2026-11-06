@@ -528,3 +528,13 @@ test('Glisser une carte : poules, groupes et première rotation sans doublon',as
  r.ctx.dragId=before[0].a;r.ctx.oldId=before[1].b;r.run("transferAssignment('opening',dragId,'1:b')");assert.equal(r.run('draftCfg().openingPairs[1].b'),before[0].a);assert.equal(r.run('draftCfg().openingPairs[0].a'),before[1].b);
  const all=plain(r.run('draftCfg().openingPairs.flatMap(p=>[p.a,p.b])'));assert.equal(new Set(all).size,all.length);
 });
+
+test('Poules : choix aller-retour recalcule le programme et peut revenir à aller simple',async()=>{
+ const r=runtime();r.run("newDraft('badminton');resizeTeams(8);draft.step=4;draftCfg().formula='pools';draftCfg().poolCount=2;draftCfg().poolSizes=[4,4];render()");assert.ok(r.html().includes('Aller-retour'));const n=r.run('E.allMatches(draftTournament()).length');await r.action('pool-legs',{id:'2'});assert.equal(r.run('E.allMatches(draftTournament()).length'),n*2);assert.ok(r.html().includes('6 matchs chacun'));await r.action('pool-legs',{id:'1'});assert.equal(r.run('E.allMatches(draftTournament()).length'),n);
+});
+test('Dernière rotation : fin du tournoi ouvre le classement sans quitter la projection',async()=>{
+ const r=runtime();open(r,fixture('handball',4,2,{formula:'rr'}));r.run("projection=true;while(tourney().roundIndex<tourney().rotations.length-1){for(const m of E.current(tourney()).matches){m.scoreA=3;m.scoreB=1;E.finishMatch(tourney(),m,'manual',0,false)}E.advance(tourney())}for(const m of E.current(tourney()).matches){m.scoreA=3;m.scoreB=1;E.finishMatch(tourney(),m,'manual',0,false)}render()");assert.ok(r.html().includes('Fin du tournoi'));await r.action('advance');assert.equal(r.run('tab'),'rank');assert.equal(r.run('projection'),true);assert.ok(r.html().includes('Classement final'));
+});
+test('Fin de poules : proposer la phase finale au lieu de terminer prématurément',()=>{
+ const r=runtime();open(r,fixture('handball',8,4,{formula:'poolfinal',poolCount:2}));r.run("while(tourney().roundIndex<tourney().rotations.length-1){for(const m of E.current(tourney()).matches){m.scoreA=3;m.scoreB=1;E.finishMatch(tourney(),m,'manual',0,false)}E.advance(tourney())}for(const m of E.current(tourney()).matches){m.scoreA=3;m.scoreB=1;E.finishMatch(tourney(),m,'manual',0,false)}render()");assert.ok(r.html().includes('Rotation suivante'));assert.ok(!r.html().includes('Fin du tournoi'));
+});
