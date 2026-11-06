@@ -86,7 +86,7 @@ export function mountCourtDrag(root,onMove){
 // Overview layouts use the real space left by the surrounding page.
 export function identityLayout(count,width,height){
  const gap=10,small=width<650,maxCols=Math.min(count,small?2:8,Math.max(1,Math.floor((width+gap)/(small?155:140))));
- const options=Array.from({length:maxCols},(_,i)=>{const cols=i+1,rows=Math.ceil(count/cols),cellWidth=(width-gap*(cols-1))/cols,cellHeight=(height-gap*(rows-1)-2)/rows;return {cols,rows,cellWidth,cellHeight,cost:Math.abs(Math.log(Math.max(.1,cellWidth/cellHeight)/2.2))+(cols*rows-count)*.85};});
+ const options=Array.from({length:maxCols},(_,i)=>{const cols=i+1,rows=Math.ceil(count/cols),cellWidth=(width-gap*(cols-1))/cols,cellHeight=(height-gap*(rows-1)-2)/rows;return {cols,rows,cellWidth,cellHeight,cost:Math.abs(Math.log(Math.max(.1,cellWidth/Math.min(150,cellHeight))/2.2))+(cols*rows-count)*.85};});
  let fitting=options.filter(x=>x.cellWidth>=180&&x.cellHeight>=90);if(!fitting.length&&!small)fitting=options.filter(x=>x.cellWidth>=130&&x.cellHeight>=48);
  const best=fitting.length?fitting.sort((a,b)=>a.cost-b.cost)[0]:options.at(-1),rowHeight=Math.max(small?68:48,Math.min(150,Math.floor(best.cellHeight)));
  return {...best,rowHeight,density:rowHeight<88||best.cellWidth<180?'micro':'compact',overflow:rowHeight*best.rows+gap*(best.rows-1)+2>height};
@@ -105,7 +105,7 @@ let overviewObserver;
 export function mountOverviewLayouts(root){
  overviewObserver?.disconnect();const boards=[...root.querySelectorAll('[data-identity-overview],[data-pool-boards],[data-overall-ranking]')];if(!boards.length)return;
  const fit=()=>{for(const board of boards){const width=board.clientWidth,height=board.clientHeight;if(!width||!height)continue;
-  if(board.hasAttribute('data-identity-overview')){const x=identityLayout(board.children.length,width,height);board.style.setProperty('--identity-cols',x.cols);board.style.setProperty('--identity-rows',x.rows);board.style.setProperty('--identity-row-height',x.rowHeight+'px');board.dataset.density=x.density;}
+  if(board.hasAttribute('data-identity-overview')){const x=identityLayout(board.children.length,width,height);board.style.setProperty('--identity-cols',x.cols);board.style.setProperty('--identity-rows',x.rows);board.style.setProperty('--identity-row-height',x.rowHeight+'px');board.dataset.density=x.density;board.dataset.fit=String(!x.overflow);}
   else if(board.hasAttribute('data-overall-ranking')){const x=overallLayout(board.children.length,width,height);board.style.setProperty('--ranking-cols',x.cols);board.style.setProperty('--ranking-rows',x.rows);board.style.setProperty('--standing-height',x.rowHeight+'px');board.dataset.density=x.rowHeight<38?'micro':'compact';}
   else{const longest=Math.max(1,...[...board.children].map(c=>c.querySelectorAll('tbody tr').length)),x=poolLayout(board.children.length,longest,width,height);board.style.setProperty('--pool-cols',x.cols);board.style.setProperty('--pool-row-height',x.rowHeight+'px');board.style.setProperty('--pool-card-height',x.cardHeight+'px');board.style.setProperty('--pool-font',x.fontSize+'px');}
  }};

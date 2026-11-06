@@ -1248,4 +1248,9 @@ html:has(dialog[open]),body:has(dialog[open]) { overflow:hidden; }
 .shell.projection-layout .ranking-dashboard { height:auto; min-height:0; overflow:hidden; }
 /* Keep the current type scale, and give spare vertical space to the playing area. */
 .shell.projection-layout .courts-grid:not(.dense) .court-upcoming { min-height:0; height:auto; flex:0 0 auto; padding-bottom:16px; }
-.projection-layout .standing-first>.rank-number { color:var(--lime); }
+.standing-first>.rank-number { color:var(--lime); }
+
+/* Small rosters remain balanced instead of forming one wide column. */
+.shell .setup-participants .identity-grid.identity-overview[data-fit="true"] { align-content:center; }
+.shell .setup-participants { grid-template-columns:minmax(0,1fr); }
+.shell .setup-participants .identity-grid.identity-overview { width:100%; max-width:1100px; justify-self:center; box-sizing:border-box; }

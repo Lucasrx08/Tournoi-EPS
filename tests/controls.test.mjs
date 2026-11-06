@@ -108,3 +108,5 @@ test('Roue : un défilement de mise en page ne remet pas les valeurs à zéro',a
  const f=fakeWheel(45),changes=[];C.mountWheels(f.root,(...args)=>changes.push(args));f.wheel.scrollTop=0;f.handlers.scroll();await new Promise(resolve=>setTimeout(resolve,170));assert.equal(changes.length,0);assert.equal(f.wheel.dataset.wheelCurrent,'45');
  f.handlers.keydown({key:'ArrowUp',preventDefault(){}});assert.deepEqual(changes,[['duration','seconds',44]]);assert.equal(f.wheel.dataset.wheelCurrent,'44');
 });
+
+test('Petit effectif : deux tuiles côte à côte sur ordinateur',()=>{assert.equal(C.identityLayout(2,1000,480).cols,2);});
