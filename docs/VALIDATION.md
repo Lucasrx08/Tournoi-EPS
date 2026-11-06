@@ -240,3 +240,7 @@ La capture fournie sur iPad montre le titre et les boutons, avec une zone centra
 ## 2.28 — plein écran (6 novembre 2026)
 
 264 tests réussis. Orientation verticale ciblée par attribut data-sport pour handball, volley et ultimate en plein écran. Chrono jusqu’à 120 px, prochaine rotation 150–240 px et noms 24–44 px, avec ajustement pour faible hauteur. La taille des scores tient compte de l’espace disponible. Pas de validation physique sur télévision/AirPlay.
+
+## 2.29 — déplacement direct (6 novembre 2026)
+
+265 tests réussis. Suppression des listes de destination des poules, groupes et première rotation. Moteur Pointer Events partagé : capture du pointeur, seuil de mouvement, carte fantôme sans interaction, surlignage du dépôt, annulation hors destination, défilement au bord du panneau. Les premières oppositions échangent leurs places pour préserver l’unicité des participants. Vérification navigateur Chrome : vrai geste de souris entre poules, Bleu clair passe de A à B, effectifs 3/3 → 2/4. Pas de test sur iPad physique ; le moteur utilise le même chemin Pointer Events pour toucher, stylet et souris. Les règles de disponibilité et de poules restent validées par les opérations existantes.

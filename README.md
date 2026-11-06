@@ -167,3 +167,7 @@ Tracés conservés à l’horizontale en plein écran, noms et chronomètre agra
 ### Version 2.28 — priorité au chrono et aux prochaines rotations
 
 En plein écran : handball, volley et ultimate verticaux ; chrono renforcé ; prochaine rotation portée à environ un quart de la hauteur, adversaires agrandis. Correction de l’interprétation de la version 2.27.
+
+### Version 2.29 — cartes à glisser-déposer
+
+Les répartitions en poules, terrains, groupes et adversaires de première rotation utilisent des cartes déplaçables au pointeur (souris, stylet, tactile). La carte suit le geste et la destination est surlignée. Les listes de répartition ont été retirées ; les paramètres sans logique de déplacement, comme le sport d’un terrain multisport, restent des choix. Un clic puis « Placer ici » permet aussi d’effectuer les déplacements. Les poules sont enregistrées par leur bouton de validation.

@@ -370,7 +370,7 @@ test('Formules : détails explicatifs et première rotation préparée avant cr�
  const r=runtime();r.run("newDraft('handball');draft.mode='existing';draft.step=4;render()");assert.ok(r.html().includes('Comprendre avec un schéma'));
  await r.action('formula-help',{id:'poolfinal'});assert.ok(r.node('modal').innerHTML.includes('rencontres complémentaires'));await r.action('close');
  r.run('draft.step=6;render()');await r.action('opening-settings');assert.ok(r.node('modal').innerHTML.includes('data-field="chooseOpening"'));await r.change({dataset:{field:'chooseOpening'},type:'checkbox',checked:true});
- assert.ok(r.node('modal').innerHTML.includes('data-opening-index'));assert.ok(r.run('draftCfg().openingPairs.length>0'));
+ assert.ok(r.node('modal').innerHTML.includes('data-transfer-target="opening"'));assert.ok(r.run('draftCfg().openingPairs.length>0'));
  await r.action('create');assert.equal(r.run('tourney().config.chooseOpening'),true);
 });
 
@@ -505,19 +505,26 @@ test('Effectif modifié après une reprise : anciennes promotions écartées, po
 for(const sport of ['badminton','table','handball','football'])for(const formula of G.FORMULAS)test(`Composition tactile : ${sport} / ${formula}, destination directe et sauvegarde`,async()=>{
  const r=runtime();r.ctx.matchMedia=()=>({matches:false});r.run(`newDraft('${sport}');resizeTeams(8);draft.step=4;render()`);
  await r.action('formula-choice',{id:formula});await r.action('pool-proposal',{id:'2'});await r.action('pool-settings');
- const id=r.run('poolEditor.assignments[0][0]');assert.ok(r.node('modal').open);assert.equal((r.node('modal').innerHTML.match(/data-pool-destination=/g)??[]).length,8);
- assert.ok(!r.node('modal').innerHTML.includes('draggable="true"'));assert.ok(r.node('modal').innerHTML.includes('aria-label="Poule de '));
+ const id=r.run('poolEditor.assignments[0][0]');assert.ok(r.node('modal').open);assert.equal((r.node('modal').innerHTML.match(/data-transfer="pool"/g)??[]).length,8);
+ assert.ok(!r.node('modal').innerHTML.includes('draggable="true"'));assert.ok(r.node('modal').innerHTML.includes('data-drop-pool='));
  await r.change({dataset:{poolDestination:id},value:'1'});assert.deepEqual(plain(r.run('poolEditor.sizes')),[3,5]);assert.equal(r.run('poolEditor.source'),'manual');
  await r.action('pool-save');r.ctx.movedId=id;assert.ok(r.run('draftTournament().engine.groups[1].ids.includes(movedId)'));
  await r.action('pool-settings');assert.deepEqual(plain(r.run('poolEditor.sizes')),[3,5]);await r.change({dataset:{poolDestination:id},value:'0'});await r.action('close');
  assert.deepEqual(plain(r.run('draftCfg().poolSizes')),[3,5]);
 });
 test('Composition au pointeur : le glisser-déposer reste disponible avec une souris',async()=>{
- const r=runtime();r.ctx.matchMedia=()=>({matches:true});r.run("newDraft('handball');resizeTeams(8);draft.step=4;draftCfg().formula='pools';render()");await r.action('pool-settings');assert.ok(r.node('modal').innerHTML.includes('draggable="true"'));
+ const r=runtime();r.ctx.matchMedia=()=>({matches:true});r.run("newDraft('handball');resizeTeams(8);draft.step=4;draftCfg().formula='pools';render()");await r.action('pool-settings');assert.ok(r.node('modal').innerHTML.includes('data-transfer="pool"'));
 });
 
 test('Fenêtre de poules : mise en page dédiée conservée après un déplacement et retirée des autres fenêtres',async()=>{
  const r=runtime(),layouts=[];r.node('modal').classList.toggle=(name,on)=>layouts.push([name,on]);r.run("newDraft('handball');draft.step=4;draftCfg().formula='pools';render()");await r.action('pool-settings');assert.deepEqual(layouts.at(-1),['pool-editor-dialog',true]);
  const id=r.run('poolEditor.assignments[0][0]');await r.change({dataset:{poolDestination:id},value:'1'});assert.deepEqual(layouts.at(-1),['pool-editor-dialog',true]);
  await r.action('close');await r.action('formula-help',{id:'pools'});assert.deepEqual(layouts.at(-1),['pool-editor-dialog',false]);
+});
+
+test('Glisser une carte : poules, groupes et première rotation sans doublon',async()=>{
+ const r=runtime();r.run("newDraft('badminton');resizeTeams(8);draft.step=4;draftCfg().formula='pools';poolSettings()");r.run("transferAssignment('pool',poolEditor.assignments[0][0],1)");assert.deepEqual(plain(r.run('poolEditor.sizes')),[3,5]);
+ await r.action('close');r.run("draft.step=6;draftCfg().chooseOpening=true;openingSettings()");const before=plain(r.run('draftCfg().openingPairs'));
+ r.ctx.dragId=before[0].a;r.ctx.oldId=before[1].b;r.run("transferAssignment('opening',dragId,'1:b')");assert.equal(r.run('draftCfg().openingPairs[1].b'),before[0].a);assert.equal(r.run('draftCfg().openingPairs[0].a'),before[1].b);
+ const all=plain(r.run('draftCfg().openingPairs.flatMap(p=>[p.a,p.b])'));assert.equal(new Set(all).size,all.length);
 });
