@@ -256,3 +256,12 @@ La capture fournie sur iPad montre le titre et les boutons, avec une zone centra
 ## 2.32 — conservation locale et gestes (6 novembre 2026)
 
 286 tests réussis (exécution séquentielle). Tests de fusion d’une collection incomplète, restauration d’anciennes sauvegardes, maintien du tournoi actif, suppression explicite et annulation sans résurrection depuis une ancienne copie. Tests UI tactiles simulés : la cible au pointerup remplace la cible du dernier pointermove ; effectifs et identifiants conservés. Demande navigator.storage.persist quand disponible, copies localStorage/IndexedDB maintenues. Pas de garantie contre l’effacement extérieur des données Safari, une désinstallation ou une réinitialisation de tablette. Pas de test physique sur iPad.
+
+## Mise à jour 2.33 — plein écran et exports (6 novembre 2026)
+
+- Fin d’un championnat de quatre équipes vérifiée dans Chrome distant, en conservant le plein écran : classement présent, conteneur de 922 px et quatre lignes visibles. Pas de validation matérielle Safari, iPad ou AirPlay.
+- Projection à deux terrains : prochaine rotation de 125 px et zone de match de 627 px sur une fenêtre de 936 px de haut. Tailles de chrono, scores et noms conservées.
+- Exports : iDoceo XLSX et CSV enrichis des statistiques détaillées ; PDF et sauvegarde JSON conservés. Autres boutons retirés.
+- Classeur généré : tous les XML analysés, statistiques et palette noir/vert/gris présentes. Import dans iDoceo non vérifié sur appareil.
+- PDF d’exemple régénéré ; première page et fiche individuelle rendues et inspectées.
+- 288 tests automatisés réussis, dont les nouveaux contrôles des exports et des statistiques par élève en double.

@@ -549,3 +549,5 @@ test('Glisser tactile : la destination au relâchement prime sur le dernier mouv
  r.listeners.get('pointermove')({pointerId:3,clientX:30,clientY:30,preventDefault(){}});zone=zones[1];r.listeners.get('pointerup')({pointerId:3,clientX:200,clientY:30});
  assert.deepEqual(plain(r.run('poolEditor.sizes')),[2,4]);r.ctx.dragged=id;assert.ok(r.run('poolEditor.assignments[1].includes(dragged)'));
 });
+
+test('Exports : seuls iDoceo XLSX/CSV, PDF et sauvegarde restent proposés',async()=>{const r=runtime();open(r,fixture('handball',4,2));await r.action('exports');const html=r.node('modal').innerHTML;for(const action of ['export-idoceo','export-idoceo-csv','export-pdf','backup'])assert.ok(html.includes('data-action="'+action+'"'));for(const action of ['export-xlsx','export-csv'])assert.ok(!html.includes('data-action="'+action+'"'));});

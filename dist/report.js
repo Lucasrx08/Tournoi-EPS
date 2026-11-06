@@ -34,16 +34,16 @@ export function tournamentPdf(event,now=new Date()){
   y-=12;for(const line of wrap(section.title+(suite?' · suite':''),515,23)){text(36,y,23,line,true);y-=28;}
   if(section.color)rect(26,y+5,4,28,section.color);
   for(const line of wrap(section.subtitle,523,10)){text(36,y-2,10,line,false,'#59604d');y-=14;}y-=18;
-  if(section.stats){const w=523/4;section.stats.forEach(([label,value],i)=>{rect(36+i*w,y-48,w-5,48,'#f0f2e9');text(46+i*w,y-15,9,label);text(46+i*w,y-37,20,value,true);});y-=65;}
+  if(section.stats){const w=523/4;section.stats.forEach(([label,value],i)=>{rect(36+i*w,y-48,w-5,48,'#eeede8');text(46+i*w,y-15,9,label);text(46+i*w,y-37,20,value,true);});y-=65;}
   for(const line of wrap(section.note,523,9)){text(36,y,9,line);y-=13;}y-=16;
  }
- function header(section){rect(36,y-25,523,25,'#202022');let x=36;section.columns.forEach((c,i)=>{text(x+6,y-16,8,c,true,'#ffffff');x+=section.widths[i];});y-=25;}
+ function header(section){rect(36,y+2,523,3,'#dcff56');rect(36,y-25,523,25,'#202022');let x=36;section.columns.forEach((c,i)=>{text(x+6,y-16,8,c,true,'#dcff56');x+=section.widths[i];});y-=25;}
  for(const section of sections){start(section);for(const group of section.groups){if(y<115)start(section,true);text(36,y,12,group.name,true);y-=12;header(section);
   if(!group.rows.length){text(42,y-24,10,section.empty??'Aucun résultat.');y-=45;}
   const size=section.kind==='ranking'&&group.rows.length>28?8:10;
   group.rows.forEach((row,index)=>{const lines=row.cells.map((c,i)=>wrap(c,section.widths[i]-12,size)),height=Math.max(27,Math.max(...lines.map(l=>l.length))*(size+3)+14);
    if(y-height<52){start(section,true);text(36,y,12,group.name+' · suite',true);y-=12;header(section);}
-   rect(36,y-height,523,height,index%2?'#f0f2e9':'#ffffff');if(row.color)rect(36,y-height,3,height,row.color);
+   rect(36,y-height,523,height,index%2?'#eeede8':'#ffffff');if(row.color)rect(36,y-height,3,height,row.color);
    let x=36;lines.forEach((ls,i)=>{ls.forEach((line,j)=>text(x+6,y-17-j*(size+3),size,line,i===1||i===3,row.result==='Victoire'&&i===3?'#147d49':row.result==='Défaite'&&i===3?'#a63232':'#202022'));x+=section.widths[i];});y-=height;
   });y-=24;
  }}finish();
