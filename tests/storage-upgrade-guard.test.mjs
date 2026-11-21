@@ -12,6 +12,7 @@ assert.ok(start!==-1&&end>start,'Le mécanisme de protection est présent');
 function boot(records){
  const storage=new Map(Object.entries(records));
  const context={
+  KEY:'EPS_TOURNOIS_V1',BACKUP:'EPS_TOURNOIS_V1_BACKUP',
   localStorage:{getItem:key=>storage.has(key)?storage.get(key):null},
   initialData:()=>({schema:1,events:[],rosters:[],activeId:null,updatedAt:0}),
   validData:value=>value?.schema===1&&Array.isArray(value.events),
