@@ -18,7 +18,41 @@ const btn=(text,action,cls='',extra='')=>`<button type="button" class="${cls}" d
 const chip=(t,id)=>{const x=E.team(t,id);return `<span class="team-chip"><i class="color-dot" style="--color:${safeColor(x?.color)}"></i>${esc(x?.name)}</span>`};
 const safeColor=c=>/^#[0-9a-f]{6}$/i.test(c??'')?c:'#315ae8';
 function initialData(){return {schema:1,updatedAt:0,revision:0,events:[],rosters:[],activeId:null}}
-function load(){let restored=initialData();for(const key of[KEY,BACKUP])try{const v=JSON.parse(localStorage.getItem(key));if(validData(v))restored=S.mergeSnapshots(restored,v)}catch{}return restored}
+let storageIntegrityIssue=null;
+function load(){
+ let restored=initialData(),hasReadableCopy=false;
+ const unreadable=[];
+ for(const key of[KEY,BACKUP]){
+  let raw=null;
+  try{raw=localStorage.getItem(key)}catch{continue}
+  if(raw===null)continue;
+  try{
+   const value=JSON.parse(raw);
+   if(validData(value)){restored=S.mergeSnapshots(restored,value);hasReadableCopy=true}
+   else unreadable.push({key,raw});
+  }catch{unreadable.push({key,raw})}
+ }
+ // Ne pas initialiser silencieusement un tournoi vide si des données préexistent.
+ if(!hasReadableCopy&&unreadable.length)storageIntegrityIssue=unreadable;
+ return restored;
+}
+function showStorageIssue(){
+ if(!storageIntegrityIssue?.length||document.getElementById('eps-storage-blocker'))return;
+ const block=document.createElement('section');
+ block.id='eps-storage-blocker';
+ block.setAttribute('role','alertdialog');
+ block.setAttribute('aria-label','Protection des données enregistrées');
+ block.style.cssText='position:fixed;inset:0;z-index:2147483647;overflow:auto;background:#16191e;color:#fff;display:grid;place-items:center;padding:24px;font-family:system-ui,sans-serif';
+ const panel=document.createElement('div');
+ panel.style.cssText='width:min(540px,100%);background:#282d34;border:1px solid #78818c;border-radius:18px;padding:28px;line-height:1.5';
+ const title=document.createElement('h1');title.textContent='Vos tournois sont protégés';
+ const p=document.createElement('p');p.textContent='Des données sont présentes sur cet appareil, mais cette version ne parvient pas à les lire. Elles ne seront pas écrasées. Exportez une copie de secours, puis faites vérifier le format avant toute nouvelle mise à jour.';
+ const note=document.createElement('p');note.textContent='Le fichier peut contenir des noms et résultats d’élèves : conservez-le uniquement dans un espace autorisé par votre établissement.';
+ const button=document.createElement('button');button.type='button';button.textContent='Télécharger mes données brutes';
+ button.style.cssText='font:inherit;padding:12px 18px;border:0;border-radius:10px;background:#e8ff5a;color:#111;font-weight:700;cursor:pointer';
+ button.addEventListener('click',()=>X.download(JSON.stringify({kind:'tournoi-eps-raw-recovery-v1',savedAt:new Date().toISOString(),records:storageIntegrityIssue},null,2),'Tournoi_EPS_recuperation.json','application/json'));
+ panel.append(title,p,note,button);block.append(panel);document.body.append(block);
+}
 function validData(v){return !!v&&v.schema===1&&L.validLists(v.rosters)&&Array.isArray(v.events)&&v.events.every(e=>e&&typeof e.id==='string'&&typeof e.title==='string'&&Array.isArray(e.tournaments)&&e.tournaments.length>0&&e.tournaments.length<=20&&e.tournaments.every(t=>t&&typeof t.id==='string'&&E.SPORTS[t.config?.sport]&&E.FORMULAS[t.config?.formula]&&Array.isArray(t.teams)&&Array.isArray(t.courts)&&Array.isArray(t.rotations)&&t.rotations.length>0&&t.engine&&Array.isArray(t.engine.groups)&&t.engine.placements&&Array.isArray(t.audit)&&t.teams.every(x=>x&&typeof x.id==='string'&&typeof x.name==='string')&&new Set(t.teams.map(x=>x.id)).size===t.teams.length&&t.rotations.every(r=>Array.isArray(r.matches)&&r.matches.every(m=>m&&Array.isArray(m.a)&&Array.isArray(m.b)&&m&&Number.isInteger(m.scoreA)&&m.scoreA>=0&&m.scoreA<=999&&Number.isInteger(m.scoreB)&&m.scoreB>=0&&m.scoreB<=999))&&t.roundIndex>=0&&t.roundIndex<t.rotations.length))}
 let data=load(),view='home',tab='courts',draft=null,rankGeneral=false,rankingPage=0,rankingMode='auto',colorEditing=null,projection=false,archiveQuery='',archivePage=0,archiveFilter='all',deletedEvents=[],zoom=1,installEvent=null,audioContext=null,toastTimer=null,dbPromise=null,storageWarning=false,dragMember=null,dragCourtPlayer=null,courtSelected=null,courtClickAfter=0,lastAudioEnd=0;
 function normalizeEvent(e){
@@ -43,10 +77,25 @@ const hasTournament=()=>!!tourney();
 const canScore=m=>!!m;
 function db(){if(!('indexedDB'in globalThis))return Promise.reject(Error('IndexedDB indisponible'));return dbPromise??=new Promise((resolve,reject)=>{const r=indexedDB.open('eps-tournoi-offline',1);r.onupgradeneeded=()=>r.result.createObjectStore('snapshots');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
 async function dbWrite(snapshot){const d=await db();await new Promise((resolve,reject)=>{const tx=d.transaction('snapshots','readwrite'),store=tx.objectStore('snapshots'),read=store.get('current');read.onsuccess=()=>store.put(validData(read.result)?S.mergeSnapshots(snapshot,read.result):snapshot,'current');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});}
-async function restoreDB(){try{const d=await db(),r=d.transaction('snapshots').objectStore('snapshots').get('current');r.onsuccess=()=>{if(!validData(r.result))return;const merged=S.mergeSnapshots(data,r.result);const changed=JSON.stringify(merged.events)!==JSON.stringify(data.events);data=merged;if(changed){data.events.forEach(normalizeEvent);try{localStorage.setItem(KEY,JSON.stringify(data))}catch{}render();toast('Vos tournois enregistrés ont été restaurés.');}}}catch{}}
+async function restoreDB(){
+ try{
+  const d=await db();
+  const snapshot=await new Promise((resolve,reject)=>{const r=d.transaction('snapshots').objectStore('snapshots').get('current');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
+  if(!validData(snapshot))return;
+  const merged=S.mergeSnapshots(data,snapshot);
+  const changed=JSON.stringify(merged.events)!==JSON.stringify(data.events);
+  data=merged;
+  storageIntegrityIssue=null;
+  if(changed){
+   data.events.forEach(normalizeEvent);
+   try{localStorage.setItem(KEY,JSON.stringify(data))}catch{}
+   toast('Vos tournois enregistrés ont été restaurés.');
+  }
+ }catch{}
+}
 let persistenceRequested=false;
 
-function save(){const stamp=Math.max(Date.now(),(data.updatedAt??0)+1);if(event())event().savedAt=stamp;data.updatedAt=stamp;for(const key of[KEY,BACKUP])try{const stored=JSON.parse(localStorage.getItem(key));if(validData(stored))data=S.mergeSnapshots(data,stored)}catch{}if(!persistenceRequested){persistenceRequested=true;navigator.storage?.persist?.().catch(()=>{});} data.revision=(data.revision??0)+1;const snapshot=JSON.stringify(data);let ok=false;try{const previous=localStorage.getItem(KEY);if(previous)localStorage.setItem(BACKUP,previous);localStorage.setItem(KEY,snapshot);ok=true}catch{try{localStorage.removeItem(BACKUP);localStorage.setItem(KEY,snapshot);ok=true}catch{}}dbWrite(structuredClone(data)).catch(()=>{if(!ok)toast('Sauvegarde impossible : exportez une copie JSON tout de suite.',true)});if(!ok&&!storageWarning){storageWarning=true;toast('Le stockage rapide est plein. Pensez à exporter une sauvegarde JSON.',true)}channel?.postMessage({type:'snapshot',data});}
+function save(){if(storageIntegrityIssue){showStorageIssue();return;}const stamp=Math.max(Date.now(),(data.updatedAt??0)+1);if(event())event().savedAt=stamp;data.updatedAt=stamp;for(const key of[KEY,BACKUP])try{const stored=JSON.parse(localStorage.getItem(key));if(validData(stored))data=S.mergeSnapshots(data,stored)}catch{}if(!persistenceRequested){persistenceRequested=true;navigator.storage?.persist?.().catch(()=>{});} data.revision=(data.revision??0)+1;const snapshot=JSON.stringify(data);let ok=false;try{const previous=localStorage.getItem(KEY);if(previous)localStorage.setItem(BACKUP,previous);localStorage.setItem(KEY,snapshot);ok=true}catch{try{localStorage.removeItem(BACKUP);localStorage.setItem(KEY,snapshot);ok=true}catch{}}dbWrite(structuredClone(data)).catch(()=>{if(!ok)toast('Sauvegarde impossible : exportez une copie JSON tout de suite.',true)});if(!ok&&!storageWarning){storageWarning=true;toast('Le stockage rapide est plein. Pensez à exporter une sauvegarde JSON.',true)}channel?.postMessage({type:'snapshot',data});}
 function sync(v){if(validData(v)){data=S.mergeSnapshots(data,v);data.events.forEach(normalizeEvent);render()}}
 channel&&(channel.onmessage=e=>{if(e.data?.type==='snapshot')sync(e.data.data)});addEventListener('storage',e=>{if(e.key===KEY&&e.newValue)try{sync(JSON.parse(e.newValue))}catch{}});
 function toast(message,persistent=false){clearTimeout(toastTimer);toastNode.textContent=message;toastNode.classList.add('show');if(!persistent)toastTimer=setTimeout(()=>toastNode.classList.remove('show'),4200)}
@@ -556,7 +605,7 @@ modal.addEventListener('click',e=>{if(e.target===modal){const r=modal.getBoundin
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvent=e;render()});
 if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>toast('L’utilisation hors connexion n’a pas pu être préparée.'));
 addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')tick()});
-setInterval(tick,250);restoreDB();render();
+setInterval(tick,250);void restoreDB().then(()=>{if(storageIntegrityIssue)showStorageIssue();else render()});
 
 document.addEventListener('focusin',e=>{if(e.target.matches?.('input[type=number]'))e.target.select?.()});
 
