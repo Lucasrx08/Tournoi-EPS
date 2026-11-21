@@ -605,7 +605,7 @@ modal.addEventListener('click',e=>{if(e.target===modal){const r=modal.getBoundin
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvent=e;render()});
 if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>toast('L’utilisation hors connexion n’a pas pu être préparée.'));
 addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')tick()});
-setInterval(tick,250);void restoreDB().then(()=>{if(storageIntegrityIssue)showStorageIssue();else render()});
+setInterval(tick,250);if(storageIntegrityIssue){void restoreDB().then(()=>{if(storageIntegrityIssue)showStorageIssue();else render()});}else{void restoreDB();render();}
 
 document.addEventListener('focusin',e=>{if(e.target.matches?.('input[type=number]'))e.target.select?.()});
 
