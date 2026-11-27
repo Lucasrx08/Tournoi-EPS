@@ -1254,3 +1254,47 @@ html:has(dialog[open]),body:has(dialog[open]) { overflow:hidden; }
 .shell .setup-participants .identity-grid.identity-overview[data-fit="true"] { align-content:center; }
 .shell .setup-participants { grid-template-columns:minmax(0,1fr); }
 .shell .setup-participants .identity-grid.identity-overview { width:100%; max-width:1100px; justify-self:center; box-sizing:border-box; }
+
+/* 2.35: score entry mode and independent, scrollable tournament overview. */
+.score-entry-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,155px),1fr));gap:8px;min-width:0}
+.score-entry-options .choice-card{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:5px;min-height:76px;text-align:left;white-space:normal;overflow-wrap:anywhere;line-height:1.25}
+.score-entry-options .choice-card>span{font-size:12px;line-height:1.35}
+.score-entry-setup{min-width:0}
+.shell .tournament-heading{min-width:0;gap:10px;flex-wrap:wrap}
+.shell .tournament-heading>div{min-width:0}
+.shell .tournament-heading h1{overflow-wrap:anywhere;line-height:1.15}
+.shell .nav-tabs{flex-wrap:wrap;min-width:0;max-width:100%;gap:5px}
+.shell .nav-tabs button{min-width:0;white-space:normal;line-height:1.2}
+.shell .court-foot{flex-wrap:wrap;gap:4px}
+.shell .court-foot button{white-space:normal;line-height:1.15;min-width:0}
+.shell .courts-grid .score-team .score-value{display:grid;place-items:center;font-weight:800;font-variant-numeric:tabular-nums}
+.shell .score-team:not(:has(.score-controls)){grid-template-rows:auto minmax(0,1fr)}
+.shell .courts-grid.dense .score-team:not(:has(.score-controls)){grid-template-columns:minmax(0,1fr) 52px;grid-template-rows:minmax(36px,1fr)}
+.shell .courts-grid.dense .score-team:not(:has(.score-controls)) .score-value{grid-column:2;grid-row:1}
+.bracket-overview{min-width:0;display:flex;flex-direction:column;gap:14px;height:100%;min-height:0}
+.bracket-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.bracket-heading h2{margin:0;font-size:clamp(23px,3vw,36px);line-height:1.1}
+.bracket-heading p{margin:5px 0 0;font-size:13px;line-height:1.3}
+.bracket-scroll{min-height:160px;max-width:100%;overflow:auto;overscroll-behavior:contain;padding:12px 8px;border:1px solid #555;border-radius:12px;flex:1}
+.bracket-canvas{position:relative;min-width:max-content}
+.bracket-round-title{position:absolute;top:0;margin:0;text-align:center;font-size:15px;line-height:26px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bracket-lines{position:absolute;inset:0;color:#a0aa91;pointer-events:none}
+.bracket-match{position:absolute;display:grid;grid-template-rows:22px minmax(0,1fr) minmax(0,1fr);border:1px solid #64695f;border-radius:9px;background:#292b28;color:#f5f5f3;overflow:hidden;box-sizing:border-box}
+.bracket-match>header{display:flex;align-items:center;justify-content:space-between;gap:5px;background:#3b4037;padding:3px 7px;font-size:10px;line-height:1.15}
+.bracket-match>header>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bracket-match>header>small{white-space:nowrap;font-size:10px}
+.bracket-side{display:grid;grid-template-columns:minmax(0,1fr) 36px;align-items:center;gap:5px;padding:4px 7px;border-top:1px solid #4c5148;font-size:13px;line-height:1.15}
+.bracket-side>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bracket-side>b{text-align:center;font-variant-numeric:tabular-nums}
+.bracket-side.winner{color:var(--lime,#b5ed43);font-weight:800}
+.bracket-pending{border-style:dashed;opacity:.75}
+.bracket-pool-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:8px}
+.bracket-pool-grid>article{min-width:0;overflow:auto;border:1px solid #555;border-radius:9px;padding:8px}
+.bracket-pool-grid h4{margin:0 0 6px}
+.projection-layout .bracket-overview{height:100%;min-height:0}
+.projection-layout .bracket-scroll{min-height:0}
+@media(max-width:700px){.shell .tournament-heading .nav-tabs{width:100%}.shell .nav-tabs button{flex:1 1 auto;min-height:44px}.bracket-scroll{min-height:300px}.bracket-overview{height:auto}.shell .court-foot button{font-size:12px}}
+
+.bracket-provisional{stroke-dasharray:4 5;opacity:.65}
+.score-entry-setup{grid-column:1/-1}
+@media(min-width:701px){.score-entry-setup .score-entry-options{grid-template-columns:repeat(2,minmax(0,1fr))}}

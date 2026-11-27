@@ -47,7 +47,7 @@ test('Accueil : dix activités, anciens raccourcis et sports retirés absents',(
 test('Navigation simplifiée : outils accessibles et menu fermé par Échap',async()=>{
  const r=runtime();open(r,fixture('badminton',6,3));
  const tabs=r.html().match(/<nav class="nav-tabs"[^>]*>(.*?)<\/nav>/s)[1];
- assert.deepEqual([...tabs.matchAll(/data-action="([^"]+)"/g)].map(x=>x[1]),['courts','rank']);
+ assert.deepEqual([...tabs.matchAll(/data-action="([^"]+)"/g)].map(x=>x[1]),['courts','rank','bracket']);
  for(const name of['rotations','court-players','exports','settings','test-sound'])assert.ok(r.html().includes('data-action="'+name+'"'));
  await r.action('rotations');assert.equal(r.run('tab'),'rotations');assert.ok(r.html().includes('Rencontres et rotations'));
  await r.action('courts');assert.equal(r.run('tab'),'courts');
@@ -556,3 +556,19 @@ test('Restauration explicite : les deux copies importées remplacent les copies 
 
 test('Sauvegardes invalides : scores négatifs et moteur absent sont refusés',()=>{const r=runtime(),x=JSON.parse(snapshot(fixture('table',4,2)));r.ctx.invalid=x;r.run('invalid.events[0].tournaments[0].rotations[0].matches[0].scoreA=-1');assert.equal(r.run('validData(invalid)'),false);r.run('invalid.events[0].tournaments[0].rotations[0].matches[0].scoreA=0;delete invalid.events[0].tournaments[0].engine');assert.equal(r.run('validData(invalid)'),false);});
 test('Restauration explicite : un tournoi supprimé revient après choix du fichier',async()=>{const e=fixture('table',4,2),r=runtime(JSON.stringify({schema:1,events:[],deleted:{[e.id]:Date.now()},activeId:null,updatedAt:Date.now(),revision:1}));r.ctx.file={size:500,text:async()=>snapshot(e)};await r.run('restoreFile(file)');assert.equal(r.run('data.events.length'),1);assert.equal(r.run('data.events[0].id'),e.id);});
+
+test('Saisie en direct : aucun raccourci de saisie finale et validation sans formulaire',async()=>{
+ const r=runtime();open(r,fixture('table',4,2,{scoreEntry:'live',endMode:'free'}));await r.action('start');
+ const id=r.run('E.current(tourney()).matches[0].id');assert.ok(r.html().includes('data-action="score"'));assert.ok(!r.html().includes('data-action="quick-result"'));await r.action('score',{match:id,side:'a',delta:'3'});await r.action('finish-match',{match:id});assert.equal(r.run('E.current(tourney()).matches[0].scoreA'),3);assert.equal(r.run('E.current(tourney()).matches[0].status'),'done');
+});
+test('Saisie finale : aucun bouton de point et aucun résultat inventé',async()=>{
+ const r=runtime();open(r,fixture('table',4,2,{scoreEntry:'final',endMode:'free'}));await r.action('start');assert.ok(!r.html().includes('data-action="score"'));assert.ok(r.html().includes('data-action="quick-result"'));const id=r.run('E.current(tourney()).matches[0].id');await r.action('quick-result',{match:id});await submitMatch(r,id,11,7);assert.equal(r.run('E.current(tourney()).matches[0].scoreA'),11);
+});
+test('File des rencontres : uniquement les suggestions réellement disponibles',async()=>{
+ const r=runtime();open(r,fixture('table',8,4,{endMode:'free',sync:'independent'}));await r.action('start');assert.equal(r.run('queueFrontier(tourney()).length'),0);assert.ok(!r.html().includes('class="waiting-match'));r.run("const m=E.current(tourney()).matches[0];m.scoreA=11;m.scoreB=7;E.finishMatch(tourney(),m);render()");assert.ok(r.run('queueFrontier(tourney()).every(x=>x.ready&&x.courts.length>0)'));
+});
+test('Raquettes : tableau général accessible et futurs qualifiés non inventés',async()=>{
+ const r=runtime();open(r,fixture('table',8,4,{formula:'knockout'}));assert.ok(r.html().includes('data-action="bracket"'));await r.action('bracket');assert.ok(r.html().includes('bracket-canvas'));assert.ok(r.html().includes('Qualifié à venir'));assert.ok(r.html().includes('Finale'));
+});
+
+test('Réglages : choix conservé sans changement du score ou des identités',async()=>{const r=runtime();open(r,fixture('table',4,2));const before=r.run('JSON.stringify(tourney().teams)');await r.action('settings');assert.ok(r.node('modal').innerHTML.includes('Saisie des scores'));await r.action('live-score-entry',{id:'final'});assert.equal(r.run('tourney().config.scoreEntry'),'final');assert.equal(r.run('JSON.stringify(tourney().teams)'),before);const restored=runtime(r.memory.get('EPS_TOURNOIS_V1'));assert.equal(restored.run('tourney().config.scoreEntry'),'final');});

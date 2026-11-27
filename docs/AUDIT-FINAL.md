@@ -93,3 +93,12 @@ Les libellés et exemples ont été relus dans les modules de formules, les vues
 - Tester AirPlay et les annonces sonores avec le matériel du gymnase.
 
 Conclusion : corrections ciblées apportées, contrôles automatisés réussis et vues contrôlées améliorées. Le statut proposé est **version de recette avant diffusion finale**, avec les limites ci-dessus explicites.
+
+## Mise à jour 2.35 — 27 novembre 2026
+
+- Choix de saisie en direct ou en fin de match, pendant la préparation et dans les réglages (changement autorisé entre les matchs). Les anciens tournois gardent leur fonctionnement historique jusqu'au choix explicite.
+- En direct, validation des points connus à la fin du chrono ; en fin de match, aucun score non renseigné n'est ajouté au classement. Les règles de départage restent actives.
+- Les départs décalés ne montrent que les suggestions de rencontres immédiatement jouables, sur des terrains libres et avec des participants disponibles. La liste de toutes les rotations reste accessible au menu enseignant.
+- Tableau général des raquettes : rotations, poules, phases finales, scores et qualifiés connus. Les futurs tours dépendants des résultats restent prévisionnels.
+- Vérification syntaxique du JavaScript et contrôles ciblés exécutés dans un environnement JavaScript de simulation : chrono direct, collecte finale sans faux nuls, prolongation indépendante, compatibilité du chrono historique, file de rencontres disponibles ; six contrôles de génération HTML (modes de saisie, tableau à huit joueurs, poules puis finales, file vide et options de préparation).
+- Tests de régression ajoutés au dépôt ; la suite Node complète n'a pas été exécutée dans cette session. Aucun essai physique iPad, iPhone, Mac, AirPlay ou mode avion n'a été réalisé pour cette version. Les vérifications matérielles restent nécessaires. Aucun format de stockage n'a été supprimé ni réinitialisé.
